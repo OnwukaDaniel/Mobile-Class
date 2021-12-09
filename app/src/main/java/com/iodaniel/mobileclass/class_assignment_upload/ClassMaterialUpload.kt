@@ -31,9 +31,11 @@ class ClassMaterialUpload : AppCompatActivity(), View.OnClickListener, progressB
     private val pickFileLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult(),
             ActivityResultCallback {
-                println("ACTIVITY RESULT ******************** ${it.data}")
+                println("ACTIVITY RESULT ******************** ${it.data!!.data}")
                 try {
-                    binding.uploadFile.setImageURI(it.data!!.data)
+                    binding.pdfView.fromUri(it.data!!.data)
+                        .load()
+                    //binding.uploadFile.setImageURI(it.data!!.data)
                 } catch (e: Exception) {
                     print("ACTIVITY RESULT ERROR ******************* ${e.printStackTrace()}")
                 }
@@ -66,6 +68,7 @@ class ClassMaterialUpload : AppCompatActivity(), View.OnClickListener, progressB
     private fun initialiseUtils() {
         binding.uploadButton.setOnClickListener(this)
         binding.uploadLink.setOnClickListener(this)
+        binding.pdfView.setOnClickListener(this)
     }
 
     private fun checkInput() {
@@ -145,6 +148,9 @@ class ClassMaterialUpload : AppCompatActivity(), View.OnClickListener, progressB
             }
             R.id.upload_button -> {
                 checkInput()
+            }
+            R.id.pdfView -> {
+                selectFileFromStorage()
             }
         }
     }
