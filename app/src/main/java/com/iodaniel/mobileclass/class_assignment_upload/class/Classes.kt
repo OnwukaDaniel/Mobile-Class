@@ -1,4 +1,4 @@
-package com.iodaniel.mobileclassq.`class`
+package com.iodaniel.mobileclass.class_assignment_upload.`class`
 
 import android.app.Dialog
 import android.content.Intent
@@ -19,7 +19,7 @@ import com.iodaniel.mobileclass.class_assignment_upload.Material
 import com.iodaniel.mobileclass.class_assignment_upload.MyCourse
 import com.iodaniel.mobileclass.class_assignment_upload.MyCoursesAdapter
 import com.iodaniel.mobileclass.databinding.ActivityClassBinding
-import com.iodaniel.mobileclassq.class_assignment_upload.ClassMaterialUpload
+import com.iodaniel.mobileclass.class_assignment_upload.ClassMaterialUpload
 
 class Classes : AppCompatActivity(), View.OnClickListener {
 

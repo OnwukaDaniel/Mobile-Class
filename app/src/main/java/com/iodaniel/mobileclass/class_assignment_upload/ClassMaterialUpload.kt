@@ -1,4 +1,4 @@
-package com.iodaniel.mobileclassq.class_assignment_upload
+package com.iodaniel.mobileclass.class_assignment_upload
 
 import android.app.Dialog
 import android.content.Intent
@@ -10,11 +10,9 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.FirebaseDatabase
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.class_assignment_upload.ClassMaterialUploadInterface.progressBarController
-import com.iodaniel.mobileclass.class_assignment_upload.Material
-import com.iodaniel.mobileclass.class_assignment_upload.MyCourse
 import com.iodaniel.mobileclass.databinding.ActivityClassMaterialUploadBinding
 import com.iodaniel.mobileclass.databinding.ProgressBarDialogBinding
-import com.iodaniel.mobileclassq.`class`.Classes
+import com.iodaniel.mobileclass.class_assignment_upload.`class`.Classes
 import java.text.DateFormat
 import java.time.Instant
 import java.util.*

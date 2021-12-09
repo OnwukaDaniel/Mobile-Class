@@ -19,8 +19,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.iodaniel.mobileclassq.class.Classes" />
-        <activity android:name="com.iodaniel.mobileclassq.class_assignment_upload.ClassMaterialUpload" />
+        <activity android:name=".class_assignment_upload.class.Classes" />
+        <activity android:name=".class_assignment_upload.ClassMaterialUpload" />
 
         <meta-data
             android:name="preloaded_fonts"
