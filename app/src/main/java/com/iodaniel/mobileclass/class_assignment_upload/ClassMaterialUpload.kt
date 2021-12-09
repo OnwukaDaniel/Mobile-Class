@@ -5,14 +5,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.FirebaseDatabase
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.class_assignment_upload.ClassMaterialUploadInterface.progressBarController
+import com.iodaniel.mobileclass.class_assignment_upload.`class`.Classes
 import com.iodaniel.mobileclass.databinding.ActivityClassMaterialUploadBinding
 import com.iodaniel.mobileclass.databinding.ProgressBarDialogBinding
-import com.iodaniel.mobileclass.class_assignment_upload.`class`.Classes
 import java.text.DateFormat
 import java.time.Instant
 import java.util.*
@@ -25,6 +27,17 @@ class ClassMaterialUpload : AppCompatActivity(), View.OnClickListener, progressB
     private val dialog by lazy { Dialog(this) }
     private lateinit var snackbar: Snackbar
     private var courseName: String = ""
+
+    private val pickFileLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult(),
+            ActivityResultCallback {
+                println("ACTIVITY RESULT ******************** ${it.data}")
+                try {
+                    binding.uploadFile.setImageURI(it.data!!.data)
+                } catch (e: Exception) {
+                    print("ACTIVITY RESULT ERROR ******************* ${e.printStackTrace()}")
+                }
+            })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,10 +130,18 @@ class ClassMaterialUpload : AppCompatActivity(), View.OnClickListener, progressB
         binding.uploadExtraNote.setText("")
     }
 
+    private fun selectFileFromStorage() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.type = "*/*"
+        pickFileLauncher.launch(intent)
+    }
+
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.upload_link -> {
-
+                selectFileFromStorage()
             }
             R.id.upload_button -> {
                 checkInput()
