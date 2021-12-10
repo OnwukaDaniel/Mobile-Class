@@ -233,6 +233,7 @@ class ClassMaterialUpload : AppCompatActivity(), View.OnClickListener, ProgressB
     }
 
     override fun musicReader(uri: Uri) {
+        binding.uploadAudio.visibility = View.VISIBLE
         val mp = MediaPlayer()
         mp.setDataSource(this, uri)
         mp.isLooping = true
@@ -263,7 +264,6 @@ class ClassMaterialUpload : AppCompatActivity(), View.OnClickListener, ProgressB
             listLength == 1 -> {
                 binding.uploadMoreLayout.visibility = View.INVISIBLE
                 binding.uploadStack1.visibility = View.INVISIBLE
-                binding.uploadStack2.visibility = View.INVISIBLE
             }
             listLength > 1 -> {
                 binding.uploadNumberOfFiles.text = (listLength - 1).toString()
@@ -272,7 +272,6 @@ class ClassMaterialUpload : AppCompatActivity(), View.OnClickListener, ProgressB
             }
             listLength > 2 -> {
                 binding.uploadNumberOfFiles.text = (listLength - 1).toString()
-                binding.uploadStack2.visibility = View.VISIBLE
                 binding.uploadMoreLayout.visibility = View.VISIBLE
             }
         }
