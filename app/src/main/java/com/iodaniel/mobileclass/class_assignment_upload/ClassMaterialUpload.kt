@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
+import android.widget.MediaController
+import android.widget.VideoView
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -27,17 +29,26 @@ class ClassMaterialUpload : AppCompatActivity(), View.OnClickListener, progressB
     private val dialog by lazy { Dialog(this) }
     private lateinit var snackbar: Snackbar
     private var courseName: String = ""
+    private lateinit var controller: MediaController
+    private val videoView: VideoView by lazy { binding.uploadVideoView }
 
     private val pickFileLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult(),
             ActivityResultCallback {
-                println("ACTIVITY RESULT ******************** ${it.data!!.data}")
-                try {
-                    binding.pdfView.fromUri(it.data!!.data)
-                        .load()
-                    //binding.uploadFile.setImageURI(it.data!!.data)
-                } catch (e: Exception) {
-                    print("ACTIVITY RESULT ERROR ******************* ${e.printStackTrace()}")
+                if (it.resultCode == RESULT_OK) {
+                    val dataUri = it.data!!.data
+                    var extensionType = dataUri.toString().split(".").last()
+                    println("ACTIVITY RESULT ******************** $extensionType")
+                    try {
+                        videoView.setVideoURI(dataUri)
+                        videoView.requestFocus()
+                        videoView.start()
+                        videoView.suspend()
+                        //binding.uploadFile.setImageURI(dataUri)
+                        //binding.pdfView.fromUri(dataUri).load()
+                    } catch (e: Exception) {
+                        print("ACTIVITY RESULT ERROR ******************* ${e.printStackTrace()}")
+                    }
                 }
             })
 
@@ -48,8 +59,15 @@ class ClassMaterialUpload : AppCompatActivity(), View.OnClickListener, progressB
         initialiseDatabase()
         initialiseAllClassInterface()
         initialiseUtils()
+        initVideo()
         if (intent.hasExtra("class_name"))
             courseName = intent.getStringExtra("class_name")!!
+    }
+
+    private fun initVideo() {
+        controller = MediaController(this)
+        controller.setAnchorView(videoView)
+        videoView.setMediaController(controller)
     }
 
     private fun initialiseDatabase() {
@@ -150,7 +168,7 @@ class ClassMaterialUpload : AppCompatActivity(), View.OnClickListener, progressB
                 checkInput()
             }
             R.id.pdfView -> {
-                selectFileFromStorage()
+
             }
         }
     }
