@@ -20,7 +20,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".class_assignment_upload.class.Classes" />
-        <activity android:name=".class_assignment_upload.ClassMaterialUpload" />
+        <activity android:name=".class_assignment_upload.ClassMaterialUpload"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
 
         <meta-data
             android:name="preloaded_fonts"

@@ -2,7 +2,10 @@ package com.iodaniel.mobileclass.class_assignment_upload
 
 import android.app.Dialog
 import android.content.Intent
+import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import android.view.WindowManager
 import android.widget.MediaController
@@ -13,7 +16,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.FirebaseDatabase
 import com.iodaniel.mobileclass.R
-import com.iodaniel.mobileclass.class_assignment_upload.ClassMaterialUploadInterface.progressBarController
+import com.iodaniel.mobileclass.class_assignment_upload.ClassMaterialUploadInterface.MediaSupport
+import com.iodaniel.mobileclass.class_assignment_upload.ClassMaterialUploadInterface.ProgressBarController
 import com.iodaniel.mobileclass.class_assignment_upload.`class`.Classes
 import com.iodaniel.mobileclass.databinding.ActivityClassMaterialUploadBinding
 import com.iodaniel.mobileclass.databinding.ProgressBarDialogBinding
@@ -21,15 +25,18 @@ import java.text.DateFormat
 import java.time.Instant
 import java.util.*
 
-class ClassMaterialUpload : AppCompatActivity(), View.OnClickListener, progressBarController {
+class ClassMaterialUpload : AppCompatActivity(), View.OnClickListener, ProgressBarController,
+    MediaSupport {
 
     private val binding by lazy { ActivityClassMaterialUploadBinding.inflate(layoutInflater) }
     private var reference = FirebaseDatabase.getInstance().reference
-    private lateinit var progressBarController: progressBarController
+    private lateinit var progressBarController: ProgressBarController
+    private lateinit var mediaSupport: MediaSupport
     private val dialog by lazy { Dialog(this) }
     private lateinit var snackbar: Snackbar
     private var courseName: String = ""
     private lateinit var controller: MediaController
+    private var listOfMedia: ArrayList<Uri> = arrayListOf()
     private val videoView: VideoView by lazy { binding.uploadVideoView }
 
     private val pickFileLauncher =
@@ -37,18 +44,47 @@ class ClassMaterialUpload : AppCompatActivity(), View.OnClickListener, progressB
             ActivityResultCallback {
                 if (it.resultCode == RESULT_OK) {
                     val dataUri = it.data!!.data
-                    var extensionType = dataUri.toString().split(".").last()
+                    val extensionType = dataUri.toString().split(".").last()
                     println("ACTIVITY RESULT ******************** $extensionType")
-                    try {
-                        videoView.setVideoURI(dataUri)
-                        videoView.requestFocus()
-                        videoView.start()
-                        videoView.suspend()
-                        //binding.uploadFile.setImageURI(dataUri)
-                        //binding.pdfView.fromUri(dataUri).load()
-                    } catch (e: Exception) {
-                        print("ACTIVITY RESULT ERROR ******************* ${e.printStackTrace()}")
+                    when (extensionType) {
+                        "mp4" -> {
+                            mediaSupport.makeMediaPlayersInvisible()
+                            mediaSupport.videoPlayer(dataUri!!)
+                        }
+                        "3gp" -> {
+                            mediaSupport.makeMediaPlayersInvisible()
+                            mediaSupport.videoPlayer(dataUri!!)
+                        }
+                        "mp3" -> {
+                            mediaSupport.makeMediaPlayersInvisible()
+                            mediaSupport.musicReader(dataUri!!)
+                        }
+                        "aac" -> {
+                            mediaSupport.makeMediaPlayersInvisible()
+                            mediaSupport.musicReader(dataUri!!)
+                        }
+                        "wav" -> {
+                            mediaSupport.makeMediaPlayersInvisible()
+                            mediaSupport.musicReader(dataUri!!)
+                        }
+                        "pdf" -> {
+                            mediaSupport.makeMediaPlayersInvisible()
+                            mediaSupport.pdfReader(dataUri!!)
+                        }
+                        "jpg" -> {
+                            mediaSupport.makeMediaPlayersInvisible()
+                            mediaSupport.imageReader(dataUri!!)
+                        }
+                        "png" -> {
+                            mediaSupport.makeMediaPlayersInvisible()
+                            mediaSupport.imageReader(dataUri!!)
+                        }
+                        "jpeg" -> {
+                            mediaSupport.makeMediaPlayersInvisible()
+                            mediaSupport.imageReader(dataUri!!)
+                        }
                     }
+                    mediaSupport.listOfMediaListener(listOfMedia.size)
                 }
             })
 
@@ -81,12 +117,14 @@ class ClassMaterialUpload : AppCompatActivity(), View.OnClickListener, progressB
 
     private fun initialiseAllClassInterface() {
         progressBarController = this
+        mediaSupport = this
     }
 
     private fun initialiseUtils() {
         binding.uploadButton.setOnClickListener(this)
         binding.uploadLink.setOnClickListener(this)
         binding.pdfView.setOnClickListener(this)
+        binding.uploadImage.setOnClickListener(this)
     }
 
     private fun checkInput() {
@@ -158,19 +196,9 @@ class ClassMaterialUpload : AppCompatActivity(), View.OnClickListener, progressB
         pickFileLauncher.launch(intent)
     }
 
-
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.upload_link -> {
-                selectFileFromStorage()
-            }
-            R.id.upload_button -> {
-                checkInput()
-            }
-            R.id.pdfView -> {
-
-            }
-        }
+    private fun selectImageFromStorage() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+        pickFileLauncher.launch(intent)
     }
 
     override fun showProgressBar() {
@@ -184,4 +212,87 @@ class ClassMaterialUpload : AppCompatActivity(), View.OnClickListener, progressB
     override fun hideProgressBar() {
         dialog.dismiss()
     }
+
+    override fun videoPlayer(uri: Uri) = try {
+        videoView.visibility = View.VISIBLE
+        listOfMedia.add(uri)
+        videoView.setVideoURI(uri)
+        videoView.requestFocus()
+        videoView.start()
+    } catch (e: Exception) {
+        print("ACTIVITY RESULT ERROR ******************* ${e.printStackTrace()}")
+    }
+
+
+    override fun pdfReader(uri: Uri) = try {
+        binding.pdfView.visibility = View.VISIBLE
+        listOfMedia.add(uri)
+        binding.pdfView.fromUri(uri).load()
+    } catch (e: Exception) {
+        print("ACTIVITY RESULT ERROR ******************* ${e.printStackTrace()}")
+    }
+
+    override fun musicReader(uri: Uri) {
+        val mp = MediaPlayer()
+        mp.setDataSource(this, uri)
+        mp.isLooping = true
+        mp.setVolume(0.5F, 0.5F)
+    }
+
+    override fun imageReader(uri: Uri) = try {
+        binding.uploadFile.visibility = View.VISIBLE
+        listOfMedia.add(uri)
+        binding.uploadFile.setImageURI(uri)
+    } catch (e: Exception) {
+        print("ACTIVITY RESULT ERROR ******************* ${e.printStackTrace()}")
+    }
+
+    override fun youTubePlayer() {
+
+    }
+
+    override fun makeMediaPlayersInvisible() {
+        binding.uploadFile.visibility = View.INVISIBLE
+        binding.pdfView.visibility = View.INVISIBLE
+        binding.uploadAudio.visibility = View.INVISIBLE
+        videoView.visibility = View.INVISIBLE
+    }
+
+    override fun listOfMediaListener(listLength: Int) {
+        when {
+            listLength == 1 -> {
+                binding.uploadMoreLayout.visibility = View.INVISIBLE
+                binding.uploadStack1.visibility = View.INVISIBLE
+                binding.uploadStack2.visibility = View.INVISIBLE
+            }
+            listLength > 1 -> {
+                binding.uploadNumberOfFiles.text = (listLength - 1).toString()
+                binding.uploadStack1.visibility = View.VISIBLE
+                binding.uploadMoreLayout.visibility = View.VISIBLE
+            }
+            listLength > 2 -> {
+                binding.uploadNumberOfFiles.text = (listLength - 1).toString()
+                binding.uploadStack2.visibility = View.VISIBLE
+                binding.uploadMoreLayout.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.upload_link -> {
+                selectFileFromStorage()
+            }
+            R.id.upload_image -> {
+                selectImageFromStorage()
+            }
+            R.id.upload_button -> {
+                checkInput()
+            }
+            R.id.pdfView -> {
+
+            }
+        }
+    }
+
 }
