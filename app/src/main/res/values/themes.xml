@@ -25,4 +25,9 @@
         <item name="android:statusBarColor" tools:targetApi="l">@android:color/transparent</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="roundImageView" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
+
 </resources>

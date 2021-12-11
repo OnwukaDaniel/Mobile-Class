@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.iodaniel.mobileclass.class_assignment_upload.`class`.Classes
+import com.iodaniel.mobileclass.class_assignment_upload.classes.Classes
 
 
 class SplashScreen: AppCompatActivity() {

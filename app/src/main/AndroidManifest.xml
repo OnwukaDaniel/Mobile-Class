@@ -19,9 +19,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".class_assignment_upload.class.Classes" />
-        <activity android:name=".class_assignment_upload.ClassMaterialUpload"
+        <activity android:name=".class_assignment_upload.classes.ClassMaterialUpload"
             android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <activity android:name=".class_assignment_upload.singleclass.AClass" />
 
         <meta-data
             android:name="preloaded_fonts"

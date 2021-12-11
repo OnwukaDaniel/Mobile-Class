@@ -1,4 +1,4 @@
-package com.iodaniel.mobileclass.class_assignment_upload
+package com.iodaniel.mobileclass.class_assignment_upload.classes
 
 import android.net.Uri
 
@@ -8,13 +8,7 @@ class ClassMaterialUploadInterface {
         fun hideProgressBar()
     }
     interface MediaSupport{
-        fun videoPlayer(uri: Uri)
-        fun pdfReader(uri: Uri)
-        fun musicReader(uri: Uri)
         fun imageReader(uri: Uri)
-        fun youTubePlayer()
         fun makeMediaPlayersInvisible()
-
-        fun listOfMediaListener(listLength: Int)
     }
 }
