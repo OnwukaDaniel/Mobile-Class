@@ -12,8 +12,8 @@ class StudentFragment : Fragment() {
     private lateinit var binding: StudentFragmentBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         binding = StudentFragmentBinding.inflate(layoutInflater, container, false)
-        return inflater.inflate(R.layout.fragment_student_framgment, container, false)
+        return binding.root
     }
 }

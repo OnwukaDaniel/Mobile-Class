@@ -5,12 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.iodaniel.mobileclass.R
+import com.iodaniel.mobileclass.databinding.AssignmentBinding
 
 class Assignments : Fragment() {
+    private lateinit var binding: AssignmentBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
-    ): View? {
-        return inflater.inflate(R.layout.fragment_student_framgment, container, false)
+    ): View {
+        binding = AssignmentBinding.inflate(layoutInflater, container, false)
+        return binding.root
     }
 }

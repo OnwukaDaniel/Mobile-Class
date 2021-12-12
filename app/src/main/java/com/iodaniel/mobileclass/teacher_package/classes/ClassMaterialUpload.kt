@@ -15,6 +15,7 @@ import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.iodaniel.mobileclass.R
@@ -32,6 +33,7 @@ class ClassMaterialUpload : AppCompatActivity(), View.OnClickListener, ProgressB
 
     private val binding by lazy { ActivityClassMaterialUploadBinding.inflate(layoutInflater) }
     private var reference = FirebaseDatabase.getInstance().reference
+    private val auth = FirebaseAuth.getInstance().currentUser!!.uid
     private lateinit var progressBarController: ProgressBarController
     private lateinit var mediaSupport: MediaSupport
     private val dialog by lazy { Dialog(this) }
@@ -110,8 +112,8 @@ class ClassMaterialUpload : AppCompatActivity(), View.OnClickListener, ProgressB
 
     private fun initialiseDatabase() {
         reference = reference
-            .child("admins")
-            .child("abc@gmailcom")
+            .child("teacher")
+            .child(auth)
             .child("classes")
             .push()
     }

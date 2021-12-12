@@ -25,7 +25,8 @@
         <activity
             android:name=".teacher_package.classes.ClassMaterialUpload"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity android:name=".teacher_package.singleclass.AClass" />
+        <activity android:name=".teacher_package.singleclass.AClass"
+            android:theme="@style/Theme.AClass"/>
         <activity android:name=".accessing_mobile_app.SignIn" />
         <activity android:name=".teacher_package.classes.TeacherPage" />
 

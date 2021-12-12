@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -12,13 +13,17 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.Gson
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.TeacherPageBinding
+import com.iodaniel.mobileclass.teacher_package.HelperListener
+import com.iodaniel.mobileclass.teacher_package.HelperListener.ClassListener
 
-class TeacherPage : AppCompatActivity(), View.OnClickListener {
+class TeacherPage : AppCompatActivity(), View.OnClickListener, ClassListener {
 
     private val binding by lazy {
         TeacherPageBinding.inflate(layoutInflater)
     }
     private lateinit var rvAdapter: MyClassesAdapter
+    private lateinit var classListener: ClassListener
+    private val auth = FirebaseAuth.getInstance().currentUser!!.uid
     private var listOfCourses: ArrayList<ClassInfo> = arrayListOf()
     private var reference = FirebaseDatabase.getInstance().reference
 
@@ -27,14 +32,15 @@ class TeacherPage : AppCompatActivity(), View.OnClickListener {
         setContentView(binding.root)
         title = "Classes"
         binding.addClassNote.setOnClickListener(this)
+        classListener = this
         initialiseDatabase()
         readDatabase()
     }
 
     private fun initialiseDatabase() {
         reference = reference
-            .child("admins")
-            .child("abc@gmailcom")
+            .child("teacher")
+            .child(auth)
             .child("classes")
     }
 
@@ -62,6 +68,7 @@ class TeacherPage : AppCompatActivity(), View.OnClickListener {
                     )
                     listOfCourses.add(classInfo)
                     initRv()
+                    classListener.nonEmptyClass()
                 } catch (e: Exception) {
                     println("ERROR  *************************** ${e.printStackTrace()}")
                 }
@@ -89,6 +96,7 @@ class TeacherPage : AppCompatActivity(), View.OnClickListener {
                     )
                     listOfCourses.add(classInfo)
                     initRv()
+                    classListener.nonEmptyClass()
                 } catch (e: Exception) {
                     println("ERROR  *************************** ${e.printStackTrace()}")
                 }
@@ -114,6 +122,9 @@ class TeacherPage : AppCompatActivity(), View.OnClickListener {
         binding.rvListOfCourses.layoutManager =
             LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
         rvAdapter.dataset = listOfCourses
+        if (listOfCourses.size==0) {
+            classListener.emptyClass()
+        }
         rvAdapter.context = applicationContext
         rvAdapter.activity = this
     }
@@ -131,5 +142,15 @@ class TeacherPage : AppCompatActivity(), View.OnClickListener {
                 overridePendingTransition(0, 0)
             }
         }
+    }
+
+    override fun emptyClass() {
+        binding.emptyContainer.visibility = View.VISIBLE
+        binding.rvListOfCourses.visibility = View.INVISIBLE
+    }
+
+    override fun nonEmptyClass() {
+        binding.emptyContainer.visibility = View.INVISIBLE
+        binding.rvListOfCourses.visibility = View.VISIBLE
     }
 }
