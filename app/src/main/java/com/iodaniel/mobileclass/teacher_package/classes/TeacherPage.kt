@@ -1,4 +1,4 @@
-package com.iodaniel.mobileclass.class_assignment_upload.classes
+package com.iodaniel.mobileclass.teacher_package.classes
 
 import android.content.Intent
 import android.os.Bundle
@@ -11,12 +11,12 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.Gson
 import com.iodaniel.mobileclass.R
-import com.iodaniel.mobileclass.databinding.ActivityClassBinding
+import com.iodaniel.mobileclass.databinding.TeacherPageBinding
 
-class Classes : AppCompatActivity(), View.OnClickListener {
+class TeacherPage : AppCompatActivity(), View.OnClickListener {
 
     private val binding by lazy {
-        ActivityClassBinding.inflate(layoutInflater)
+        TeacherPageBinding.inflate(layoutInflater)
     }
     private lateinit var rvAdapter: MyClassesAdapter
     private var listOfCourses: ArrayList<ClassInfo> = arrayListOf()

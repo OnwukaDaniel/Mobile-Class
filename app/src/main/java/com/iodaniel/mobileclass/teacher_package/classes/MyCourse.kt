@@ -1,4 +1,4 @@
-package com.iodaniel.mobileclass.class_assignment_upload.classes
+package com.iodaniel.mobileclass.teacher_package.classes
 
 import kotlinx.serialization.Serializable
 

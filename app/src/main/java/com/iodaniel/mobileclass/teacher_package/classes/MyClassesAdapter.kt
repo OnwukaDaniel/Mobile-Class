@@ -1,4 +1,4 @@
-package com.iodaniel.mobileclass.class_assignment_upload.classes
+package com.iodaniel.mobileclass.teacher_package.classes
 
 import android.app.Activity
 import android.content.Context
@@ -13,7 +13,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.iodaniel.mobileclass.R
-import com.iodaniel.mobileclass.class_assignment_upload.singleclass.AClass
+import com.iodaniel.mobileclass.teacher_package.singleclass.AClass
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 

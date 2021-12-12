@@ -1,4 +1,4 @@
-package com.iodaniel.mobileclass.class_assignment_upload.classes
+package com.iodaniel.mobileclass.teacher_package.classes
 
 import android.app.Dialog
 import android.content.Intent
@@ -18,8 +18,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.iodaniel.mobileclass.R
-import com.iodaniel.mobileclass.class_assignment_upload.classes.ClassMaterialUploadInterface.MediaSupport
-import com.iodaniel.mobileclass.class_assignment_upload.classes.ClassMaterialUploadInterface.ProgressBarController
+import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.MediaSupport
+import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.ProgressBarController
 import com.iodaniel.mobileclass.databinding.ActivityClassMaterialUploadBinding
 import com.iodaniel.mobileclass.databinding.ProgressBarDialogBinding
 import java.text.DateFormat
@@ -196,7 +196,7 @@ class ClassMaterialUpload : AppCompatActivity(), View.OnClickListener, ProgressB
                 time = time, classCode = classCode, dateCreated = "$time/$date")
             reference.setValue(classInfo).addOnCompleteListener {
                 progressBarController.hideProgressBar()
-                startActivity(Intent(this, Classes::class.java))
+                startActivity(Intent(this, TeacherPage::class.java))
                 overridePendingTransition(0, 0)
             }.addOnFailureListener {
                 progressBarController.hideProgressBar()
@@ -233,7 +233,7 @@ class ClassMaterialUpload : AppCompatActivity(), View.OnClickListener, ProgressB
                         dateCreated = "$time/$date")
                     reference.setValue(classInfo).addOnCompleteListener {
                         progressBarController.hideProgressBar()
-                        startActivity(Intent(this, Classes::class.java))
+                        startActivity(Intent(this, TeacherPage::class.java))
                         overridePendingTransition(0, 0)
                     }
 
