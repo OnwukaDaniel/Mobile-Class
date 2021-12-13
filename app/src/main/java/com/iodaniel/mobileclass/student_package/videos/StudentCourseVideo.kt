@@ -17,7 +17,7 @@ class StudentCourseVideo : YouTubeBaseActivity() {
     // Add the api key that you had
     // copied from google API
     // This is a dummy api key
-    val api_key =  "AIzaSyBbSFcZpBg3OJnwacq8YKa13WJNoC-a1Lk"
+    val api_key =  "API KEY Goes Here"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
