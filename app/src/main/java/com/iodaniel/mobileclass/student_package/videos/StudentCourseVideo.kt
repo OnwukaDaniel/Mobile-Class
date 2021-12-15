@@ -1,15 +1,7 @@
 package com.iodaniel.mobileclass.student_package.videos
 
-import android.os.Bundle
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import com.iodaniel.mobileclass.R
-import com.google.android.youtube.player.YouTubeBaseActivity
-import com.google.android.youtube.player.YouTubeInitializationResult
-import com.google.android.youtube.player.YouTubePlayer
-import com.google.android.youtube.player.YouTubePlayerView
 
-
+/*
 class StudentCourseVideo : YouTubeBaseActivity() {
 
     // Change the AppCompactActivity to YouTubeBaseActivity()
@@ -52,4 +44,4 @@ class StudentCourseVideo : YouTubeBaseActivity() {
             }
         })
     }
-}
+}*/

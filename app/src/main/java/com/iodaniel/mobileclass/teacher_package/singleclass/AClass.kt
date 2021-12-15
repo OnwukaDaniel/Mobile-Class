@@ -64,6 +64,12 @@ class AClass : FragmentActivity(), View.OnClickListener {
             .addToBackStack("newClass").commit()
     }
 
+    private fun inflateCreateNewAssignment() {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.a_class_frame, CreateNewAssignment())
+            .addToBackStack("newAssi").commit()
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.a_class_more -> {
@@ -72,6 +78,10 @@ class AClass : FragmentActivity(), View.OnClickListener {
                 popUp.setOnMenuItemClickListener {
                     when (it.itemId) {
                         R.id.create_new_lesson -> {
+                            inflateCreateNewLessonFragment()
+                            return@setOnMenuItemClickListener true
+                        }
+                        R.id.create_new_assignment -> {
                             inflateCreateNewLessonFragment()
                             return@setOnMenuItemClickListener true
                         }
