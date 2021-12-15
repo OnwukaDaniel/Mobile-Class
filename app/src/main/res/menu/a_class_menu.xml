@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/create_new_lesson"
+        android:title="Create New Lesson"/>
+    <item
+        android:id="@+id/remove_lesson"
+        android:title="Remove Lesson"/>
+    <item
+        android:id="@+id/create_new_assignment"
+        android:title="Create New Assignment"/>
+    <item
+        android:id="@+id/remove_assignment"
+        android:title="Create New Lesson"/>
+    <item
+        android:id="@+id/add_student"
+        android:title="Add Student"/>
+</menu>
