@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.iodaniel.mobileclass">
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -9,7 +10,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/Theme.MobileClass">
-        <activity android:name=".accessing_mobile_app.SignInOrSignUp"></activity>
+        <activity
+            android:name=".student_package.videos.StudentCourseWork"
+            android:exported="false" />
+        <activity
+            android:name=".student_package.videos.StudentCourseVideo"
+            android:exported="false" />
+        <activity android:name=".accessing_mobile_app.SignInOrSignUp" />
         <activity android:name=".student_package.StudentPage" />
         <activity android:name=".accessing_mobile_app.SignUp" />
         <activity android:name=".MainActivity" />
@@ -25,8 +32,9 @@
         <activity
             android:name=".teacher_package.classes.ClassUpload"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity android:name=".teacher_package.singleclass.AClass"
-            android:theme="@style/Theme.AClass"/>
+        <activity
+            android:name=".teacher_package.singleclass.AClass"
+            android:theme="@style/Theme.AClass" />
         <activity android:name=".accessing_mobile_app.SignIn" />
         <activity android:name=".teacher_package.classes.TeacherPage" />
 
