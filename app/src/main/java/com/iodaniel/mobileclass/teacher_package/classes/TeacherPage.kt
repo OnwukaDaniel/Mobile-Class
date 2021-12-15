@@ -52,7 +52,7 @@ class TeacherPage : AppCompatActivity(), View.OnClickListener, ClassListener {
                     val gson = Gson().toJson((courses.values.toList()))
                     val className = courses["className"].toString()
                     val classCode = courses["classCode"].toString()
-                    val dateCreated = courses["dateCreated"].toString()
+                    val datetime = courses["datetime"].toString()
                     val dateModified = courses["dateModified"].toString()
                     val classImage = courses["classImage"].toString()
                     val teacherInChargeName = courses["teacherInChargeName"].toString()
@@ -63,7 +63,7 @@ class TeacherPage : AppCompatActivity(), View.OnClickListener, ClassListener {
                         classCode = classCode,
                         classImage = classImage,
                         time = time,
-                        dateCreated = dateCreated,
+                        datetime = datetime,
                         teacherInChargeName = teacherInChargeName,
                     )
                     listOfCourses.add(classInfo)
@@ -81,7 +81,7 @@ class TeacherPage : AppCompatActivity(), View.OnClickListener, ClassListener {
                     val className = courses["className"].toString()
                     val classCode = courses["classCode"].toString()
                     val dateCreated = courses["dateCreated"].toString()
-                    val dateModified = courses["dateModified"].toString()
+                    val datetime = courses["datetime"].toString()
                     val classImage = courses["classImage"].toString()
                     val teacherInChargeName = courses["teacherInChargeName"].toString()
                     val time = courses["time"].toString()
@@ -91,7 +91,7 @@ class TeacherPage : AppCompatActivity(), View.OnClickListener, ClassListener {
                         classCode = classCode,
                         classImage = classImage,
                         time = time,
-                        dateCreated = dateCreated,
+                        datetime = datetime,
                         teacherInChargeName = teacherInChargeName,
                     )
                     listOfCourses.add(classInfo)
@@ -134,16 +134,6 @@ class TeacherPage : AppCompatActivity(), View.OnClickListener, ClassListener {
         finish()
     }
 
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.add_class_note -> {
-                val intent = Intent(applicationContext, ClassMaterialUpload::class.java)
-                startActivity(intent)
-                overridePendingTransition(0, 0)
-            }
-        }
-    }
-
     override fun emptyClass() {
         binding.emptyContainer.visibility = View.VISIBLE
         binding.rvListOfCourses.visibility = View.INVISIBLE
@@ -152,5 +142,15 @@ class TeacherPage : AppCompatActivity(), View.OnClickListener, ClassListener {
     override fun nonEmptyClass() {
         binding.emptyContainer.visibility = View.INVISIBLE
         binding.rvListOfCourses.visibility = View.VISIBLE
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.add_class_note -> {
+                val intent = Intent(applicationContext, ClassUpload::class.java)
+                startActivity(intent)
+                overridePendingTransition(0, 0)
+            }
+        }
     }
 }

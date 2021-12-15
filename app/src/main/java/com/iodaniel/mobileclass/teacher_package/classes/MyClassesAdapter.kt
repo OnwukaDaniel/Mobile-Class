@@ -17,18 +17,20 @@ import com.iodaniel.mobileclass.teacher_package.singleclass.AClass
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-class MyClassesAdapter : RecyclerView.Adapter<MyClassesAdapter.MyCoursesAdapterViewHolder>(),
-    View.OnClickListener {
+class MyClassesAdapter : RecyclerView.Adapter<MyClassesAdapter.MyCoursesAdapterViewHolder>(){
 
     var dataset: ArrayList<ClassInfo> = arrayListOf()
     lateinit var context: Context
     lateinit var activity: Activity
-    lateinit var datum: ClassInfo
+
+    init {
+        setHasStableIds(true)
+    }
 
     class MyCoursesAdapterViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val image: ImageView = view.findViewById(R.id.class_image)
         val className: TextView = view.findViewById(R.id.class_name)
-        val year: TextView = view.findViewById(R.id.year)
+        val teacherInChargeName: TextView = view.findViewById(R.id.year)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyCoursesAdapterViewHolder {
@@ -38,7 +40,7 @@ class MyClassesAdapter : RecyclerView.Adapter<MyClassesAdapter.MyCoursesAdapterV
     }
 
     override fun onBindViewHolder(holder: MyCoursesAdapterViewHolder, position: Int) {
-        datum = dataset[position]
+        val datum = dataset[position]
         val imageUri = Uri.parse(datum.classImage)
         val red = datum.red
         val green = datum.green
@@ -47,23 +49,20 @@ class MyClassesAdapter : RecyclerView.Adapter<MyClassesAdapter.MyCoursesAdapterV
         Glide.with(context).load(imageUri).centerCrop().into(holder.image)
         holder.image.setColorFilter(Color.argb(80, red, green, blue))
         holder.className.text = datum.className
-        if (holder.year.text != "") {
-            holder.year.visibility = View.VISIBLE
-            holder.year.text = datum.dateCreated
+        if (holder.teacherInChargeName.text != "") {
+            holder.teacherInChargeName.visibility = View.VISIBLE
+            holder.teacherInChargeName.text = datum.teacherInChargeName
         }
-        holder.itemView.setOnClickListener(this)
+        holder.itemView.setOnClickListener {
+            val intent = Intent(context, AClass::class.java)
+            println("AClass ************************** ${datum.className}")
+            println("AClass dataset ************************** ${dataset.size}")
+            val json = Json.encodeToString(datum)
+            intent.putExtra("class_data", json)
+            context.startActivity(intent)
+            activity.overridePendingTransition(0,0)
+        }
     }
 
     override fun getItemCount(): Int = dataset.size
-    override fun onClick(v: View?) {
-        when (v?.id){
-            R.id.classes_card ->{
-                val intent = Intent(context, AClass::class.java)
-                val json = Json.encodeToString(datum)
-                intent.putExtra("class_data", json)
-                context.startActivity(intent)
-                activity.overridePendingTransition(0,0)
-            }
-        }
-    }
 }

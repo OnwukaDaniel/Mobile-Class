@@ -13,6 +13,9 @@ class Assignments : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View {
         binding = AssignmentBinding.inflate(layoutInflater, container, false)
+
+
+
         return binding.root
     }
 }

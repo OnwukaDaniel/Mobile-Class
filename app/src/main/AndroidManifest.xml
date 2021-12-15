@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".teacher_package.classes.ClassMaterialUpload"
+            android:name=".teacher_package.classes.ClassUpload"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity android:name=".teacher_package.singleclass.AClass"
             android:theme="@style/Theme.AClass"/>

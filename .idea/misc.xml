@@ -1,5 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/drawable/edit_text_background1.xml" value="0.240625" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/a_class.xml" value="0.22447916666666667" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/activity_class_material_upload.xml" value="0.22447916666666667" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/assignment.xml" value="0.19166666666666668" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/class_upload.xml" value="0.25" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/create_new_lesson_fragment.xml" value="0.33" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/lesson_fragment.xml" value="0.22447916666666667" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/lesson_row.xml" value="0.22" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/my_courses_row.xml" value="0.22447916666666667" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/progress_bar_dialog.xml" value="0.22447916666666667" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/student_fragment.xml" value="0.19166666666666668" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/teacher_page.xml" value="0.22447916666666667" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/menu/a_class_menu.xml" value="0.22447916666666667" />
+        <entry key="app/src/main/res/drawable/tab_selector.xml" value="0.4046296296296296" />
+        <entry key="app/src/main/res/layout/a_class.xml" value="0.4427083333333333" />
+        <entry key="app/src/main/res/layout/activity_class.xml" value="0.4427083333333333" />
+        <entry key="app/src/main/res/layout/activity_class_material.xml" value="0.4427083333333333" />
+        <entry key="app/src/main/res/layout/activity_class_material_upload.xml" value="0.4427083333333333" />
+        <entry key="app/src/main/res/layout/activity_course_video.xml" value="0.428125" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.4427083333333333" />
+        <entry key="app/src/main/res/layout/activity_student_course_work.xml" value="0.428125" />
+        <entry key="app/src/main/res/layout/class_name_dalog.xml" value="0.4427083333333333" />
+        <entry key="app/src/main/res/layout/fragment_student_framgment.xml" value="0.4427083333333333" />
+        <entry key="app/src/main/res/layout/lesson_fragment.xml" value="0.4427083333333333" />
+        <entry key="app/src/main/res/layout/my_courses_row.xml" value="0.4427083333333333" />
+        <entry key="app/src/main/res/layout/progress_bar_dialog.xml" value="0.4427083333333333" />
+        <entry key="app/src/main/res/layout/student_fragment.xml" value="0.4427083333333333" />
+        <entry key="app/src/main/res/layout/student_page.xml" value="0.4427083333333333" />
+      </map>
+    </option>
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>

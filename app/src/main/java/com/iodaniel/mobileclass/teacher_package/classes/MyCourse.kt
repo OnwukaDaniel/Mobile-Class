@@ -18,7 +18,7 @@ class Material(
     val courseName: String = "",
     val note: String = "",
     val extraNote: String = "",
-    val title: String = "",
+    val heading: String = "",
     val mediaUris: ArrayList<String> = arrayListOf(),
     val classwork: ArrayList<String> = arrayListOf(),
     val test: ArrayList<String> = arrayListOf(),
@@ -38,7 +38,7 @@ class ClassInfo(
     val teacherInChargeUID: String = "",
     val time: String = "",
     val dateModified: String = "",
-    val dateCreated: String = "",
+    val datetime: String = "",
     //colors
     val red: Int=0,
     val green: Int=0,
