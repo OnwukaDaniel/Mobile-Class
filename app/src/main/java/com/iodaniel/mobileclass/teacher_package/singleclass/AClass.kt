@@ -66,7 +66,7 @@ class AClass : FragmentActivity(), View.OnClickListener {
 
     private fun inflateCreateNewAssignment() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.a_class_frame, CreateNewAssignment())
+            .replace(R.id.a_class_frame, CreateNewAssignment(classInfo))
             .addToBackStack("newAssi").commit()
     }
 
@@ -82,7 +82,7 @@ class AClass : FragmentActivity(), View.OnClickListener {
                             return@setOnMenuItemClickListener true
                         }
                         R.id.create_new_assignment -> {
-                            inflateCreateNewLessonFragment()
+                            inflateCreateNewAssignment()
                             return@setOnMenuItemClickListener true
                         }
                         else -> {

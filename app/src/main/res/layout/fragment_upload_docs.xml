@@ -3,12 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".teacher_package.singleclass.CreateNewLessonFragment">
+    android:background="@color/white"
+    tools:context=".teacher_package.singleclass.assignment_package.UploadDocs">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Create New Lesson" />
+        android:text="Upload Docs" />
 
 </FrameLayout>

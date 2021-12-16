@@ -1,6 +1,8 @@
 package com.iodaniel.mobileclass.teacher_package.singleclass
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +11,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.chip.Chip
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -18,6 +21,9 @@ import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.LessonFragmentBinding
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.Material
+import com.iodaniel.mobileclass.teacher_package.singleclass.material.MaterialPage
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class LessonsFragment(private val classInfo: ClassInfo) : Fragment() {
 
@@ -41,6 +47,7 @@ class LessonsFragment(private val classInfo: ClassInfo) : Fragment() {
         adapter = LessonRvAdapter()
         adapter.dataSet = listOfLessons
         binding.rvLessons.adapter = adapter
+        adapter.activity = requireActivity()
         binding.rvLessons.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
     }
@@ -123,15 +130,18 @@ class LessonRvAdapter : RecyclerView.Adapter<LessonRvAdapter.ViewHolder>() {
 
     var dataSet: ArrayList<Material> = arrayListOf()
     lateinit var context: Context
+    lateinit var activity: Activity
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val lesson_serial_number: TextView = itemView.findViewById(R.id.lesson_serial_number)
         val lesson_heading: TextView = itemView.findViewById(R.id.lesson_heading)
         val lesson_number: TextView = itemView.findViewById(R.id.lesson_number)
         val lesson_date: TextView = itemView.findViewById(R.id.lesson_date)
+        val chip: Chip = itemView.findViewById(R.id.edit_lesson)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        context = parent.context
         val view = LayoutInflater.from(parent.context).inflate(R.layout.lesson_row, parent, false)
         return ViewHolder(view)
     }
@@ -140,8 +150,13 @@ class LessonRvAdapter : RecyclerView.Adapter<LessonRvAdapter.ViewHolder>() {
         val datum = dataSet[position]
         holder.lesson_date.text = datum.time
         holder.lesson_heading.text = datum.heading
-        println("********************* dataset size ${datum.heading}")
 
+        holder.chip.setOnClickListener {
+            val intent = Intent(context, MaterialPage::class.java)
+            val json = Json.encodeToString(datum)
+            intent.putExtra("material", json)
+            activity.overridePendingTransition(0,0)
+        }
     }
 
     override fun getItemCount(): Int = dataSet.size

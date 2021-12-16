@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".teacher_package.singleclass.assignment_package.CreateMultiChoice">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginHorizontal="16dp"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/multi_choice_question_assignment_instruction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Assignment Instructions"/>
+
+        <Button
+            android:id="@+id/multi_choice_question_file_chooser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/black"
+            android:text="Choose File"
+            android:textColor="@color/white"/>
+
+        <EditText
+            android:id="@+id/multi_choice_question"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:hint="Question here"
+            android:minLines="4" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="bottom"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textSize="22sp"
+                android:text="(A)"/>
+
+
+            <EditText
+                android:id="@+id/option1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="30dp"
+                android:layout_gravity="start"
+                android:hint="Options A"/>
+
+            <Button
+                android:id="@+id/add_new_option"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/black"
+                android:layout_marginHorizontal="10dp"
+                android:text="+"/>
+        </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/options"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+
+        <EditText
+            android:id="@+id/multi_choice_question_solution"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text_background"
+            android:paddingHorizontal="30dp"
+            android:hint="Solution"/>
+
+        <Button
+            android:id="@+id/multi_choice_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/black"
+            android:layout_marginVertical="40dp"
+            android:textColor="@color/white"
+            android:text="Submit"/>
+
+        <EditText
+            android:id="@+id/multi_choice_extra_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="30dp"
+            android:hint="Link here"/>
+
+    </LinearLayout>
+
+</ScrollView>

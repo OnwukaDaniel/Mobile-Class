@@ -2,16 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/create_new_lesson"
-        android:title="Create New Lesson"/>
+        android:title="New Lesson"/>
     <item
         android:id="@+id/remove_lesson"
         android:title="Remove Lesson"/>
     <item
         android:id="@+id/create_new_assignment"
-        android:title="Create New Assignment"/>
+        android:title="New Assignment"/>
     <item
         android:id="@+id/remove_assignment"
-        android:title="Create New Lesson"/>
+        android:title="Remove Lesson"/>
     <item
         android:id="@+id/add_student"
         android:title="Add Student"/>
