@@ -22,28 +22,26 @@ import com.iodaniel.mobileclass.databinding.LessonFragmentBinding
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.Material
 import com.iodaniel.mobileclass.teacher_package.singleclass.material.MaterialPage
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.Serializable
 
 class LessonsFragment(private val classInfo: ClassInfo) : Fragment() {
 
     private lateinit var binding: LessonFragmentBinding
     private lateinit var adapter: LessonRvAdapter
     private var listOfLessons: ArrayList<Material> = arrayListOf()
-    private var stTypeRef = FirebaseDatabase.getInstance().reference.child("users")
+    private var stTypeRef = FirebaseDatabase.getInstance().reference
+        .child("materials")
+        .child(classInfo.classCode)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View {
-        println("ON CREATE ********************************* LESSON FRAGMENT ***** $classInfo")
         binding = LessonFragmentBinding.inflate(layoutInflater, container, false)
-
         readFromDatabase()
         return binding.root
     }
 
     private fun rvInit() {
-        println("rvInit ********************************* rvInit")
         adapter = LessonRvAdapter()
         adapter.dataSet = listOfLessons
         binding.rvLessons.adapter = adapter
@@ -53,11 +51,6 @@ class LessonsFragment(private val classInfo: ClassInfo) : Fragment() {
     }
 
     private fun readFromDatabase() {
-        stTypeRef = stTypeRef
-            .child("teacher")
-            .child("materials")
-            .child(classInfo.classCode)
-
         stTypeRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 readData(snapshot)
@@ -82,8 +75,6 @@ class LessonsFragment(private val classInfo: ClassInfo) : Fragment() {
             fun readData(snapshot: DataSnapshot) {
                 try {
                     val lessonSnap = (snapshot.value as HashMap<*, *>)
-                    println("LESSON SNAP ****************************** $lessonSnap")
-                    val json = Gson().toJson(lessonSnap.values.toList())
 
                     val courseName = lessonSnap["courseName"].toString()
                     val note = lessonSnap["note"].toString()
@@ -133,7 +124,6 @@ class LessonRvAdapter : RecyclerView.Adapter<LessonRvAdapter.ViewHolder>() {
     lateinit var activity: Activity
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val lesson_serial_number: TextView = itemView.findViewById(R.id.lesson_serial_number)
         val lesson_heading: TextView = itemView.findViewById(R.id.lesson_heading)
         val lesson_number: TextView = itemView.findViewById(R.id.lesson_number)
         val lesson_date: TextView = itemView.findViewById(R.id.lesson_date)
@@ -153,8 +143,11 @@ class LessonRvAdapter : RecyclerView.Adapter<LessonRvAdapter.ViewHolder>() {
 
         holder.chip.setOnClickListener {
             val intent = Intent(context, MaterialPage::class.java)
-            val json = Json.encodeToString(datum)
+            println("************************************************* ${datum.mediaUris}")
+
+            val json = Gson().toJson(datum)
             intent.putExtra("material", json)
+            context.startActivity(intent)
             activity.overridePendingTransition(0,0)
         }
     }

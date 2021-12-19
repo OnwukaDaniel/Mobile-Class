@@ -12,7 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.SignUpBinding
-import com.iodaniel.mobileclass.student_package.StudentPage
+import com.iodaniel.mobileclass.student_package.StudentInitPage
 import com.iodaniel.mobileclass.teacher_package.classes.TeacherPage
 
 class SignUp : AppCompatActivity(), View.OnClickListener, HelperListener.LoadingListener {
@@ -90,7 +90,7 @@ class SignUp : AppCompatActivity(), View.OnClickListener, HelperListener.Loading
                 stTypeRef.push().setValue(pair).addOnCompleteListener {
                     val teacherIntent = Intent(this, TeacherPage::class.java)
                     teacherIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                    val studentIntent = Intent(this, StudentPage::class.java)
+                    val studentIntent = Intent(this, StudentInitPage::class.java)
                     studentIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                     when (binding.accountType.text) {
                         "Create your student account" -> {

@@ -30,8 +30,8 @@ import kotlin.random.Random
 class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarController {
 
     private val binding by lazy { ClassUploadBinding.inflate(layoutInflater) }
-    private val stTypeRef = FirebaseDatabase.getInstance().reference
     private var reference = FirebaseDatabase.getInstance().reference
+    private var allClassesRef = FirebaseDatabase.getInstance().reference
     private val auth = FirebaseAuth.getInstance().currentUser!!.uid
     private lateinit var progressBarController: ProgressBarController
     private val dialog by lazy { Dialog(this) }
@@ -95,8 +95,9 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
     }
 
     private fun initialiseDatabase() {
-        reference = reference.child("teacher").child(auth).child("classes").push()
-        stTypeRef.child("users").child(auth).child("classCode").push()
+        allClassesRef = allClassesRef
+            .child("class_codes")
+            .push()
     }
 
     private fun initialiseAllClassInterface() {
@@ -119,6 +120,13 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
         val date = split[0].trim()
         val time = split[1].trim() + split[2].trim()
         val className = binding.uploadClassName.text.toString().trim()
+        val classCode = UUID.randomUUID().toString()
+
+        val classInfo = ClassInfo(className = className,
+            time = time, datetime = datetime.toString(), classCode = classCode)
+
+        val details = hashMapOf("classCode" to classInfo.classCode,
+            "auth" to auth)
 
         if (className == "") {
             snackBar.setText("Empty Class Name!!!"); snackBar.show()
@@ -126,19 +134,26 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
             return
         }
         if (classImage == "") {
-            val classInfo = ClassInfo(className = className,
-                time = time, datetime = datetime.toString())
-            reference.setValue(classInfo).addOnCompleteListener {
-                progressBarController.hideProgressBar()
-                startActivity(Intent(this, TeacherPage::class.java))
-                overridePendingTransition(0, 0)
-
+            reference = reference
+                .child("teacher")
+                .child(auth)
+                .child("classes")
+                .child(classCode)
+            allClassesRef.setValue(details).addOnCompleteListener {
+                reference.setValue(classInfo).addOnCompleteListener {
+                    progressBarController.hideProgressBar()
+                    startActivity(Intent(this, TeacherPage::class.java))
+                    overridePendingTransition(0, 0)
+                }.addOnFailureListener {
+                    progressBarController.hideProgressBar()
+                    errorSnackBar.show()
+                    return@addOnFailureListener
+                }
             }.addOnFailureListener {
                 progressBarController.hideProgressBar()
                 errorSnackBar.show()
                 return@addOnFailureListener
             }
-            return
         }
 
         val contentResolver = applicationContext.contentResolver
@@ -155,20 +170,36 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
         }.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 finalStorageRef.downloadUrl.addOnSuccessListener {
+                    val classCodeX = UUID.randomUUID().toString()
                     val downloadUri = it.toString()
                     val rand = Random(42).nextInt(10, 255)
-                    val classInfo = ClassInfo(className = className,
+                    reference = reference
+                        .child("teacher")
+                        .child(auth)
+                        .child("classes")
+                        .child(classCodeX)
+
+                    val detailsX = hashMapOf("classCode" to classCodeX,
+                        "auth" to auth)
+
+                    val classInfoX = ClassInfo(className = className,
                         time = time,
                         red = rand,
                         green = rand,
                         blue = rand,
-                        classCode = UUID.randomUUID().toString(),
+                        classCode = classCodeX,
                         classImage = downloadUri,
                         datetime = datetime.toString())
-                    reference.setValue(classInfo).addOnCompleteListener {
-                        progressBarController.hideProgressBar()
-                        startActivity(Intent(this, TeacherPage::class.java))
-                        overridePendingTransition(0, 0)
+                    allClassesRef.setValue(detailsX).addOnCompleteListener {
+                        reference.setValue(classInfoX).addOnCompleteListener {
+                            progressBarController.hideProgressBar()
+                            startActivity(Intent(this, TeacherPage::class.java))
+                            overridePendingTransition(0, 0)
+                        }.addOnFailureListener {
+                            progressBarController.hideProgressBar()
+                            errorSnackBar.show()
+                            return@addOnFailureListener
+                        }
                     }.addOnFailureListener {
                         progressBarController.hideProgressBar()
                         errorSnackBar.show()
@@ -206,6 +237,7 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
         dialog.setContentView(progressBarBinding.root)
         dialog.window?.setLayout(WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT)
+        dialog.setCancelable(false)
         dialog.show()
     }
 

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/teacher_classes_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="2dp"
-    app:cardCornerRadius="10dp">
+    app:cardCornerRadius="10dp"
+    android:id="@+id/classes_card"
+    android:layout_margin="2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/teacher_class_image"
+            android:id="@+id/student_class_image"
             android:layout_width="match_parent"
             android:layout_height="140dp"
             android:contentDescription="Course Image"
@@ -23,11 +23,11 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
-            android:id="@+id/teacher_linearLayout2"
+            android:id="@+id/student_linearLayout2"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="#1A000000"
             android:orientation="vertical"
+            android:background="#1A000000"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -41,17 +41,17 @@
 
 
                 <TextView
-                    android:id="@+id/teacher_class_name"
+                    android:id="@+id/student_class_name"
                     android:layout_width="0dp"
+                    android:layout_weight="12"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
-                    android:layout_weight="12"
                     android:text="CHE 101"
                     android:textColor="@color/white"
                     android:textSize="25sp" />
 
                 <TextView
-                    android:id="@+id/teacher_year"
+                    android:id="@+id/student_year"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="8"

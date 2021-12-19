@@ -1,18 +1,17 @@
 package com.iodaniel.mobileclass.student_package
 
-import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import com.iodaniel.mobileclass.R
+import com.iodaniel.mobileclass.databinding.ActivityJoinClassBinding
 import com.iodaniel.mobileclass.databinding.StudentPageBinding
 
-class StudentPage : AppCompatActivity() {
-
+class JoinClassX : AppCompatActivity() {
     private val binding by lazy {
-        StudentPageBinding.inflate(layoutInflater)
+        ActivityJoinClassBinding.inflate(layoutInflater)
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
     }
 }

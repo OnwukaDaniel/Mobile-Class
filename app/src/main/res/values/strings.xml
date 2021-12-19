@@ -5,4 +5,5 @@
     <string name="course_title">Course Title</string>
     <string name="videos">Videos</string>
     <string name="coursework">Coursework</string>
+    <string name="rename">Rename</string>
 </resources>

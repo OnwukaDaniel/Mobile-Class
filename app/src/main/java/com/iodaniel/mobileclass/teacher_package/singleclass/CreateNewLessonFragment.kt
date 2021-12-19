@@ -8,16 +8,14 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.webkit.MimeTypeMap
-import android.widget.MediaController
-import android.widget.VideoView
+import android.widget.*
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.*
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -38,7 +36,12 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
     ProgressBarController,
     MediaSupport {
 
-    private var stTypeRef = FirebaseDatabase.getInstance().reference.child("users")
+    private var fileName = ""
+
+    private var stTypeRef = FirebaseDatabase.getInstance().reference
+        .child("materials")
+        .child(classInfo.classCode)
+        .push()
     private val auth = FirebaseAuth.getInstance().currentUser!!.uid
     private lateinit var progressBarController: ProgressBarController
     private lateinit var mediaSupport: MediaSupport
@@ -46,7 +49,7 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
     private var classImage: String = ""
     private var className: String = classInfo.className
     private lateinit var controller: MediaController
-    private var listOfMedia: ArrayList<Uri> = arrayListOf()
+    private var listOfMedia: ArrayList<String> = arrayListOf()
     private val storageRef = FirebaseStorage.getInstance().reference
     private val videoView: VideoView by lazy { binding.newLessonUploadVideoView }
     private lateinit var binding: CreateNewLessonFragmentBinding
@@ -63,6 +66,9 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
                     }
                     if (it.resultCode == AppCompatActivity.RESULT_OK) {
                         val dataUri = it.data!!.data
+                        fileName =
+                            dataUri.toString().substring(dataUri.toString().lastIndexOf("/") + 1)
+                        println("______________________ filename: $fileName")
                         val contentResolver = requireActivity().contentResolver
                         val mime = MimeTypeMap.getSingleton()
                         val extensionType =
@@ -72,44 +78,58 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
                                 println("ACTIVITY RESULT ******************** $extensionType")
                                 mediaSupport.makeMediaPlayersInvisible()
                                 mediaSupport.videoPlayer(dataUri!!)
-                                listOfMedia.add(dataUri)
+                                binding.newLessonFilename.text = fileName
+                                binding.newLessonRenameFile.text = getString(R.string.rename)
+                                listOfMedia.add(dataUri.toString())
                             }
                             "3gp" -> {
                                 println("ACTIVITY RESULT ******************** $extensionType")
                                 mediaSupport.makeMediaPlayersInvisible()
                                 mediaSupport.videoPlayer(dataUri!!)
-                                listOfMedia.add(dataUri)
+                                binding.newLessonFilename.text = fileName
+                                binding.newLessonRenameFile.text = getString(R.string.rename)
+                                listOfMedia.add(dataUri.toString())
                             }
                             "mp3" -> {
                                 println("ACTIVITY RESULT ******************** $extensionType")
                                 mediaSupport.makeMediaPlayersInvisible()
                                 mediaSupport.musicReader(dataUri!!)
-                                listOfMedia.add(dataUri)
+                                binding.newLessonFilename.text = fileName
+                                binding.newLessonRenameFile.text = getString(R.string.rename)
+                                listOfMedia.add(dataUri.toString())
                             }
                             "aac" -> {
                                 println("ACTIVITY RESULT ******************** $extensionType")
                                 mediaSupport.makeMediaPlayersInvisible()
                                 mediaSupport.musicReader(dataUri!!)
-                                listOfMedia.add(dataUri)
+                                binding.newLessonFilename.text = fileName
+                                binding.newLessonRenameFile.text = getString(R.string.rename)
+                                listOfMedia.add(dataUri.toString())
                             }
                             "wav" -> {
                                 println("ACTIVITY RESULT ******************** $extensionType")
                                 mediaSupport.makeMediaPlayersInvisible()
                                 mediaSupport.musicReader(dataUri!!)
-                                listOfMedia.add(dataUri)
+                                binding.newLessonFilename.text = fileName
+                                binding.newLessonRenameFile.text = getString(R.string.rename)
+                                listOfMedia.add(dataUri.toString())
                             }
                             "pdf" -> {
                                 println("ACTIVITY RESULT ******************** $extensionType")
                                 mediaSupport.makeMediaPlayersInvisible()
                                 mediaSupport.pdfReader(dataUri!!)
-                                listOfMedia.add(dataUri)
+                                binding.newLessonFilename.text = fileName
+                                binding.newLessonRenameFile.text = getString(R.string.rename)
+                                listOfMedia.add(dataUri.toString())
                             }
                             "jpg" -> {
                                 println("ACTIVITY RESULT ******************** $extensionType")
                                 mediaSupport.makeMediaPlayersInvisible()
                                 classImage = dataUri!!.toString()
                                 mediaSupport.imageReader(dataUri)
-                                listOfMedia.add(dataUri)
+                                binding.newLessonFilename.text = fileName
+                                binding.newLessonRenameFile.text = getString(R.string.rename)
+                                listOfMedia.add(dataUri.toString())
                                 binding.newLessonImageview.setImageURI(dataUri)
                             }
                             "png" -> {
@@ -117,7 +137,9 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
                                 mediaSupport.makeMediaPlayersInvisible()
                                 classImage = dataUri!!.toString()
                                 mediaSupport.imageReader(dataUri)
-                                listOfMedia.add(dataUri)
+                                binding.newLessonFilename.text = fileName
+                                binding.newLessonRenameFile.text = getString(R.string.rename)
+                                listOfMedia.add(dataUri.toString())
                                 binding.newLessonImageview.setImageURI(dataUri)
                             }
                             "jpeg" -> {
@@ -125,7 +147,9 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
                                 //mediaSupport.makeMediaPlayersInvisible()
                                 classImage = dataUri!!.toString()
                                 mediaSupport.imageReader(dataUri)
-                                listOfMedia.add(dataUri)
+                                binding.newLessonFilename.text = fileName
+                                binding.newLessonRenameFile.text = getString(R.string.rename)
+                                listOfMedia.add(dataUri.toString())
                                 binding.newLessonImageview.setImageURI(dataUri)
                             }
                         }
@@ -153,6 +177,7 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
     private fun initialiseUtils() {
         binding.newLessonUploadButton.setOnClickListener(this)
         binding.newLessonUploadImage.setOnClickListener(this)
+        binding.newLessonRenameFile.setOnClickListener(this)
     }
 
     private fun upload() {
@@ -165,11 +190,6 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
         val split = dateString.split(' ')
         val date = split[0].trim()
         val time = split[1].trim() + split[2].trim()
-        stTypeRef = stTypeRef
-            .child("teacher")
-            .child("materials")
-            .child(classInfo.classCode)
-            .push()
 
         if (classInfo.classCode == "") {
             snackBar.setText("Empty Class Code!!!"); snackBar.show()
@@ -178,13 +198,14 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
         }
 
         for (file in listOfMedia) { //fileUris
+            val fileUri = Uri.parse(file.split("---").first())
             val contentResolver = requireContext().contentResolver
             val mime = MimeTypeMap.getSingleton()
             val extension =
-                mime.getExtensionFromMimeType(contentResolver?.getType(file))!!
+                mime.getExtensionFromMimeType(contentResolver?.getType(fileUri))!!
             val event = (date + time + file).replace("//", ".").replace("/", ".")
             val finalStorageRef = storageRef.child("$event.$extension")
-            val uploadTask = finalStorageRef.putFile(file)
+            val uploadTask = finalStorageRef.putFile(fileUri)
 
             uploadTask.continueWith { task ->
                 if (!task.isSuccessful) task.exception?.let { throw it }
@@ -193,9 +214,7 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
                 if (task.isSuccessful) {
                     finalStorageRef.downloadUrl.addOnSuccessListener {
                         val downloadUri = it.toString()
-                        arrayDownloadUris.add(downloadUri)
-                        println("DOWNLOAD URI ******************** $downloadUri")
-                        println("****************** New * ${arrayDownloadUris.size} ------------ Old --${listOfMedia.size}")
+                        arrayDownloadUris.add("$downloadUri---${file.split("---").last()}")
                         if (arrayDownloadUris.size == listOfMedia.size) {
                             val material = Material(
                                 courseName = className,
@@ -305,6 +324,37 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
         binding.newLessonUploadVideoView.visibility = View.INVISIBLE
     }
 
+    private fun renameFile() {
+        if (fileName == "") return
+        val view = layoutInflater.inflate(R.layout.layout_rename_dialog, null)
+        val renameTxt = view.findViewById<EditText>(R.id.rename_edit)
+        renameTxt.setText(fileName)
+        val alertDialog = AlertDialog.Builder(requireContext())
+        alertDialog.setTitle("Rename")
+        alertDialog.setView(view)
+        alertDialog.setCancelable(true)
+
+        alertDialog.setNegativeButton("Cancel") { dialog, which ->
+            dialog.dismiss()
+        }
+
+        alertDialog.setPositiveButton("Done") { dialog, which ->
+            fileName = renameTxt.text.toString().trim()
+            binding.newLessonFilename.text = fileName
+
+            val oldName = listOfMedia.removeLast()
+            val urlPlusExtension = oldName.split("---").first()
+            val extension = urlPlusExtension.split(".").last()
+            val newName = "$urlPlusExtension----$fileName.$extension"
+            if (listOfMedia.add(newName)) {
+                Snackbar.make(binding.root, fileName, Snackbar.LENGTH_SHORT).show()
+                dialog.dismiss()
+                println("************************* $listOfMedia")
+            }
+        }
+        alertDialog.show()
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.new_lesson_upload_image -> {
@@ -312,6 +362,9 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
             }
             R.id.new_lesson_upload_button -> {
                 upload()
+            }
+            R.id.new_lesson_rename_file -> {
+                renameFile()
             }
         }
     }

@@ -12,10 +12,14 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.MobileClass">
         <activity
-            android:name=".teacher_package.singleclass.material.MaterialPage"
+            android:name=".student_package.JoinClassX"
             android:exported="false" />
+        <activity
+            android:name=".teacher_package.singleclass.material.MaterialPage"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity android:name=".accessing_mobile_app.SignInOrSignUp" />
-        <activity android:name=".student_package.StudentPage" />
+        <activity android:name=".student_package.StudentInitPage" />
         <activity android:name=".accessing_mobile_app.SignUp" />
         <activity android:name=".MainActivity" />
         <activity
@@ -35,6 +39,7 @@
             android:theme="@style/Theme.AClass" />
         <activity android:name=".accessing_mobile_app.SignIn" />
         <activity android:name=".teacher_package.classes.TeacherPage" />
+        <activity android:name=".student_package.MyClasses" />
 
         <meta-data
             android:name="preloaded_fonts"

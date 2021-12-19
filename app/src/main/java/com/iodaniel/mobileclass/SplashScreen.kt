@@ -9,12 +9,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.iodaniel.mobileclass.accessing_mobile_app.SignInOrSignUp
-import com.iodaniel.mobileclass.student_package.StudentPage
+import com.iodaniel.mobileclass.student_package.StudentInitPage
 import com.iodaniel.mobileclass.teacher_package.classes.TeacherPage
 
 class SplashScreen : AppCompatActivity() {
 
     private lateinit var pref: SharedPreferences
+    private val auth = FirebaseAuth.getInstance().currentUser
     private val teacher = "teacher"
     private val student = "student"
 
@@ -24,7 +25,11 @@ class SplashScreen : AppCompatActivity() {
         val userType = pref.getString("studentTeacher", "")
         println("*************************************** $userType")
 
-        Firebase.database.setPersistenceEnabled(true)
+        try {
+            Firebase.database.setPersistenceEnabled(true)
+        } catch (e: Exception) {
+
+        }
         val firebaseUser = FirebaseAuth.getInstance().currentUser
         println("firebaseUser *************************************** $firebaseUser")
 
@@ -32,16 +37,28 @@ class SplashScreen : AppCompatActivity() {
         newUserIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
         val teacherUserIntent = Intent(this, TeacherPage::class.java)
         teacherUserIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-        val studentUserIntent = Intent(this, StudentPage::class.java)
+        val studentUserIntent = Intent(this, StudentInitPage::class.java)
         studentUserIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+
         when (firebaseUser) {
-            null -> startActivity(newUserIntent)
+            null -> {
+                startActivity(newUserIntent)
+                overridePendingTransition(0, 0)
+            }
             else -> when (userType) {
-                "" -> startActivity(newUserIntent)
-                teacher -> startActivity(teacherUserIntent)
-                student -> startActivity(studentUserIntent)
+                "" -> {
+                    startActivity(newUserIntent)
+                    overridePendingTransition(0, 0)
+                }
+                teacher -> {
+                    startActivity(teacherUserIntent)
+                    overridePendingTransition(0, 0)
+                }
+                student -> {
+                    startActivity(studentUserIntent)
+                    overridePendingTransition(0, 0)
+                }
             }
         }
-        overridePendingTransition(0, 0)
     }
 }
