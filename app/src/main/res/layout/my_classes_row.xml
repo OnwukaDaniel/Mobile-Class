@@ -47,6 +47,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
                     android:text="CHE 101"
+                    android:lines="1"
+                    android:minLines="1"
                     android:textColor="@color/white"
                     android:textSize="25sp" />
 

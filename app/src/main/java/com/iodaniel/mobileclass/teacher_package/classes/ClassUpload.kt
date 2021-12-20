@@ -123,7 +123,8 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
         val classCode = UUID.randomUUID().toString()
 
         val classInfo = ClassInfo(className = className,
-            time = time, datetime = datetime.toString(), classCode = classCode)
+            time = time, datetime = datetime.toString(),
+            teacherInChargeUID = auth, classCode = classCode)
 
         val details = hashMapOf("classCode" to classInfo.classCode,
             "auth" to auth)
@@ -189,6 +190,7 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
                         blue = rand,
                         classCode = classCodeX,
                         classImage = downloadUri,
+                        teacherInChargeUID = auth,
                         datetime = datetime.toString())
                     allClassesRef.setValue(detailsX).addOnCompleteListener {
                         reference.setValue(classInfoX).addOnCompleteListener {

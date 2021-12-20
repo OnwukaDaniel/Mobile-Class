@@ -15,12 +15,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.FragmentCreateMultiChoiceBinding
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.*
+import com.iodaniel.mobileclass.teacher_package.classes.MultiChoiceQuestion
 import java.util.ArrayList
 
 class CreateMultiChoice(private val classInfo: ClassInfo) : Fragment(), View.OnClickListener,
@@ -28,8 +30,9 @@ class CreateMultiChoice(private val classInfo: ClassInfo) : Fragment(), View.OnC
     MediaSupport {
 
     private lateinit var binding: FragmentCreateMultiChoiceBinding
-    private var stTypeRef = FirebaseDatabase.getInstance().reference
+    private var multiChoiceRef = FirebaseDatabase.getInstance().reference
         .child("multi_choice_assignments")
+        .child(FirebaseAuth.getInstance().currentUser!!.uid)
         .child(classInfo.classCode)
         .push()
     private var listOfMedia: ArrayList<String> = arrayListOf()
@@ -181,8 +184,12 @@ class CreateMultiChoice(private val classInfo: ClassInfo) : Fragment(), View.OnC
         if (question == "") return
         if (option1 == "") return
         if (solution == "") return
+
+        //val multiChoice = MultiChoiceQuestion( className = classInfo.className, classCode = classInfo.classCode, teacherInChargeName = classInfo.teacherInChargeName, teacherInChargeUID = classInfo.teacherInChargeUID, )
+
     }
 
+    //multiChoiceRef.setValue()
     private fun selectFileFromStorage() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
         intent.addCategory(Intent.CATEGORY_OPENABLE)
@@ -243,6 +250,6 @@ class CreateMultiChoice(private val classInfo: ClassInfo) : Fragment(), View.OnC
     }
 
     override fun hideProgressBar() {
-        TODO("Not yet implemented")
+
     }
 }

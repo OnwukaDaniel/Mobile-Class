@@ -4,14 +4,8 @@
         android:id="@+id/create_new_lesson"
         android:title="New Lesson"/>
     <item
-        android:id="@+id/remove_lesson"
-        android:title="Remove Lesson"/>
-    <item
         android:id="@+id/create_new_assignment"
         android:title="New Assignment"/>
-    <item
-        android:id="@+id/remove_assignment"
-        android:title="Remove Lesson"/>
     <item
         android:id="@+id/add_student"
         android:title="Add Student"/>

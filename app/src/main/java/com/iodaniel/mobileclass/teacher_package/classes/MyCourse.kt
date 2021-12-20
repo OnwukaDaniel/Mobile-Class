@@ -43,5 +43,22 @@ class ClassInfo(
     val red: Int=0,
     val green: Int=0,
     val blue: Int=0,
+)
 
+@Serializable
+class MultiChoiceQuestion(
+    val className: String = "",
+    val classCode: String = "",
+    val teacherInChargeName: String = "",
+    val teacherInChargeUID: String = "",
+    val time: String = "",
+    val dateModified: String = "",
+    val datetime: String = "",
+    //MultiChoice
+    val instructions: String="",
+    val question: String="",
+    val solution: String="",
+    val mediaUris: ArrayList<String>,
+    val link: String="",
+    val options: ArrayList<String>,
 )

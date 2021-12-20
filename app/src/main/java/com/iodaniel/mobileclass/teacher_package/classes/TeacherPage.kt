@@ -1,5 +1,6 @@
 package com.iodaniel.mobileclass.teacher_package.classes
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -114,8 +115,11 @@ class TeacherPage : AppCompatActivity(), View.OnClickListener, ClassListener {
                 }
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             override fun onChildRemoved(snapshot: DataSnapshot) {
-                print("onChildRemoved ********************************* ${snapshot.value}")
+                val materialRemoved = snapshot.getValue(ClassInfo::class.java)
+                listOfCourses.remove(materialRemoved)
+                initRv()
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {

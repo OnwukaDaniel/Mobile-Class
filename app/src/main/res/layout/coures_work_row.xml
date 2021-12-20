@@ -8,8 +8,9 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        app:cardCornerRadius="20dp">
+        android:layout_marginVertical="2dp"
+        android:layout_marginHorizontal="4dp"
+        app:cardCornerRadius="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -45,13 +46,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center">
+                    android:gravity="end" >
 
                     <TextView
-                        android:id="@+id/lesson_heading"
-                        android:layout_width="match_parent"
+                        android:id="@+id/student_lesson_heading"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="end"
                         android:text="Heading" />
 
                 </LinearLayout>
@@ -59,8 +59,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="end">
+                    android:gravity="end"
+                    android:orientation="horizontal">
 
 
                     <TextView
@@ -70,7 +70,7 @@
 
 
                     <TextView
-                        android:id="@+id/lesson_number"
+                        android:id="@+id/student_lesson_number"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="1" />
@@ -80,17 +80,17 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="end">
+                    android:gravity="end"
+                    android:orientation="horizontal">
 
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Created on: " />
+                        android:text="Assigned on: " />
 
                     <TextView
-                        android:id="@+id/lesson_date"
+                        android:id="@+id/student_lesson_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="1/18/2020" />

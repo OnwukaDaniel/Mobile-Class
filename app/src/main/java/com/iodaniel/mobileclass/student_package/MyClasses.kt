@@ -21,7 +21,6 @@ import com.google.firebase.database.*
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.ActivityMyClassesBinding
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
-import com.iodaniel.mobileclass.teacher_package.singleclass.AClass
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -33,9 +32,9 @@ class MyClasses : AppCompatActivity(), View.OnClickListener, HelperListener.Load
     }
     private lateinit var loadingListener: HelperListener.LoadingListener
     private val auth = FirebaseAuth.getInstance().currentUser!!.uid
+    private var registerRef = FirebaseDatabase.getInstance().reference
     private var classRef = FirebaseDatabase.getInstance().reference
     private var myCoursesRef = FirebaseDatabase.getInstance().reference
-    private var allCodesData: ArrayList<HashMap<*, *>> = arrayListOf()
     private var myCoursesList: ArrayList<ClassInfo> = arrayListOf()
     private val adapter = MyClassesAdapter()
 
@@ -106,11 +105,23 @@ class MyClasses : AppCompatActivity(), View.OnClickListener, HelperListener.Load
                 .child("classes")
                 .child(any["classCode"]!!)
 
+            registerRef = registerRef
+                .child("teacher")
+                .child(any["auth"] as String)
+                .child("registered_students")
+                .child(any["classCode"]!!)
+                .child(auth)
+
+
             myCoursesRef.addChildEventListener(object : ChildEventListener {
                 override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                     val courseList = snapshot.getValue(ClassInfo::class.java)
                     myCoursesList.add(courseList!!)
-                    println("myCoursesList *********************** $myCoursesList")
+
+                    //Register User for Teacher to see
+                    registerRef.setValue(FirebaseAuth.getInstance().currentUser?.email).addOnCompleteListener {
+
+                    }
                     rvInit()
                 }
 
@@ -244,7 +255,8 @@ class MyClassesAdapter : RecyclerView.Adapter<MyClassesAdapter.ViewHolder>() {
             holder.teacherInChargeName.text = datum.teacherInChargeName
         }
         holder.itemView.setOnClickListener {
-            val intent = Intent(context, AClass::class.java)
+            val intent =
+                Intent(context, AClass::class.java)
             val json = Json.encodeToString(datum)
             intent.putExtra("class_data", json)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK

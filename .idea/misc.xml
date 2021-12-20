@@ -10,24 +10,29 @@
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/drawable/rounded_background_b.xml" value="0.240625" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/drawable/rounded_toolbar_background.xml" value="0.1421875" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/drawable/rounded_toolbar_background_b.xml" value="0.1421875" />
-        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/a_class.xml" value="0.33" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/a_class.xml" value="0.22" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/activity_aclass.xml" value="0.22395833333333334" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/activity_class_material_upload.xml" value="0.22447916666666667" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/activity_join_class.xml" value="0.2" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/activity_material_page.xml" value="0.22395833333333334" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/activity_my_classes.xml" value="0.21041666666666667" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/assignment.xml" value="0.19166666666666668" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/class_upload.xml" value="0.25" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/coures_work_row.xml" value="0.25" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/create_new_assignment.xml" value="0.22" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/create_new_lesson_fragment.xml" value="0.25" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/fragment_assign_student_task.xml" value="0.21041666666666667" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/fragment_assignments.xml" value="0.20989583333333334" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/fragment_course_work.xml" value="0.20989583333333334" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/fragment_create_direct_question.xml" value="0.22447916666666667" />
-        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/fragment_create_multi_choice.xml" value="0.33" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/fragment_create_multi_choice.xml" value="0.25" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/fragment_create_new_lesson.xml" value="0.22447916666666667" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/fragment_join_class.xml" value="0.20989583333333334" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/fragment_upload_docs.xml" value="0.22447916666666667" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/fragment_view_material.xml" value="0.25" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/layout_rename_dialog.xml" value="0.33" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/lesson_fragment.xml" value="0.22447916666666667" />
-        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/lesson_row.xml" value="0.33" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/lesson_row.xml" value="0.25" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/materials_row.xml" value="0.22447916666666667" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/my_classes_row.xml" value="0.22447916666666667" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/my_courses_row.xml" value="0.22447916666666667" />
@@ -35,8 +40,9 @@
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/sign_in_or_sign_up.xml" value="0.22447916666666667" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/student_fragment.xml" value="0.19166666666666668" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/student_page.xml" value="0.22" />
-        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/students_row.xml" value="0.22395833333333334" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/students_row.xml" value="0.25" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/teacher_page.xml" value="0.22447916666666667" />
+        <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/layout/view_material_row.xml" value="0.22447916666666667" />
         <entry key="..\:/Users/HP/AndroidStudioProjects/MobileClass/app/src/main/res/menu/a_class_menu.xml" value="0.22447916666666667" />
         <entry key="app/src/main/res/drawable/tab_selector.xml" value="0.4046296296296296" />
         <entry key="app/src/main/res/layout/a_class.xml" value="0.4427083333333333" />

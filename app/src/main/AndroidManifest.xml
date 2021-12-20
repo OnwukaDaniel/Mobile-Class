@@ -12,7 +12,7 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.MobileClass">
         <activity
-            android:name=".student_package.JoinClassX"
+            android:name=".student_package.AClass"
             android:exported="false" />
         <activity
             android:name=".teacher_package.singleclass.material.MaterialPage"
@@ -40,6 +40,7 @@
         <activity android:name=".accessing_mobile_app.SignIn" />
         <activity android:name=".teacher_package.classes.TeacherPage" />
         <activity android:name=".student_package.MyClasses" />
+        <activity android:name=".student_package.ViewMaterial" />
 
         <meta-data
             android:name="preloaded_fonts"

@@ -38,8 +38,10 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
 
     private var fileName = ""
 
+    private val storageRef = FirebaseStorage.getInstance().reference
     private var stTypeRef = FirebaseDatabase.getInstance().reference
         .child("materials")
+        .child(FirebaseAuth.getInstance().currentUser!!.uid)
         .child(classInfo.classCode)
         .push()
     private val auth = FirebaseAuth.getInstance().currentUser!!.uid
@@ -50,7 +52,6 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
     private var className: String = classInfo.className
     private lateinit var controller: MediaController
     private var listOfMedia: ArrayList<String> = arrayListOf()
-    private val storageRef = FirebaseStorage.getInstance().reference
     private val videoView: VideoView by lazy { binding.newLessonUploadVideoView }
     private lateinit var binding: CreateNewLessonFragmentBinding
 
@@ -183,7 +184,6 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
     private fun upload() {
         val arrayDownloadUris = arrayListOf<String>()
         progressBarController.showProgressBar()
-        var snackBar: Snackbar = Snackbar.make(binding.root, "", Snackbar.LENGTH_LONG)
 
         val datetime = Date.from(Instant.now()).time
         val dateString = DateFormat.getInstance().format(datetime)
@@ -191,7 +191,27 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
         val date = split[0].trim()
         val time = split[1].trim() + split[2].trim()
 
+        if (listOfMedia.isEmpty()) {
+            val material = Material(
+            courseName = className,
+            note = binding.createClassNote.text.toString(),
+            extraNote = binding.createClassExtraNote.text.toString(),
+            heading = binding.createClassHeading.text.toString(),
+            time = time,
+            dateCreated = classInfo.datetime
+        )
+
+            stTypeRef.setValue(material).addOnCompleteListener {
+                requireActivity().onBackPressed()
+                progressBarController.hideProgressBar()
+            }.addOnFailureListener {
+                Snackbar.make(binding.root,
+                    "Error occurred!!!", Snackbar.LENGTH_LONG).show()
+            }
+            return
+        }
         if (classInfo.classCode == "") {
+            var snackBar: Snackbar = Snackbar.make(binding.root, "", Snackbar.LENGTH_LONG)
             snackBar.setText("Empty Class Code!!!"); snackBar.show()
             progressBarController.hideProgressBar()
             return
@@ -229,6 +249,9 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
                             stTypeRef.setValue(material).addOnCompleteListener {
                                 requireActivity().onBackPressed()
                                 progressBarController.hideProgressBar()
+                            }.addOnFailureListener {
+                                Snackbar.make(binding.root,
+                                    "Error occurred!!!", Snackbar.LENGTH_LONG).show()
                             }
                         }
                     }
@@ -236,8 +259,7 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
             }.addOnFailureListener {
                 progressBarController.hideProgressBar()
                 val txt = "Upload Failed. Please Try again"
-                snackBar = Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG)
-                snackBar.show()
+                Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG).show()
                 return@addOnFailureListener
             }
         }

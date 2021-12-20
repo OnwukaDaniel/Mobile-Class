@@ -1,5 +1,6 @@
 package com.iodaniel.mobileclass.teacher_package.singleclass
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -23,6 +25,10 @@ import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.Material
 import com.iodaniel.mobileclass.teacher_package.singleclass.material.MaterialPage
 import kotlinx.serialization.Serializable
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class LessonsFragment(private val classInfo: ClassInfo) : Fragment() {
 
@@ -31,6 +37,7 @@ class LessonsFragment(private val classInfo: ClassInfo) : Fragment() {
     private var listOfLessons: ArrayList<Material> = arrayListOf()
     private var stTypeRef = FirebaseDatabase.getInstance().reference
         .child("materials")
+        .child(FirebaseAuth.getInstance().currentUser!!.uid)
         .child(classInfo.classCode)
 
     override fun onCreateView(
@@ -60,8 +67,11 @@ class LessonsFragment(private val classInfo: ClassInfo) : Fragment() {
                 readData(snapshot)
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             override fun onChildRemoved(snapshot: DataSnapshot) {
-
+                val materialRemoved = snapshot.getValue(Material::class.java)
+                listOfLessons.remove(materialRemoved)
+                rvInit()
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
@@ -75,7 +85,6 @@ class LessonsFragment(private val classInfo: ClassInfo) : Fragment() {
             fun readData(snapshot: DataSnapshot) {
                 try {
                     val lessonSnap = (snapshot.value as HashMap<*, *>)
-
                     val courseName = lessonSnap["courseName"].toString()
                     val note = lessonSnap["note"].toString()
                     val extraNote = lessonSnap["extraNote"].toString()
@@ -127,7 +136,6 @@ class LessonRvAdapter : RecyclerView.Adapter<LessonRvAdapter.ViewHolder>() {
         val lesson_heading: TextView = itemView.findViewById(R.id.lesson_heading)
         val lesson_number: TextView = itemView.findViewById(R.id.lesson_number)
         val lesson_date: TextView = itemView.findViewById(R.id.lesson_date)
-        val chip: Chip = itemView.findViewById(R.id.edit_lesson)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -140,16 +148,25 @@ class LessonRvAdapter : RecyclerView.Adapter<LessonRvAdapter.ViewHolder>() {
         val datum = dataSet[position]
         holder.lesson_date.text = datum.time
         holder.lesson_heading.text = datum.heading
+        holder.lesson_number.text =
+            if (datum.mediaUris.size == 0) "None" else datum.mediaUris.size.toString()
+        val date = convertLongToTime(datum.dateCreated.toLong()).split(" ")[0]
+        holder.lesson_date.text = date
 
-        holder.chip.setOnClickListener {
+        holder.itemView.setOnClickListener {
             val intent = Intent(context, MaterialPage::class.java)
-            println("************************************************* ${datum.mediaUris}")
 
             val json = Gson().toJson(datum)
             intent.putExtra("material", json)
             context.startActivity(intent)
             activity.overridePendingTransition(0,0)
         }
+    }
+
+    fun convertLongToTime(time: Long): String {
+        val date = Date(time)
+        val format = SimpleDateFormat("yyyy.MM.dd HH:mm")
+        return format.format(date)
     }
 
     override fun getItemCount(): Int = dataSet.size

@@ -96,8 +96,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/edit_text_background"
-            android:paddingHorizontal="30dp"
-            android:hint="Solution"/>
+            android:hint="Solution"
+            android:paddingVertical="8dp"
+            android:paddingHorizontal="50dp" />
 
         <Button
             android:id="@+id/multi_choice_submit"
@@ -110,9 +111,12 @@
 
         <EditText
             android:id="@+id/multi_choice_extra_link"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="30dp"
+            android:paddingEnd="70dp"
+            android:layout_gravity="start"
+            android:gravity="start"
+            android:layout_marginHorizontal="10dp"
             android:hint="Link here"/>
 
     </LinearLayout>
