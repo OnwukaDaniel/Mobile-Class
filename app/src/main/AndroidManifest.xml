@@ -12,6 +12,20 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.MobileClass">
         <activity
+            android:name=".teacher_package.TeacherSettings"
+            android:exported="false" />
+        <activity
+            android:name=".student_package.StudentSettings"
+            android:exported="false" />
+
+        <meta-data
+            android:name="com.google.android.actions"
+            android:resource="@xml/pref_main" />
+
+        <activity
+            android:name=".SettingsFragment"
+            android:exported="false" />
+        <activity
             android:name=".student_package.AClass"
             android:exported="false" />
         <activity
