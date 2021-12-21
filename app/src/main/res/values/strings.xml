@@ -6,4 +6,12 @@
     <string name="videos">Videos</string>
     <string name="coursework">Coursework</string>
     <string name="rename">Rename</string>
+    <string name="name">Name</string>
+    <string name="username">Username</string>
+
+    <string-array name="gender_item">
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
 </resources>
+
