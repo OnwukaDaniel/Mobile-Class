@@ -6,7 +6,4 @@
     <item
         android:id="@+id/create_new_assignment"
         android:title="New Assignment"/>
-    <item
-        android:id="@+id/add_student"
-        android:title="Add Student"/>
 </menu>

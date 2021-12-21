@@ -42,7 +42,7 @@ class AClass : FragmentActivity(), View.OnClickListener {
         viewPagerAdapter = ViewPagerAdapter(this)
         binding.aClassViewpager.adapter = viewPagerAdapter
         val data = arrayListOf("Student", "Lessons", "Assignments")
-        viewPagerAdapter.dataset = arrayListOf(StudentFragment(classInfo), LessonsFragment(classInfo), Assignments())
+        viewPagerAdapter.dataset = arrayListOf(StudentFragment(classInfo), LessonsFragment(classInfo), Assignments(classInfo))
         TabLayoutMediator(binding.aClassTabLayout, binding.aClassViewpager) { tab, position ->
             tab.text = data[position]
         }.attach()
@@ -50,7 +50,7 @@ class AClass : FragmentActivity(), View.OnClickListener {
 
     inner class ViewPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
         var dataset: ArrayList<Fragment> =
-            arrayListOf(StudentFragment(classInfo), LessonsFragment(classInfo), Assignments())
+            arrayListOf(StudentFragment(classInfo), LessonsFragment(classInfo), Assignments(classInfo))
 
         override fun getItemCount(): Int = dataset.size
         override fun createFragment(position: Int): Fragment {

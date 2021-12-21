@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.*
+import android.view.View.OnClickListener
 import android.webkit.MimeTypeMap
 import android.widget.*
 import androidx.activity.result.ActivityResultCallback
@@ -31,13 +32,11 @@ import java.text.DateFormat
 import java.time.Instant
 import java.util.*
 
-class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
-    View.OnClickListener,
-    ProgressBarController,
-    MediaSupport {
+class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(), OnClickListener,
+    ProgressBarController, MediaSupport {
 
+    private lateinit var binding: CreateNewLessonFragmentBinding
     private var fileName = ""
-
     private val storageRef = FirebaseStorage.getInstance().reference
     private var stTypeRef = FirebaseDatabase.getInstance().reference
         .child("materials")
@@ -49,11 +48,10 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
     private lateinit var mediaSupport: MediaSupport
     private val dialog by lazy { Dialog(requireContext()) }
     private var classImage: String = ""
-    private var className: String = classInfo.className
+
     private lateinit var controller: MediaController
     private var listOfMedia: ArrayList<String> = arrayListOf()
     private val videoView: VideoView by lazy { binding.newLessonUploadVideoView }
-    private lateinit var binding: CreateNewLessonFragmentBinding
 
     private val pickFileLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult(),
@@ -183,7 +181,10 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
 
     private fun upload() {
         val arrayDownloadUris = arrayListOf<String>()
-        progressBarController.showProgressBar()
+        val className: String = classInfo.className
+        val heading = binding.createClassHeading.text.toString()
+        val note = binding.createClassNote.text.toString()
+        val extraNote = binding.createClassExtraNote.text.toString()
 
         val datetime = Date.from(Instant.now()).time
         val dateString = DateFormat.getInstance().format(datetime)
@@ -191,15 +192,14 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
         val date = split[0].trim()
         val time = split[1].trim() + split[2].trim()
 
+        if (heading == "") return
+        if (note == "") return
+        if (extraNote == "") return
+
+        progressBarController.showProgressBar()
         if (listOfMedia.isEmpty()) {
-            val material = Material(
-            courseName = className,
-            note = binding.createClassNote.text.toString(),
-            extraNote = binding.createClassExtraNote.text.toString(),
-            heading = binding.createClassHeading.text.toString(),
-            time = time,
-            dateCreated = classInfo.datetime
-        )
+            val material = Material(courseName = className, note = note, extraNote = extraNote,
+                heading = heading, time = time, dateCreated = classInfo.datetime)
 
             stTypeRef.setValue(material).addOnCompleteListener {
                 requireActivity().onBackPressed()
@@ -207,12 +207,12 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
             }.addOnFailureListener {
                 Snackbar.make(binding.root,
                     "Error occurred!!!", Snackbar.LENGTH_LONG).show()
+                progressBarController.hideProgressBar()
             }
             return
         }
         if (classInfo.classCode == "") {
-            var snackBar: Snackbar = Snackbar.make(binding.root, "", Snackbar.LENGTH_LONG)
-            snackBar.setText("Empty Class Code!!!"); snackBar.show()
+            Snackbar.make(binding.root, "Empty Class Code!!!", Snackbar.LENGTH_LONG).show()
             progressBarController.hideProgressBar()
             return
         }
@@ -221,8 +221,7 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
             val fileUri = Uri.parse(file.split("---").first())
             val contentResolver = requireContext().contentResolver
             val mime = MimeTypeMap.getSingleton()
-            val extension =
-                mime.getExtensionFromMimeType(contentResolver?.getType(fileUri))!!
+            val extension = mime.getExtensionFromMimeType(contentResolver?.getType(fileUri))!!
             val event = (date + time + file).replace("//", ".").replace("/", ".")
             val finalStorageRef = storageRef.child("$event.$extension")
             val uploadTask = finalStorageRef.putFile(fileUri)
@@ -237,12 +236,8 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
                         arrayDownloadUris.add("$downloadUri---${file.split("---").last()}")
                         if (arrayDownloadUris.size == listOfMedia.size) {
                             val material = Material(
-                                courseName = className,
-                                note = binding.createClassNote.text.toString(),
-                                extraNote = binding.createClassExtraNote.text.toString(),
-                                mediaUris = arrayDownloadUris,
-                                heading = binding.createClassHeading.text.toString(),
-                                time = time,
+                                courseName = className, note = note, extraNote = extraNote,
+                                heading = heading, time = time, mediaUris = arrayDownloadUris,
                                 dateCreated = classInfo.datetime
                             )
 
@@ -250,8 +245,8 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
                                 requireActivity().onBackPressed()
                                 progressBarController.hideProgressBar()
                             }.addOnFailureListener {
-                                Snackbar.make(binding.root,
-                                    "Error occurred!!!", Snackbar.LENGTH_LONG).show()
+                                Snackbar.make(binding.root, "Error occurred!!!", Snackbar.LENGTH_LONG).show()
+                                progressBarController.hideProgressBar()
                             }
                         }
                     }
@@ -294,6 +289,8 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
         dialog.setContentView(progressBarBinding.root)
         dialog.window?.setLayout(WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT)
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
         dialog.show()
     }
 
@@ -302,7 +299,6 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
     }
 
     override fun videoPlayer(uri: Uri) = try {
-        print("URI videoPlayer ******************* $uri")
         videoView.visibility = View.VISIBLE
         controller = MediaController(requireActivity())
         controller.setAnchorView(videoView)
@@ -315,7 +311,6 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
     }
 
     override fun pdfReader(uri: Uri) = try {
-        print("URI pdfReader ******************* $uri")
         binding.newLessonPdfView.visibility = View.VISIBLE
         binding.newLessonPdfView.fromUri(uri).load()
     } catch (e: Exception) {
@@ -323,7 +318,6 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
     }
 
     override fun musicReader(uri: Uri) {
-        print("URI musicReader ******************* $uri")
         binding.newLessonUploadAudio.visibility = View.VISIBLE
         val mp = MediaPlayer()
         mp.setDataSource(requireContext(), uri)
@@ -332,7 +326,6 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
     }
 
     override fun imageReader(uri: Uri) = try {
-        print("URI imageReader ******************* $uri")
         binding.newLessonImageview.visibility = View.VISIBLE
         binding.newLessonImageview.setImageURI(uri)
     } catch (e: Exception) {
@@ -371,7 +364,6 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(),
             if (listOfMedia.add(newName)) {
                 Snackbar.make(binding.root, fileName, Snackbar.LENGTH_SHORT).show()
                 dialog.dismiss()
-                println("************************* $listOfMedia")
             }
         }
         alertDialog.show()

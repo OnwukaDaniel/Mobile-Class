@@ -1,124 +1,292 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:id="@+id/multi_choice_root"
     tools:context=".teacher_package.singleclass.assignment_package.CreateMultiChoice">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:layout_marginHorizontal="16dp"
-        android:orientation="vertical">
-
-        <EditText
-            android:id="@+id/multi_choice_question_assignment_instruction"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Assignment Instructions"/>
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:weightSum="10"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/multi_choice_question_file_chooser"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/black"
-                android:text="Choose File"
-                android:textColor="@color/white"/>
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/multichoice_media"
-                android:layout_width="0dp"
-                android:layout_weight="10"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"/>
-        </LinearLayout>
-
-        <EditText
-            android:id="@+id/multi_choice_question"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="top"
-            android:hint="Question here"
-            android:minLines="4" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="bottom"
-            android:orientation="horizontal">
+            android:layout_marginHorizontal="16dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="20sp"
+                android:fontFamily="@font/chivo"
+                android:text="Multiple-Choice Questions"
+                android:textColor="@color/black"
+                android:textSize="25sp" />
+
+            <EditText
+                android:id="@+id/multi_choice_question_assignment_instruction"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Assignment Instructions" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="10">
+
+                <Button
+                    android:id="@+id/multi_choice_question_file_chooser"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/black"
+                    android:text="Choose File"
+                    android:textColor="@color/white" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/multichoice_media"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_weight="10" />
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/multi_choice_question"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp"
+                android:gravity="top"
+                android:hint="Question here"
+                android:minLines="4" />
+
+            <EditText
+                android:id="@+id/multi_choice_extra_note"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginVertical="10dp"
+                android:gravity="start"
+                android:hint="Extra Note"
+                android:paddingEnd="70dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+                android:orientation="horizontal">
+
+                <Button
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/black"
+                    android:text="(A)"
+                    android:textColor="@color/white" />
+
+                <EditText
+                    android:id="@+id/optionA"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginHorizontal="10dp"
+                    android:hint="Option A"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+                android:orientation="horizontal">
+
+                <Button
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/black"
+                    android:text="(B)"
+                    android:textColor="@color/white" />
+
+                <EditText
+                    android:id="@+id/optionB"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginHorizontal="10dp"
+                    android:hint="Option B"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+                android:orientation="horizontal">
+
+                <Button
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/black"
+                    android:text="(C)"
+                    android:textColor="@color/white" />
+
+                <EditText
+                    android:id="@+id/optionC"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginHorizontal="10dp"
+                    android:hint="Option C"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+                android:orientation="horizontal">
+
+                <Button
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/black"
+                    android:text="(D)"
+                    android:textColor="@color/white" />
+
+                <EditText
+                    android:id="@+id/optionD"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginHorizontal="10dp"
+                    android:hint="Option D"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/eLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+                android:visibility="gone"
+                android:orientation="horizontal">
+
+                <Button
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/black"
+                    android:text="(E)"
+                    android:textColor="@color/white" />
+
+                <EditText
+                    android:id="@+id/optionE"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginHorizontal="10dp"
+                    android:hint="Option E"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/add_new_option"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:textSize="22sp"
-                android:text="(A)"/>
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/add_new_option_button"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:backgroundTint="@color/white"
+                    android:text="+"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/create_extra_option_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="Create Extra Option"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/options"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="5dp"
+                android:orientation="vertical">
+
+            </LinearLayout>
 
 
             <EditText
-                android:id="@+id/option1"
+                android:id="@+id/multi_choice_question_solution"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="30dp"
-                android:layout_gravity="start"
-                android:hint="Options A"/>
+                android:background="@drawable/edit_text_background"
+                android:hint="Solution"
+                android:paddingHorizontal="50dp"
+                android:paddingVertical="8dp" />
 
-            <Button
-                android:id="@+id/add_new_option"
-                android:layout_width="50dp"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:backgroundTint="@color/black"
-                android:layout_marginHorizontal="10dp"
-                android:text="+"/>
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/multi_choice_previous"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="40dp"
+                    android:backgroundTint="@color/black"
+                    android:text="Prev."
+                    android:textColor="@color/white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/multi_choice_next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="40dp"
+                    android:backgroundTint="@color/black"
+                    android:text="Next"
+                    android:textColor="@color/white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/multi_choice_submit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="40dp"
+                    android:backgroundTint="@color/black"
+                    android:text="Submit"
+                    android:textColor="@color/white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/multi_choice_next"
+                    app:layout_constraintStart_toEndOf="@+id/multi_choice_previous"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/options"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
 
-    </LinearLayout>
-
-
-        <EditText
-            android:id="@+id/multi_choice_question_solution"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/edit_text_background"
-            android:hint="Solution"
-            android:paddingVertical="8dp"
-            android:paddingHorizontal="50dp" />
-
-        <Button
-            android:id="@+id/multi_choice_submit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/black"
-            android:layout_marginVertical="40dp"
-            android:textColor="@color/white"
-            android:text="Submit"/>
-
-        <EditText
-            android:id="@+id/multi_choice_extra_link"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingEnd="70dp"
-            android:layout_gravity="start"
-            android:gravity="start"
-            android:layout_marginHorizontal="10dp"
-            android:hint="Link here"/>
-
-    </LinearLayout>
-
-</ScrollView>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

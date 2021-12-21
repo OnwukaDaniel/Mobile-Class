@@ -5,8 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
-    android:orientation="vertical"
-    tools:context=".teacher_package.singleclass.assignment_package.UploadDocs">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,17 +24,24 @@
             android:textSize="30sp" />
 
         <EditText
-            android:id="@+id/upload_question_question"
+            android:id="@+id/view_question_assignment_instruction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:hint="Assignment Instructions"/>
+
+        <EditText
+            android:id="@+id/view_question_question"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="start|top"
             android:hint="Share question here"
             android:maxLines="8"
-            android:minLines="5"
+            android:minLines="3"
             android:textSize="16sp" />
 
         <EditText
-            android:id="@+id/upload_question_extra_note"
+            android:id="@+id/view_question_extra_note"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="start|top"
@@ -44,31 +50,18 @@
             android:minLines="2"
             android:textSize="16sp" />
 
-        <Button
-            android:id="@+id/upload_attachment"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/black"
-            android:textColor="@color/white"
-            android:text="Select Attachment" />
+            android:layout_marginVertical="20dp"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:text="Multiple Choice Questions"/>
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/upload_attachment_file_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
-            android:backgroundTint="@color/black"
-            android:visibility="gone"
-            android:textColor="@color/white"
-            android:text="Attachment" />
-
-        <Button
-            android:id="@+id/upload_question_upload"
+        <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/black"
-            android:text="Upload"
-            android:textColor="@color/white" />
+            android:id="@+id/rvMultipleChoice"/>
 
     </LinearLayout>
 

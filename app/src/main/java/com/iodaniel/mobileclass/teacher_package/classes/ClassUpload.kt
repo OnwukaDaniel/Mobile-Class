@@ -35,17 +35,11 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
     private val auth = FirebaseAuth.getInstance().currentUser!!.uid
     private lateinit var progressBarController: ProgressBarController
     private val dialog by lazy { Dialog(this) }
-    private var className: String = ""
     private var classImage: String = ""
     private lateinit var controller: MediaController
     private var listOfMedia: ArrayList<Uri> = arrayListOf()
     private val storageRef = FirebaseStorage.getInstance().reference
     private lateinit var errorSnackBar: Snackbar
-
-    val customImages: ArrayList<Int> = arrayListOf(R.drawable.classimages,
-        R.drawable.classimages1,
-        R.drawable.classimages2,
-        R.drawable.classimages3)
 
     private val pickFileLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult(),
@@ -155,6 +149,7 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
                 errorSnackBar.show()
                 return@addOnFailureListener
             }
+            return
         }
 
         val contentResolver = applicationContext.contentResolver

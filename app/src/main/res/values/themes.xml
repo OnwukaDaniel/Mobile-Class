@@ -45,4 +45,10 @@
         <item name="cornerSize">50%</item>
     </style>
 
+    <style name="Autoscroll">
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:marqueeRepeatLimit">marquee_forever</item>
+    </style>
+
 </resources>

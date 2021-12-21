@@ -11,7 +11,7 @@ class MyCourse(
     val time: String = "",
     val materials: ArrayList<Material> = arrayListOf(),
     val dateCreated: String = "",
-)
+) {}
 
 @Serializable
 class Material(
@@ -27,7 +27,7 @@ class Material(
     val time: String = "",
     val dateModified: String = "",
     val dateCreated: String = "",
-)
+) {}
 
 @Serializable
 class ClassInfo(
@@ -40,10 +40,10 @@ class ClassInfo(
     val dateModified: String = "",
     val datetime: String = "",
     //colors
-    val red: Int=0,
-    val green: Int=0,
-    val blue: Int=0,
-)
+    val red: Int = 0,
+    val green: Int = 0,
+    val blue: Int = 0,
+) {}
 
 @Serializable
 class MultiChoiceQuestion(
@@ -54,11 +54,11 @@ class MultiChoiceQuestion(
     val time: String = "",
     val dateModified: String = "",
     val datetime: String = "",
-    //MultiChoice
-    val instructions: String="",
-    val question: String="",
-    val solution: String="",
-    val mediaUris: ArrayList<String>,
-    val link: String="",
-    val options: ArrayList<String>,
+
+    val instructions: String = "",
+    val question: String = "",
+    val solution: String = "",
+    val mediaUris: ArrayList<String> = arrayListOf(),
+    val extraNote: String = "",
+    val options: ArrayList<String> = arrayListOf(),
 )
