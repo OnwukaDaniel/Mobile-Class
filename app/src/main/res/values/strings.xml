@@ -8,6 +8,7 @@
     <string name="rename">Rename</string>
     <string name="name">Name</string>
     <string name="username">Username</string>
+    <string name="userBio">sharedPreferenceBio</string>
 
     <string-array name="gender_item">
         <item>Male</item>

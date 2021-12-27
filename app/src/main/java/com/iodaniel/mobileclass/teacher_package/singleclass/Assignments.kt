@@ -1,8 +1,8 @@
 package com.iodaniel.mobileclass.teacher_package.singleclass
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,20 +16,21 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.gson.Gson
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.AssignmentBinding
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.MultiChoiceQuestion
 import com.iodaniel.mobileclass.teacher_package.singleclass.AssignmentsAdapter.ViewHolder
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 class Assignments(val classInfo: ClassInfo) : Fragment(), HelperListener {
     private lateinit var binding: AssignmentBinding
     private lateinit var assignmentAdapter: AssignmentsAdapter
     private var dataSet: ArrayList<MultiChoiceQuestion> = arrayListOf()
-    private var dataSetMultipleChoice: ArrayList<ArrayList<MultiChoiceQuestion>> = arrayListOf()
+    private var dataSetMultipleChoice: ArrayList<ArrayList<HashMap<*, *>>> = arrayListOf()
+
+    private var dataSetKeyList: ArrayList<String> = arrayListOf()
+    private var dataSetMultipleChoiceKeyList: ArrayList<String> = arrayListOf()
+
     private var multiChoiceRef = FirebaseDatabase.getInstance().reference
         .child("multi_choice_question")
         .child(FirebaseAuth.getInstance().currentUser!!.uid)
@@ -54,30 +55,34 @@ class Assignments(val classInfo: ClassInfo) : Fragment(), HelperListener {
     private fun readData() {
         multiChoiceRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val snap = snapshot.value as ArrayList<MultiChoiceQuestion>
-                println("SNAP ******************** ${snapshot.value}")
+                val snap = snapshot.value as ArrayList<HashMap<*, *>>
                 try {
                     dataSetMultipleChoice.add(snap)
-                    println("SNAP ******************** ${snap[0]}")
+                    dataSetMultipleChoiceKeyList.add(snapshot.key!!)
                     rvInit()
                 } catch (e: Exception) {
                     println("********************* ${e.printStackTrace()}")
                 }
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                val snap = snapshot.value as ArrayList<MultiChoiceQuestion>
-                println("SNAP ******************** ${snapshot.value}")
+                val snap = snapshot.value as ArrayList<HashMap<*, *>>
                 try {
                     dataSetMultipleChoice.add(snap)
-                    println("SNAP ******************** ${snap[0]}")
-                    rvInit()
+                    dataSetMultipleChoiceKeyList.add(snapshot.key!!)
+                    assignmentAdapter.notifyDataSetChanged()
                 } catch (e: Exception) {
                     println("********************* ${e.printStackTrace()}")
                 }
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             override fun onChildRemoved(snapshot: DataSnapshot) {
+                val index = dataSetMultipleChoiceKeyList.indexOf(snapshot.key)
+                dataSetMultipleChoiceKeyList.removeAt(index)
+                dataSetMultipleChoice.removeAt(index)
+                assignmentAdapter.notifyItemRemoved(index)
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
@@ -92,17 +97,25 @@ class Assignments(val classInfo: ClassInfo) : Fragment(), HelperListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val snap = snapshot.getValue(MultiChoiceQuestion::class.java)
                 dataSet.add(snap!!)
-                println("SNAP ******************** ${snap.question}")
+                dataSetKeyList.add(snapshot.key!!)
                 rvInit()
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 val snap = snapshot.getValue(MultiChoiceQuestion::class.java)
                 dataSet.add(snap!!)
+                dataSetKeyList.add(snapshot.key!!)
+                assignmentAdapter.notifyDataSetChanged()
                 rvInit()
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             override fun onChildRemoved(snapshot: DataSnapshot) {
+                val index = dataSetKeyList.indexOf(snapshot.key)
+                dataSetKeyList.removeAt(index)
+                dataSet.removeAt(index)
+                assignmentAdapter.notifyItemRemoved(index)
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
@@ -118,6 +131,7 @@ class Assignments(val classInfo: ClassInfo) : Fragment(), HelperListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val snap = snapshot.getValue(MultiChoiceQuestion::class.java)
                 dataSet.add(snap!!)
+                dataSetKeyList.add(snapshot.key!!)
                 println("SNAP ******************** ${snap.question}")
                 rvInit()
             }
@@ -125,10 +139,15 @@ class Assignments(val classInfo: ClassInfo) : Fragment(), HelperListener {
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 val snap = snapshot.getValue(MultiChoiceQuestion::class.java)
                 dataSet.add(snap!!)
+                dataSetKeyList.add(snapshot.key!!)
                 rvInit()
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
+                val index = dataSetKeyList.indexOf(snapshot.key)
+                dataSetMultipleChoiceKeyList.removeAt(index)
+                dataSetMultipleChoice.removeAt(index)
+                assignmentAdapter.notifyItemRemoved(index)
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
@@ -152,19 +171,19 @@ class Assignments(val classInfo: ClassInfo) : Fragment(), HelperListener {
 
     override fun helperClickListener(datum: MultiChoiceQuestion) {
         requireActivity().supportFragmentManager.beginTransaction().addToBackStack("data")
-            .replace(R.id.a_class_frame, ViewAssignment(datum))
+            .replace(R.id.a_class_frame, ViewAssignment(datum)).commit()
     }
 
-    override fun helperClickListenerMultipleChoice(datum: ArrayList<MultiChoiceQuestion>) {
+    override fun helperClickListenerMultipleChoice(datum: ArrayList<HashMap<*, *>>) {
         requireActivity().supportFragmentManager.beginTransaction().addToBackStack("data_multiple_choice_question")
-            .replace(R.id.a_class_frame, ViewAssignment(multipleChoiceQuestions = datum))
+            .replace(R.id.a_class_frame, ViewAssignment(multipleChoiceQuestions = datum)).commit()
     }
 }
 
 class AssignmentsAdapter : RecyclerView.Adapter<ViewHolder>() {
 
     lateinit var dataset: ArrayList<MultiChoiceQuestion>
-    lateinit var dataSetMultipleChoice: ArrayList<ArrayList<MultiChoiceQuestion>>
+    lateinit var dataSetMultipleChoice: ArrayList<ArrayList<HashMap<*, *>>>
     lateinit var context: Context
     lateinit var activity: Activity
     lateinit var helperListener: HelperListener
@@ -209,5 +228,5 @@ class AssignmentsAdapter : RecyclerView.Adapter<ViewHolder>() {
 
 interface HelperListener {
     fun helperClickListener(datum: MultiChoiceQuestion)
-    fun helperClickListenerMultipleChoice(datum: ArrayList<MultiChoiceQuestion>)
+    fun helperClickListenerMultipleChoice(datum: ArrayList<HashMap<*, *>>)
 }

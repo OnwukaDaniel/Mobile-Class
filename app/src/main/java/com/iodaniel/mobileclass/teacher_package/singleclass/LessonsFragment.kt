@@ -12,7 +12,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.chip.Chip
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -24,17 +23,15 @@ import com.iodaniel.mobileclass.databinding.LessonFragmentBinding
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.Material
 import com.iodaniel.mobileclass.teacher_package.singleclass.material.MaterialPage
-import kotlinx.serialization.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 class LessonsFragment(private val classInfo: ClassInfo) : Fragment() {
 
     private lateinit var binding: LessonFragmentBinding
     private lateinit var adapter: LessonRvAdapter
     private var listOfLessons: ArrayList<Material> = arrayListOf()
+    private var keyList = arrayListOf<String>()
     private var stTypeRef = FirebaseDatabase.getInstance().reference
         .child("materials")
         .child(FirebaseAuth.getInstance().currentUser!!.uid)
@@ -69,19 +66,21 @@ class LessonsFragment(private val classInfo: ClassInfo) : Fragment() {
 
             @SuppressLint("NotifyDataSetChanged")
             override fun onChildRemoved(snapshot: DataSnapshot) {
-                val materialRemoved = snapshot.getValue(Material::class.java)
-                listOfLessons.remove(materialRemoved)
-                rvInit()
+                val index = keyList.indexOf(snapshot.key)
+                keyList.removeAt(index)
+                listOfLessons.removeAt(index)
+                binding.rvLessons.adapter!!.notifyItemRemoved(index)
+                adapter.notifyItemRemoved(index)
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-
             }
 
             override fun onCancelled(error: DatabaseError) {
 
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             fun readData(snapshot: DataSnapshot) {
                 try {
                     val lessonSnap = (snapshot.value as HashMap<*, *>)
@@ -116,14 +115,15 @@ class LessonsFragment(private val classInfo: ClassInfo) : Fragment() {
                         dateModified,
                         dateCreated)
                     listOfLessons.add(material)
+                    keyList.add(snapshot.key!!)
                     rvInit()
+                    adapter.notifyDataSetChanged()
                 } catch (e: Exception) {
                     println("Exception from database ******************** ${e.printStackTrace()}")
                 }
             }
         })
     }
-
 }
 
 class LessonRvAdapter : RecyclerView.Adapter<LessonRvAdapter.ViewHolder>() {
@@ -159,7 +159,7 @@ class LessonRvAdapter : RecyclerView.Adapter<LessonRvAdapter.ViewHolder>() {
             val json = Gson().toJson(datum)
             intent.putExtra("material", json)
             context.startActivity(intent)
-            activity.overridePendingTransition(0,0)
+            activity.overridePendingTransition(0, 0)
         }
     }
 

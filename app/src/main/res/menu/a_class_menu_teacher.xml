@@ -6,4 +6,7 @@
     <item
         android:id="@+id/create_new_assignment"
         android:title="New Assignment"/>
+    <item
+        android:id="@+id/menu_delete"
+        android:title="Remove Class "/>
 </menu>

@@ -1,9 +1,10 @@
 package com.iodaniel.mobileclass.teacher_package.singleclass
 
+import android.app.AlertDialog
 import android.os.Bundle
-import android.view.Gravity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
-import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -25,12 +26,15 @@ class AClass : FragmentActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        binding.aClassMore.setOnClickListener(this)
+        setActionBar(binding.aClassToolbar)
+
+        binding.aClassBack.setOnClickListener(this)
         if (intent.hasExtra("class_data")) {
             try {
                 val json = intent.getStringExtra("class_data")!!
                 classInfo = Json.decodeFromString(json)
                 binding.className.text = classInfo.className
+                binding.classCode.text = classInfo.classCode
             } catch (e: Exception) {
                 println("INTENT EXCEPTION *************************** ${e.printStackTrace()}")
             }
@@ -42,7 +46,11 @@ class AClass : FragmentActivity(), View.OnClickListener {
         viewPagerAdapter = ViewPagerAdapter(this)
         binding.aClassViewpager.adapter = viewPagerAdapter
         val data = arrayListOf("Student", "Lessons", "Assignments")
-        viewPagerAdapter.dataset = arrayListOf(StudentFragment(classInfo), LessonsFragment(classInfo), Assignments(classInfo))
+        viewPagerAdapter.dataset = arrayListOf(
+            StudentFragment(classInfo),
+            LessonsFragment(classInfo),
+            Assignments(classInfo)
+        )
         TabLayoutMediator(binding.aClassTabLayout, binding.aClassViewpager) { tab, position ->
             tab.text = data[position]
         }.attach()
@@ -50,7 +58,11 @@ class AClass : FragmentActivity(), View.OnClickListener {
 
     inner class ViewPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
         var dataset: ArrayList<Fragment> =
-            arrayListOf(StudentFragment(classInfo), LessonsFragment(classInfo), Assignments(classInfo))
+            arrayListOf(
+                StudentFragment(classInfo),
+                LessonsFragment(classInfo),
+                Assignments(classInfo)
+            )
 
         override fun getItemCount(): Int = dataset.size
         override fun createFragment(position: Int): Fragment {
@@ -60,7 +72,7 @@ class AClass : FragmentActivity(), View.OnClickListener {
 
     private fun inflateCreateNewLessonFragment() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.a_class_frame, CreateNewLessonFragment(classInfo))
+            .replace(R.id.a_class_frame, FragmentCreateNewLesson(classInfo))
             .addToBackStack("newClass").commit()
     }
 
@@ -70,27 +82,47 @@ class AClass : FragmentActivity(), View.OnClickListener {
             .addToBackStack("newAssi").commit()
     }
 
+    private fun deleteClass() {
+        val view = layoutInflater.inflate(R.layout.delete, null)
+        val alertDialog = AlertDialog.Builder(this, R.style.WarningDialogs)
+        alertDialog.setPositiveButton("Delete") { dialog, which ->
+            dialog.dismiss()
+        }.setNegativeButton("Cancel") { dialog, which ->
+            dialog.dismiss()
+        }.setView(view)
+        alertDialog.setMessage("Are you sure?")
+        alertDialog.show()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.a_class_menu_teacher, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.create_new_lesson -> {
+                inflateCreateNewLessonFragment()
+                return true
+            }
+            R.id.create_new_assignment -> {
+                inflateCreateNewAssignment()
+                return true
+            }
+            R.id.menu_delete -> {
+                deleteClass()
+                return true
+            }
+            else -> {
+                return false
+            }
+        }
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.a_class_more -> {
-                val popUp = PopupMenu(this, binding.aClassMore, Gravity.CENTER)
-                popUp.menuInflater.inflate(R.menu.a_class_menu, popUp.menu)
-                popUp.setOnMenuItemClickListener {
-                    when (it.itemId) {
-                        R.id.create_new_lesson -> {
-                            inflateCreateNewLessonFragment()
-                            return@setOnMenuItemClickListener true
-                        }
-                        R.id.create_new_assignment -> {
-                            inflateCreateNewAssignment()
-                            return@setOnMenuItemClickListener true
-                        }
-                        else -> {
-                            return@setOnMenuItemClickListener false
-                        }
-                    }
-                }
-                popUp.show()
+            R.id.a_class_back -> {
+                onBackPressed()
             }
         }
     }

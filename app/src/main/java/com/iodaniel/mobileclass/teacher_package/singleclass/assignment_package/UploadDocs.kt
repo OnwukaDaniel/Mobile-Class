@@ -23,7 +23,6 @@ import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.MediaSupport
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.ProgressBarController
 import com.iodaniel.mobileclass.teacher_package.classes.MultiChoiceQuestion
-import java.time.Instant
 import java.util.*
 
 class UploadDocs(val classInfo: ClassInfo) : Fragment(), ProgressBarController,
@@ -32,7 +31,7 @@ class UploadDocs(val classInfo: ClassInfo) : Fragment(), ProgressBarController,
     private lateinit var binding: FragmentUploadDocsBinding
     private val storageRef = FirebaseStorage.getInstance().reference
     private lateinit var dialog: Dialog
-    var fileName = ""
+    private var fileName = ""
     private lateinit var progressBarController: ProgressBarController
     private var multiChoiceRef = FirebaseDatabase.getInstance().reference
         .child("doc_question")
@@ -46,12 +45,7 @@ class UploadDocs(val classInfo: ClassInfo) : Fragment(), ProgressBarController,
         registerForActivityResult(ActivityResultContracts.StartActivityForResult(),
             ActivityResultCallback {
                 try {
-                    if (it.data!!.data == null) {
-                        val error = "Error loading file!!!"
-                        var snackBar =
-                            Snackbar.make(binding.root, error, Snackbar.LENGTH_LONG).show()
-                        return@ActivityResultCallback
-                    }
+                    if (it.data!!.data == null) return@ActivityResultCallback
                     if (it.resultCode == AppCompatActivity.RESULT_OK) {
                         val dataUri = it.data!!.data
                         fileName = "Attachment"
@@ -150,7 +144,7 @@ class UploadDocs(val classInfo: ClassInfo) : Fragment(), ProgressBarController,
         if (fileName == "") return
         progressBarController.showProgressBar()
 
-        val dateTime = Date.from(Instant.now()).time
+        val dateTime = Calendar.getInstance().time.time.toString()
         val arrayDownloadUris = arrayListOf<String>()
 
         for (file in listOfMedia) { //fileUris
@@ -159,7 +153,7 @@ class UploadDocs(val classInfo: ClassInfo) : Fragment(), ProgressBarController,
             val mime = MimeTypeMap.getSingleton()
             val extension =
                 mime.getExtensionFromMimeType(contentResolver?.getType(fileUri))!!
-            val event = (dateTime.toString()).replace("//", ".").replace("/", ".")
+            val event = (dateTime).replace("//", ".").replace("/", ".")
             val finalStorageRef = storageRef.child("$event.$extension")
             val uploadTask = finalStorageRef.putFile(fileUri)
 
@@ -178,7 +172,7 @@ class UploadDocs(val classInfo: ClassInfo) : Fragment(), ProgressBarController,
                                 classCode = classInfo.classCode,
                                 teacherInChargeName = classInfo.teacherInChargeName,
                                 teacherInChargeUID = classInfo.teacherInChargeUID,
-                                datetime = dateTime.toString(),
+                                datetime = dateTime,
                                 question = question,
                                 extraNote = extraNote,
                                 mediaUris = arrayDownloadUris,

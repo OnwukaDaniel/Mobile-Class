@@ -21,7 +21,7 @@
         <EditText
             android:id="@+id/signup_email"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:background="@drawable/edit_text_background_black"
             android:hint="Email"
@@ -31,7 +31,7 @@
         <EditText
             android:id="@+id/signup_password"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:background="@drawable/edit_text_background_black"
             android:hint="Password"
@@ -53,6 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:theme="@style/Theme.ProgressBar"
                 android:visibility="invisible" />
 
             <TextView

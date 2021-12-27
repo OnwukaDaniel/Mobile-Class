@@ -15,7 +15,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.SignInBinding
 import com.iodaniel.mobileclass.student_package.StudentInitPage
-import com.iodaniel.mobileclass.teacher_package.classes.TeacherPage
+import com.iodaniel.mobileclass.teacher_package.classes.ActivityMyClasses
 
 class SignIn : AppCompatActivity(), View.OnClickListener, HelperListener.LoadingListener {
     private val binding by lazy {
@@ -32,7 +32,7 @@ class SignIn : AppCompatActivity(), View.OnClickListener, HelperListener.Loading
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        teacherIntent = Intent(this, TeacherPage::class.java)
+        teacherIntent = Intent(this, ActivityMyClasses::class.java)
         studentIntent = Intent(this, StudentInitPage::class.java)
         studentIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
         teacherIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK

@@ -23,13 +23,13 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 class CourseWork(val classInfo: ClassInfo) : Fragment() {
 
     private lateinit var binding: FragmentCourseWorkBinding
     private var courseWorkAdapter = CourseWorkAdapter()
     private var dataset: ArrayList<Material> = arrayListOf()
+    private var keyList: ArrayList<String> = arrayListOf()
     private var stTypeRef = FirebaseDatabase.getInstance().reference
         .child("materials")
         .child(classInfo.teacherInChargeUID)
@@ -57,15 +57,22 @@ class CourseWork(val classInfo: ClassInfo) : Fragment() {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val snap = snapshot.getValue(Material::class.java)
                 dataset.add(snap!!)
+                keyList.add(snapshot.key!!)
                 rvInit()
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-
+                val snap = snapshot.getValue(Material::class.java)
+                dataset.add(snap!!)
+                keyList.add(snapshot.key!!)
+                rvInit()
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
-
+                val index = keyList.indexOf(snapshot.key)
+                keyList.removeAt(index)
+                dataset.removeAt(index)
+                courseWorkAdapter.notifyItemRemoved(index)
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
@@ -115,7 +122,7 @@ class CourseWorkAdapter : RecyclerView.Adapter<CourseWorkAdapter.ViewHolder>() {
             activity.overridePendingTransition(0, 0)
         }
     }
-    fun convertLongToTime(time: Long): String {
+    private fun convertLongToTime(time: Long): String {
         val date = Date(time)
         val format = SimpleDateFormat("yyyy.MM.dd HH:mm")
         return format.format(date)

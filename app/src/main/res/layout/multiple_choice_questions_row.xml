@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_margin="50dp"
+            android:src="@drawable/question" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="5dp"
+                android:layout_height="match_parent"
+                android:background="#FFC900" />
+
+            <TextView
+                android:id="@id/multi_choice_question"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:text="A SAMPLE QUESTION TEXT USED FOR EVERYONE"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/multi_choice_instruction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="10dp"
+            android:text="A SAMPLE QUESTION TEXT USED FOR EVERYONE"
+            android:textSize="12sp" />
+
+        <RadioGroup
+            android:id="@+id/multi_choice_radio_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/multi_choice_a"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/rounded_background_radio_group"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="18dp"
+                android:text="A SAMPLE QUESTION TEXT USED FOR EVERYONE" />
+
+            <RadioButton
+                android:id="@+id/multi_choice_b"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:paddingVertical="18dp"
+                android:background="@drawable/rounded_background_radio_group"
+                android:paddingHorizontal="10dp"
+                android:text="A SAMPLE QUESTION TEXT USED FOR EVERYONE" />
+
+            <RadioButton
+                android:id="@+id/multi_choice_c"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:paddingVertical="18dp"
+                android:background="@drawable/rounded_background_radio_group"
+                android:paddingHorizontal="10dp"
+                android:text="A SAMPLE QUESTION TEXT USED FOR EVERYONE" />
+
+            <RadioButton
+                android:id="@+id/multi_choice_d"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:paddingVertical="18dp"
+                android:background="@drawable/rounded_background_radio_group"
+                android:paddingHorizontal="10dp"
+                android:text="A SAMPLE QUESTION TEXT USED FOR EVERYONE" />
+
+        </RadioGroup>
+
+        <com.google.android.material.chip.Chip
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Submit"
+            android:gravity="center"
+            android:backgroundTint="#73A500"
+            android:textColor="@color/white"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+
+</ScrollView>

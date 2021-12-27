@@ -10,7 +10,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.iodaniel.mobileclass.accessing_mobile_app.SignInOrSignUp
 import com.iodaniel.mobileclass.student_package.StudentInitPage
-import com.iodaniel.mobileclass.teacher_package.classes.TeacherPage
+import com.iodaniel.mobileclass.teacher_package.classes.ActivityMyClasses
 
 class SplashScreen : AppCompatActivity() {
 
@@ -31,11 +31,9 @@ class SplashScreen : AppCompatActivity() {
 
         }
         val firebaseUser = FirebaseAuth.getInstance().currentUser
-        println("firebaseUser *************************************** $firebaseUser")
-
         val newUserIntent = Intent(this, SignInOrSignUp::class.java)
         newUserIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-        val teacherUserIntent = Intent(this, TeacherPage::class.java)
+        val teacherUserIntent = Intent(this, ActivityMyClasses::class.java)
         teacherUserIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
         val studentUserIntent = Intent(this, StudentInitPage::class.java)
         studentUserIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK

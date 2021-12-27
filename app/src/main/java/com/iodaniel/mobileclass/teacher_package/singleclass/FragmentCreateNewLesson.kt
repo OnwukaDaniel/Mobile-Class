@@ -29,10 +29,9 @@ import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.*
 import com.iodaniel.mobileclass.teacher_package.classes.Material
 import java.text.DateFormat
-import java.time.Instant
 import java.util.*
 
-class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(), OnClickListener,
+class FragmentCreateNewLesson(private val classInfo: ClassInfo) : Fragment(), OnClickListener,
     ProgressBarController, MediaSupport {
 
     private lateinit var binding: CreateNewLessonFragmentBinding
@@ -43,7 +42,6 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(), On
         .child(FirebaseAuth.getInstance().currentUser!!.uid)
         .child(classInfo.classCode)
         .push()
-    private val auth = FirebaseAuth.getInstance().currentUser!!.uid
     private lateinit var progressBarController: ProgressBarController
     private lateinit var mediaSupport: MediaSupport
     private val dialog by lazy { Dialog(requireContext()) }
@@ -58,9 +56,6 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(), On
             ActivityResultCallback {
                 try {
                     if (it.data!!.data == null) {
-                        val error = "Error loading file!!!"
-                        var snackBar =
-                            Snackbar.make(binding.root, error, Snackbar.LENGTH_LONG).show()
                         return@ActivityResultCallback
                     }
                     if (it.resultCode == AppCompatActivity.RESULT_OK) {
@@ -186,7 +181,7 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(), On
         val note = binding.createClassNote.text.toString()
         val extraNote = binding.createClassExtraNote.text.toString()
 
-        val datetime = Date.from(Instant.now()).time
+        val datetime = Calendar.getInstance().time.time
         val dateString = DateFormat.getInstance().format(datetime)
         val split = dateString.split(' ')
         val date = split[0].trim()
@@ -245,7 +240,9 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(), On
                                 requireActivity().onBackPressed()
                                 progressBarController.hideProgressBar()
                             }.addOnFailureListener {
-                                Snackbar.make(binding.root, "Error occurred!!!", Snackbar.LENGTH_LONG).show()
+                                Snackbar.make(binding.root,
+                                    "Error occurred!!!",
+                                    Snackbar.LENGTH_LONG).show()
                                 progressBarController.hideProgressBar()
                             }
                         }
@@ -266,12 +263,6 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(), On
         return Bitmap.createScaledBitmap(bm, 512, inh, true)
     }
 
-    private fun clearInputs() {
-        binding.createClassHeading.setText("")
-        binding.createClassNote.setText("")
-        binding.createClassExtraNote.setText("")
-    }
-
     private fun selectFileFromStorage() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
         intent.addCategory(Intent.CATEGORY_OPENABLE)
@@ -289,8 +280,8 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(), On
         dialog.setContentView(progressBarBinding.root)
         dialog.window?.setLayout(WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT)
-        dialog.setCancelable(false);
-        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false)
+        dialog.setCanceledOnTouchOutside(false)
         dialog.show()
     }
 
@@ -344,7 +335,7 @@ class CreateNewLessonFragment(private val classInfo: ClassInfo) : Fragment(), On
         val view = layoutInflater.inflate(R.layout.layout_rename_dialog, null)
         val renameTxt = view.findViewById<EditText>(R.id.rename_edit)
         renameTxt.setText(fileName)
-        val alertDialog = AlertDialog.Builder(requireContext())
+        val alertDialog = AlertDialog.Builder(requireContext(), R.style.ThemeOverlay_MaterialComponents_Dialog_Alert)
         alertDialog.setTitle("Rename")
         alertDialog.setView(view)
         alertDialog.setCancelable(true)

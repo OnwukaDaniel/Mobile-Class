@@ -21,12 +21,12 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/upload_profile_pic"
-                android:layout_width="140dp"
-                android:layout_height="140dp"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/music_image"
+                android:src="@drawable/teacher_icon"
                 app:shapeAppearance="@style/roundImageView" />
 
             <TextView
@@ -35,7 +35,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginBottom="20dp"
-                android:text="Teacher's Name"
                 android:textSize="18sp" />
 
             <TextView

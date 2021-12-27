@@ -13,7 +13,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.SignUpBinding
 import com.iodaniel.mobileclass.student_package.StudentInitPage
-import com.iodaniel.mobileclass.teacher_package.classes.TeacherPage
+import com.iodaniel.mobileclass.teacher_package.classes.ActivityMyClasses
 
 class SignUp : AppCompatActivity(), View.OnClickListener, HelperListener.LoadingListener {
 
@@ -88,7 +88,7 @@ class SignUp : AppCompatActivity(), View.OnClickListener, HelperListener.Loading
                     hashMapOf("accountType" to accountType, "UID" to auth.currentUser!!.uid)
 
                 stTypeRef.push().setValue(pair).addOnCompleteListener {
-                    val teacherIntent = Intent(this, TeacherPage::class.java)
+                    val teacherIntent = Intent(this, ActivityMyClasses::class.java)
                     teacherIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                     val studentIntent = Intent(this, StudentInitPage::class.java)
                     studentIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK

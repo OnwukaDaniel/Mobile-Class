@@ -8,8 +8,9 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/upload_file_layout"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="140dp"
         android:layout_margin="10dp"
+        android:visibility="gone"
         android:layout_weight="10"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -20,18 +21,20 @@
             android:id="@+id/view_material_row_imageview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="invisible"/>
+            android:visibility="gone"/>
 
         <View
             android:id="@+id/view_material_row_uploadAudio"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="invisible"/>
+            android:background="@drawable/music_image"
+            android:visibility="gone"/>
 
         <VideoView
             android:id="@+id/view_material_row_uploadVideoView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:visibility="gone" />
 
         <com.github.barteksc.pdfviewer.PDFView
             android:id="@+id/view_material_row_pdfView"
@@ -41,7 +44,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:visibility="invisible"/>
+            android:visibility="gone"/>
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/download_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

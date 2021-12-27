@@ -23,7 +23,6 @@ import com.iodaniel.mobileclass.databinding.ClassUploadBinding
 import com.iodaniel.mobileclass.databinding.ProgressBarDialogBinding
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.ProgressBarController
 import java.text.DateFormat
-import java.time.Instant
 import java.util.*
 import kotlin.random.Random
 
@@ -37,7 +36,6 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
     private val dialog by lazy { Dialog(this) }
     private var classImage: String = ""
     private lateinit var controller: MediaController
-    private var listOfMedia: ArrayList<Uri> = arrayListOf()
     private val storageRef = FirebaseStorage.getInstance().reference
     private lateinit var errorSnackBar: Snackbar
 
@@ -46,9 +44,6 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
             ActivityResultCallback {
                 try {
                     if (it.data!!.data == null) {
-                        val error = "Error loading file!!!"
-                        var snackBar =
-                            Snackbar.make(binding.root, error, Snackbar.LENGTH_LONG).show()
                         return@ActivityResultCallback
                     }
                     if (it.resultCode == RESULT_OK) {
@@ -107,14 +102,18 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
         progressBarController.showProgressBar()
         var snackBar: Snackbar = Snackbar.make(binding.root, "", Snackbar.LENGTH_LONG)
 
-        val datetime = Date.from(Instant.now()).time
+        val datetime = Calendar.getInstance().time.time
         val dateString = DateFormat.getInstance().format(datetime)
         println("datetime ****************** $datetime")
         val split = dateString.split(' ')
         val date = split[0].trim()
         val time = split[1].trim() + split[2].trim()
         val className = binding.uploadClassName.text.toString().trim()
-        val classCode = UUID.randomUUID().toString()
+
+        val splita = UUID.randomUUID().toString().split("-")
+        val codea = splita[1] + splita[2].substring(0, 1) + splita[4].substring(6, 8)
+
+        val classCode = codea
 
         val classInfo = ClassInfo(className = className,
             time = time, datetime = datetime.toString(),
@@ -137,7 +136,7 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
             allClassesRef.setValue(details).addOnCompleteListener {
                 reference.setValue(classInfo).addOnCompleteListener {
                     progressBarController.hideProgressBar()
-                    startActivity(Intent(this, TeacherPage::class.java))
+                    startActivity(Intent(this, ActivityMyClasses::class.java))
                     overridePendingTransition(0, 0)
                 }.addOnFailureListener {
                     progressBarController.hideProgressBar()
@@ -156,7 +155,7 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
         val mime = MimeTypeMap.getSingleton()
         val extension =
             mime.getExtensionFromMimeType(contentResolver?.getType(Uri.parse(classImage)))!!
-        val event = (date + time + classImage.toString()).replace("//", ".").replace("/", ".")
+        val event = (date + time + classImage).replace("//", ".").replace("/", ".")
         val finalStorageRef = storageRef.child("$event.$extension")
         val uploadTask = finalStorageRef.putFile(Uri.parse(classImage))
 
@@ -166,7 +165,9 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
         }.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 finalStorageRef.downloadUrl.addOnSuccessListener {
-                    val classCodeX = UUID.randomUUID().toString()
+                    val splitc = UUID.randomUUID().toString().split("-")
+                    val codee = splitc[1] + splitc[2].substring(0, 1) + splitc[4].substring(6, 8)
+                    val classCodeX = codee
                     val downloadUri = it.toString()
                     val rand = Random(42).nextInt(10, 255)
                     reference = reference
@@ -190,7 +191,7 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
                     allClassesRef.setValue(detailsX).addOnCompleteListener {
                         reference.setValue(classInfoX).addOnCompleteListener {
                             progressBarController.hideProgressBar()
-                            startActivity(Intent(this, TeacherPage::class.java))
+                            startActivity(Intent(this, ActivityMyClasses::class.java))
                             overridePendingTransition(0, 0)
                         }.addOnFailureListener {
                             progressBarController.hideProgressBar()

@@ -62,3 +62,15 @@ class MultiChoiceQuestion(
     val extraNote: String = "",
     val options: ArrayList<String> = arrayListOf(),
 )
+
+@Serializable
+class BioClass(
+    val fullName: String = "",
+    val username: String = "",
+    val email: String = "",
+    val gender: String = "",
+    val phone: String,
+    val photo: String = "",
+    val dateModified: String = "",
+    val datetime: String = "",
+)

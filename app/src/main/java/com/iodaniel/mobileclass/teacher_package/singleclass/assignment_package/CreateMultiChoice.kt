@@ -21,13 +21,11 @@ import com.iodaniel.mobileclass.databinding.ProgressBarDialogBinding
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.*
 import com.iodaniel.mobileclass.teacher_package.classes.MultiChoiceQuestion
-import java.time.Instant
 import java.util.*
-import kotlin.collections.ArrayList
 
 class CreateMultiChoice(
     private val classInfo: ClassInfo,
-    private val arrayOfQuestions: ArrayList<MultiChoiceQuestion> = arrayListOf()
+    private val arrayOfQuestions: ArrayList<MultiChoiceQuestion> = arrayListOf(),
 ) : Fragment(), View.OnClickListener,
     ProgressBarController,
     MediaSupport {
@@ -51,9 +49,6 @@ class CreateMultiChoice(
             ActivityResultCallback {
                 try {
                     if (it.data!!.data == null) {
-                        val error = "Error loading file!!!"
-                        var snackBar =
-                            Snackbar.make(binding.root, error, Snackbar.LENGTH_LONG).show()
                         return@ActivityResultCallback
                     }
                     if (it.resultCode == AppCompatActivity.RESULT_OK) {
@@ -210,7 +205,7 @@ class CreateMultiChoice(
         if (optionsArray.isEmpty()) return
         progressBarController.showProgressBar()
 
-        val dateTime = Date.from(Instant.now()).time
+        val dateTime = Calendar.getInstance().time.time.toString()
         val arrayDownloadUris = arrayListOf<String>()
 
         if (listOfMedia.isEmpty()) {
@@ -219,7 +214,7 @@ class CreateMultiChoice(
                 classCode = classInfo.classCode,
                 teacherInChargeName = classInfo.teacherInChargeName,
                 teacherInChargeUID = classInfo.teacherInChargeUID,
-                datetime = dateTime.toString(),
+                datetime = dateTime,
                 instructions = instructions,
                 question = question,
                 solution = solution,
@@ -248,7 +243,7 @@ class CreateMultiChoice(
             val mime = MimeTypeMap.getSingleton()
             val extension =
                 mime.getExtensionFromMimeType(contentResolver?.getType(fileUri))!!
-            val event = (dateTime.toString()).replace("//", ".").replace("/", ".")
+            val event = (dateTime).replace("//", ".").replace("/", ".")
             val finalStorageRef = storageRef.child("$event.$extension")
             val uploadTask = finalStorageRef.putFile(fileUri)
 
@@ -267,7 +262,7 @@ class CreateMultiChoice(
                                 classCode = classInfo.classCode,
                                 teacherInChargeName = classInfo.teacherInChargeName,
                                 teacherInChargeUID = classInfo.teacherInChargeUID,
-                                datetime = dateTime.toString(),
+                                datetime = dateTime,
                                 instructions = instructions,
                                 question = question,
                                 solution = solution,
@@ -283,12 +278,12 @@ class CreateMultiChoice(
                                         FragmentManager.POP_BACK_STACK_INCLUSIVE)
                                     progressBarController.hideProgressBar()
                                 }.addOnFailureListener {
-                                progressBarController.hideProgressBar()
-                                Snackbar.make(binding.root,
-                                    "Error occurred!!!",
-                                    Snackbar.LENGTH_LONG)
-                                    .show()
-                            }
+                                    progressBarController.hideProgressBar()
+                                    Snackbar.make(binding.root,
+                                        "Error occurred!!!",
+                                        Snackbar.LENGTH_LONG)
+                                        .show()
+                                }
                         }
                     }
                 }
@@ -311,7 +306,7 @@ class CreateMultiChoice(
         if (solution == "") return
         progressBarController.showProgressBar()
 
-        val dateTime = Date.from(Instant.now()).time
+        val dateTime = Calendar.getInstance().time.time.toString()
         val arrayDownloadUris = arrayListOf<String>()
 
         if (listOfMedia.isEmpty()) {
@@ -320,7 +315,7 @@ class CreateMultiChoice(
                 classCode = classInfo.classCode,
                 teacherInChargeName = classInfo.teacherInChargeName,
                 teacherInChargeUID = classInfo.teacherInChargeUID,
-                datetime = dateTime.toString(),
+                datetime = dateTime,
                 instructions = instructions,
                 question = question,
                 solution = solution,
@@ -339,7 +334,7 @@ class CreateMultiChoice(
             val mime = MimeTypeMap.getSingleton()
             val extension =
                 mime.getExtensionFromMimeType(contentResolver?.getType(fileUri))!!
-            val event = (dateTime.toString()).replace("//", ".").replace("/", ".")
+            val event = (dateTime).replace("//", ".").replace("/", ".")
             val finalStorageRef = storageRef.child("$event.$extension")
             val uploadTask = finalStorageRef.putFile(fileUri)
 
@@ -358,7 +353,7 @@ class CreateMultiChoice(
                                 classCode = classInfo.classCode,
                                 teacherInChargeName = classInfo.teacherInChargeName,
                                 teacherInChargeUID = classInfo.teacherInChargeUID,
-                                datetime = dateTime.toString(),
+                                datetime = dateTime,
                                 instructions = instructions,
                                 question = question,
                                 solution = solution,
@@ -434,7 +429,8 @@ class CreateMultiChoice(
         println("ARRAY OF QUESTIONS SIZE ************************ ${arrayOfQuestions.size}")
         requireActivity().supportFragmentManager.beginTransaction()
             .addToBackStack(arrayOfQuestions.size.toString() + list.datetime)
-            .replace(R.id.multi_choice_root, CreateMultiChoice(classInfo, arrayOfQuestions)).commit()
+            .replace(R.id.multi_choice_root, CreateMultiChoice(classInfo, arrayOfQuestions))
+            .commit()
     }
 
     private fun previousData() {

@@ -7,15 +7,16 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -23,34 +24,50 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.Gson
 import com.iodaniel.mobileclass.R
-import com.iodaniel.mobileclass.databinding.TeacherPageBinding
+import com.iodaniel.mobileclass.databinding.ActivityMyClassBinding
+import com.iodaniel.mobileclass.shared_classes.FragmentAccountSettings
 import com.iodaniel.mobileclass.teacher_package.HelperListener.ClassListener
 import com.iodaniel.mobileclass.teacher_package.singleclass.AClass
+import kotlinx.coroutines.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-class TeacherPage : AppCompatActivity(), View.OnClickListener, ClassListener {
+class ActivityMyClasses : AppCompatActivity(), View.OnClickListener, ClassListener, OnNavigationItemSelectedListener {
 
     private val binding by lazy {
-        TeacherPageBinding.inflate(layoutInflater)
+        ActivityMyClassBinding.inflate(layoutInflater)
     }
     private lateinit var rvAdapter: MyClassesAdapter
     private lateinit var classListener: ClassListener
     private val auth = FirebaseAuth.getInstance().currentUser!!.uid
     private var listOfCourses: ArrayList<ClassInfo> = arrayListOf()
+    private var myCoursesKeyList: ArrayList<String> = arrayListOf()
     private var reference = FirebaseDatabase.getInstance().reference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        setSupportActionBar(binding.toolbarMyClassses)
         title = "Classes"
-        binding.addClassNote.setOnClickListener(this)
-        classListener = this
-        initialiseDatabase()
-        readDatabase()
+        initialise()
+        runBlocking {
+            val scope = CoroutineScope(Dispatchers.Main)
+            scope.launch {
+                readDatabase()
+                //THis is to emulate checking internet connectivity. After initial submission it will be replaced.
+                delay(2000)
+                runOnUiThread {
+                    classListener.nonEmptyClass()
+                }
+            }
+        }
     }
 
-    private fun initialiseDatabase() {
+    private fun initialise() {
+        binding.fabMyClassAddClasses.setOnClickListener(this)
+        binding.drawerIconMyClass.setOnClickListener(this)
+        classListener = this
+        binding.navViewTeacherPage.setNavigationItemSelectedListener(this)
         reference = reference
             .child("teacher")
             .child(auth)
@@ -62,7 +79,6 @@ class TeacherPage : AppCompatActivity(), View.OnClickListener, ClassListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 try {
                     val courses = (snapshot.value as HashMap<*, *>)
-                    val gson = Gson().toJson((courses.values.toList()))
                     val className = courses["className"].toString()
                     val classCode = courses["classCode"].toString()
                     val datetime = courses["datetime"].toString()
@@ -80,6 +96,7 @@ class TeacherPage : AppCompatActivity(), View.OnClickListener, ClassListener {
                         teacherInChargeName = teacherInChargeName,
                     )
                     listOfCourses.add(classInfo)
+                    myCoursesKeyList.add(snapshot.key!!)
                     initRv()
                     classListener.nonEmptyClass()
                 } catch (e: Exception) {
@@ -87,6 +104,7 @@ class TeacherPage : AppCompatActivity(), View.OnClickListener, ClassListener {
                 }
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 try {
                     val courses = (snapshot.value as HashMap<*, *>)
@@ -108,7 +126,8 @@ class TeacherPage : AppCompatActivity(), View.OnClickListener, ClassListener {
                         teacherInChargeName = teacherInChargeName,
                     )
                     listOfCourses.add(classInfo)
-                    initRv()
+                    myCoursesKeyList.add(snapshot.key!!)
+                    rvAdapter.notifyDataSetChanged()
                     classListener.nonEmptyClass()
                 } catch (e: Exception) {
                     println("ERROR  *************************** ${e.printStackTrace()}")
@@ -117,9 +136,10 @@ class TeacherPage : AppCompatActivity(), View.OnClickListener, ClassListener {
 
             @SuppressLint("NotifyDataSetChanged")
             override fun onChildRemoved(snapshot: DataSnapshot) {
-                val materialRemoved = snapshot.getValue(ClassInfo::class.java)
-                listOfCourses.remove(materialRemoved)
-                initRv()
+                val index = myCoursesKeyList.indexOf(snapshot.key!!)
+                myCoursesKeyList.removeAt(index)
+                listOfCourses.removeAt(index)
+                rvAdapter.notifyItemRemoved(index)
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
@@ -138,31 +158,80 @@ class TeacherPage : AppCompatActivity(), View.OnClickListener, ClassListener {
         binding.rvListOfCourses.layoutManager =
             LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
         rvAdapter.dataset = listOfCourses
-        if (listOfCourses.size == 0) {
-            classListener.emptyClass()
-        }
+        //if (listOfCourses.size == 0) classListener.emptyClass()
+
         rvAdapter.context = applicationContext
         rvAdapter.activity = this
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_sample -> {
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_my_classes, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_my_classes -> {
+                Snackbar.make(binding.root, "My Classes", Snackbar.LENGTH_LONG).show()
+                return true
+            }
+            R.id.menu_account_settings -> {
+                runBlocking {
+                    val scope = CoroutineScope(Dispatchers.Main)
+                    scope.launch {
+                        binding.drawerMyClassesRoot.closeDrawer(GravityCompat.START)
+                        delay(700)
+                        runOnUiThread {
+                            supportFragmentManager.beginTransaction()
+                                .addToBackStack("accountSettings")
+                                .replace(R.id.drawer_my_classes_root, FragmentAccountSettings(true)).commit()
+                        }
+                    }
+                }
+                return true
+            }
+            else -> {
+                return false
+            }
+        }
+    }
+
     override fun onBackPressed() {
-        super.onBackPressed()
-        finish()
+        if(supportFragmentManager.backStackEntryCount<1) {
+            super.onBackPressed()
+            finish()
+        } else{
+            supportFragmentManager.popBackStack()
+        }
     }
 
     override fun emptyClass() {
+        binding.myClassProgressbar.visibility = View.GONE
         binding.emptyContainer.visibility = View.VISIBLE
         binding.rvListOfCourses.visibility = View.INVISIBLE
     }
 
     override fun nonEmptyClass() {
+        binding.myClassProgressbar.visibility = View.GONE
         binding.emptyContainer.visibility = View.INVISIBLE
         binding.rvListOfCourses.visibility = View.VISIBLE
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.add_class_note -> {
+            R.id.drawer_icon_my_class -> {
+                binding.drawerMyClassesRoot.openDrawer(GravityCompat.START)
+            }
+            R.id.fab_my_class_add_classes -> {
                 val intent = Intent(applicationContext, ClassUpload::class.java)
                 startActivity(intent)
                 overridePendingTransition(0, 0)
@@ -209,8 +278,6 @@ class MyClassesAdapter : RecyclerView.Adapter<MyClassesAdapter.MyCoursesAdapterV
         }
         holder.itemView.setOnClickListener {
             val intent = Intent(context, AClass::class.java)
-            println("AClass ************************** ${datum.className}")
-            println("AClass dataset ************************** ${dataset.size}")
             val json = Json.encodeToString(datum)
             intent.putExtra("class_data", json)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
