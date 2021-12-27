@@ -16,7 +16,11 @@ import com.bumptech.glide.Glide
 import com.github.barteksc.pdfviewer.PDFView
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.ActivityViewMaterialBinding
+import com.iodaniel.mobileclass.shared_classes.HelperClass
 import com.iodaniel.mobileclass.teacher_package.classes.Material
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
@@ -48,6 +52,8 @@ class ViewMaterial : AppCompatActivity() {
         binding.rvViewMaterial.layoutManager =
             GridLayoutManager(applicationContext, 2, GridLayoutManager.VERTICAL, false)
         adapter.dataset = datum.mediaUris
+
+
     }
 }
 
@@ -78,6 +84,15 @@ class ViewMaterialAdapter : RecyclerView.Adapter<ViewMaterialAdapter.ViewHolder>
 
         val datum = dataset[position].split("---")[0]
         val extension = dataset[position].split("---")[1].split(".").last()
+
+        val scope = CoroutineScope(Dispatchers.IO)
+        scope.launch{
+            try {
+                HelperClass().requestDownload(datum, datum, extension)
+            } catch (e: Exception) {
+                println("Exception occurred ***************************** ${e.printStackTrace()}")
+            }
+        }
 
         when (extension) {
             "mp4" -> {

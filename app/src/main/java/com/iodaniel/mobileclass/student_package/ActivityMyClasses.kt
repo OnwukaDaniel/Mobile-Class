@@ -24,6 +24,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.iodaniel.mobileclass.R
+import com.iodaniel.mobileclass.accessing_mobile_app.SignInOrSignUp
 import com.iodaniel.mobileclass.databinding.ActivityMyClassBinding
 import com.iodaniel.mobileclass.shared_classes.FragmentAccountSettings
 import com.iodaniel.mobileclass.shared_classes.InternetConnection
@@ -215,10 +216,16 @@ class ActivityMyClasses : AppCompatActivity(), OnClickListener, LoadingListener,
                 }
                 return true
             }
-            else -> {
-                return false
+            R.id.menu_log_out -> {
+                FirebaseAuth.getInstance().signOut()
+                val intent = Intent(applicationContext, SignInOrSignUp::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+                overridePendingTransition(0, 0)
+                return true
             }
         }
+        return false
     }
 
     override fun drawerOpened() {

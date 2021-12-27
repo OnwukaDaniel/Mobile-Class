@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.Gson
 import com.iodaniel.mobileclass.R
+import com.iodaniel.mobileclass.accessing_mobile_app.SignInOrSignUp
 import com.iodaniel.mobileclass.databinding.ActivityMyClassBinding
 import com.iodaniel.mobileclass.shared_classes.FragmentAccountSettings
 import com.iodaniel.mobileclass.teacher_package.HelperListener.ClassListener
@@ -182,6 +183,14 @@ class ActivityMyClasses : AppCompatActivity(), View.OnClickListener, ClassListen
         when (item.itemId) {
             R.id.menu_my_classes -> {
                 Snackbar.make(binding.root, "My Classes", Snackbar.LENGTH_LONG).show()
+                return true
+            }
+            R.id.menu_log_out -> {
+                FirebaseAuth.getInstance().signOut()
+                val intent = Intent(applicationContext, SignInOrSignUp::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+                overridePendingTransition(0, 0)
                 return true
             }
             R.id.menu_account_settings -> {
