@@ -87,13 +87,13 @@ class AClass : AppCompatActivity(), OnClickListener, HelperListener.LoadingListe
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.leave_class -> {
-                loadingListener.loadingProgressBar()
                 val view = layoutInflater.inflate(R.layout.delete, null, false)
                 val alertDialog =
-                    AlertDialog.Builder(this, R.style.ThemeOverlay_AppCompat_Dialog_Alert)
+                    AlertDialog.Builder(this, R.style.WarningDialogs)
                 alertDialog.setView(view)
                     .setTitle("Are you sure?")
                 alertDialog.setPositiveButton("Delete") { dialog, which ->
+                    loadingListener.loadingProgressBar()
                     myClassesRef.removeValue()
                     loadingListener.notLoadingProgressBar()
                     onBackPressed()
@@ -136,4 +136,10 @@ class AClass : AppCompatActivity(), OnClickListener, HelperListener.LoadingListe
     override fun notLoadingProgressBar() {
         dialog.dismiss()
     }
+}
+interface AssignmentViewTypeListener{
+    fun multiChoiceView()
+    fun questionsOnlyView()
+    fun fileQuestionsView()
+    fun resultMultiChoiceView()
 }

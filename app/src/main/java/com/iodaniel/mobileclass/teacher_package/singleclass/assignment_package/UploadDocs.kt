@@ -17,6 +17,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
+import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.FragmentUploadDocsBinding
 import com.iodaniel.mobileclass.databinding.ProgressBarDialogBinding
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
@@ -26,7 +27,7 @@ import com.iodaniel.mobileclass.teacher_package.classes.MultiChoiceQuestion
 import java.util.*
 
 class UploadDocs(val classInfo: ClassInfo) : Fragment(), ProgressBarController,
-    MediaSupport {
+    MediaSupport, View.OnClickListener {
 
     private lateinit var binding: FragmentUploadDocsBinding
     private val storageRef = FirebaseStorage.getInstance().reference
@@ -113,7 +114,8 @@ class UploadDocs(val classInfo: ClassInfo) : Fragment(), ProgressBarController,
                 } catch (e: Exception) {
                     println("GetExternal Uri Exception ******************* ${e.printStackTrace()}")
                 }
-            })
+            }
+        )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
@@ -121,33 +123,51 @@ class UploadDocs(val classInfo: ClassInfo) : Fragment(), ProgressBarController,
         binding = FragmentUploadDocsBinding.inflate(inflater, container, false)
         dialog = Dialog(requireContext())
         progressBarController = this
+        binding.uploadQuestionCancel.setOnClickListener(this)
+        binding.uploadQuestionUpload.setOnClickListener(this)
+        binding.uploadAttachment.setOnClickListener(this)
+        binding.uploadQuestionBackArrow.setOnClickListener(this)
         mediaSupport = this
-
-        binding.uploadQuestionUpload.setOnClickListener {
-            uploadQueDoc()
-        }
-
-        binding.uploadAttachment.setOnClickListener {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-            intent.addCategory(Intent.CATEGORY_OPENABLE)
-            intent.type = "*/*"
-            pickFileLauncher.launch(intent)
-        }
-
         return binding.root
+    }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.upload_question_cancel -> {
+                listOfMedia = arrayListOf()
+                binding.uploadAttachmentFileView.visibility = View.GONE
+                Snackbar.make(binding.root, "Cleared all attachment", Snackbar.LENGTH_LONG).show()
+            }
+            R.id.upload_question_upload -> {
+                uploadQueDoc()
+            }
+            R.id.upload_question_back_arrow -> {
+                requireActivity().onBackPressed()
+            }
+            R.id.upload_attachment -> {
+                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+                intent.addCategory(Intent.CATEGORY_OPENABLE)
+                intent.type = "*/*"
+                pickFileLauncher.launch(intent)
+            }
+        }
     }
 
     private fun uploadQueDoc() {
         val question = binding.uploadQuestionQuestion.text.toString().trim()
         val extraNote = binding.uploadQuestionExtraNote.text.toString().trim()
         if (question == "") return
-        if (fileName == "") return
+        if (fileName == "") {
+            val txt = "Select a file\nOr use Direct question option"
+            Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG).show()
+            return
+        }
         progressBarController.showProgressBar()
 
         val dateTime = Calendar.getInstance().time.time.toString()
         val arrayDownloadUris = arrayListOf<String>()
 
-        for (file in listOfMedia) { //fileUris
+        for (file in listOfMedia) {
             val fileUri = Uri.parse(file)
             val contentResolver = requireContext().contentResolver
             val mime = MimeTypeMap.getSingleton()
@@ -179,11 +199,18 @@ class UploadDocs(val classInfo: ClassInfo) : Fragment(), ProgressBarController,
                             )
                             multiChoiceRef.setValue(docQuestion).addOnCompleteListener {
                                 requireActivity().onBackPressed()
+                                Snackbar.make(
+                                    binding.root,
+                                    "Uploaded successfully",
+                                    Snackbar.LENGTH_LONG
+                                ).show()
                                 progressBarController.hideProgressBar()
                             }.addOnFailureListener {
-                                Snackbar.make(binding.root,
+                                Snackbar.make(
+                                    binding.root,
                                     "Error occurred!!!",
-                                    Snackbar.LENGTH_LONG)
+                                    Snackbar.LENGTH_LONG
+                                )
                                     .show()
                             }
                         }
@@ -204,8 +231,10 @@ class UploadDocs(val classInfo: ClassInfo) : Fragment(), ProgressBarController,
         dialog.setContentView(progressBarBinding.root)
         dialog.setCancelable(false)
         dialog.setCanceledOnTouchOutside(false)
-        dialog.window?.setLayout(WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setLayout(
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
         dialog.show()
     }
 
@@ -215,26 +244,26 @@ class UploadDocs(val classInfo: ClassInfo) : Fragment(), ProgressBarController,
 
     override fun videoPlayer(uri: Uri) = try {
         binding.uploadAttachmentFileView.visibility = View.VISIBLE
-        binding.uploadAttachmentFileView.text = fileName
+        binding.uploadAttachmentFileAttachmentText.text = fileName
     } catch (e: Exception) {
         print("ACTIVITY RESULT ERROR ******************* ${e.printStackTrace()}")
     }
 
     override fun pdfReader(uri: Uri) = try {
         binding.uploadAttachmentFileView.visibility = View.VISIBLE
-        binding.uploadAttachmentFileView.text = fileName
+        binding.uploadAttachmentFileAttachmentText.text = fileName
     } catch (e: Exception) {
         print("ACTIVITY RESULT ERROR ******************* ${e.printStackTrace()}")
     }
 
     override fun musicReader(uri: Uri) {
         binding.uploadAttachmentFileView.visibility = View.VISIBLE
-        binding.uploadAttachmentFileView.text = fileName
+        binding.uploadAttachmentFileAttachmentText.text = fileName
     }
 
     override fun imageReader(uri: Uri) = try {
         binding.uploadAttachmentFileView.visibility = View.VISIBLE
-        binding.uploadAttachmentFileView.text = fileName
+        binding.uploadAttachmentFileAttachmentText.text = fileName
     } catch (e: Exception) {
         print("ACTIVITY RESULT ERROR ******************* ${e.printStackTrace()}")
     }
@@ -242,5 +271,4 @@ class UploadDocs(val classInfo: ClassInfo) : Fragment(), ProgressBarController,
     override fun makeMediaPlayersInvisible() {
 
     }
-
 }

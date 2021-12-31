@@ -24,7 +24,7 @@ class StudentInitPage : AppCompatActivity(), View.OnClickListener {
         when (v?.id) {
             R.id.student_join_class -> {
                 supportFragmentManager.beginTransaction().addToBackStack("join_class")
-                    .replace(R.id.student_page_root, JoinClass()).commit()
+                    .replace(R.id.student_page_root, FragmentJoinClass()).commit()
             }
             R.id.student_my_courses -> {
                 val intent = Intent(this, ActivityMyClasses::class.java)

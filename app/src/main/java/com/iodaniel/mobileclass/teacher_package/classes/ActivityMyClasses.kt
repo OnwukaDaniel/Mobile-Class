@@ -29,6 +29,7 @@ import com.iodaniel.mobileclass.databinding.ActivityMyClassBinding
 import com.iodaniel.mobileclass.shared_classes.FragmentAccountSettings
 import com.iodaniel.mobileclass.teacher_package.HelperListener.ClassListener
 import com.iodaniel.mobileclass.teacher_package.singleclass.AClass
+import com.iodaniel.mobileclass.teacher_package.styling_package.FragmentChangeTheme
 import kotlinx.coroutines.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -40,10 +41,12 @@ class ActivityMyClasses : AppCompatActivity(), View.OnClickListener, ClassListen
     }
     private lateinit var rvAdapter: MyClassesAdapter
     private lateinit var classListener: ClassListener
-    private val auth = FirebaseAuth.getInstance().currentUser!!.uid
     private var listOfCourses: ArrayList<ClassInfo> = arrayListOf()
     private var myCoursesKeyList: ArrayList<String> = arrayListOf()
     private var reference = FirebaseDatabase.getInstance().reference
+        .child("teacher")
+        .child(FirebaseAuth.getInstance().currentUser!!.uid)
+        .child("classes")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,10 +72,6 @@ class ActivityMyClasses : AppCompatActivity(), View.OnClickListener, ClassListen
         binding.drawerIconMyClass.setOnClickListener(this)
         classListener = this
         binding.navViewTeacherPage.setNavigationItemSelectedListener(this)
-        reference = reference
-            .child("teacher")
-            .child(auth)
-            .child("classes")
     }
 
     private fun readDatabase() {
@@ -159,15 +158,17 @@ class ActivityMyClasses : AppCompatActivity(), View.OnClickListener, ClassListen
         binding.rvListOfCourses.layoutManager =
             LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
         rvAdapter.dataset = listOfCourses
-        //if (listOfCourses.size == 0) classListener.emptyClass()
-
+        rvAdapter.myCoursesKeyList = myCoursesKeyList
         rvAdapter.context = applicationContext
         rvAdapter.activity = this
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_sample -> {
+            R.id.change_theme -> {
+                supportFragmentManager.beginTransaction().addToBackStack("styles")
+                    .replace(R.id.drawer_my_classes_root, FragmentChangeTheme())
+                    .commit()
                 return true
             }
         }
@@ -252,6 +253,7 @@ class ActivityMyClasses : AppCompatActivity(), View.OnClickListener, ClassListen
 class MyClassesAdapter : RecyclerView.Adapter<MyClassesAdapter.MyCoursesAdapterViewHolder>() {
 
     var dataset: ArrayList<ClassInfo> = arrayListOf()
+    var myCoursesKeyList: ArrayList<String> = arrayListOf()
     lateinit var context: Context
     lateinit var activity: Activity
 
@@ -273,6 +275,7 @@ class MyClassesAdapter : RecyclerView.Adapter<MyClassesAdapter.MyCoursesAdapterV
 
     override fun onBindViewHolder(holder: MyCoursesAdapterViewHolder, position: Int) {
         val datum = dataset[position]
+        val classKey = myCoursesKeyList[position]
         val imageUri = Uri.parse(datum.classImage)
         val red = datum.red
         val green = datum.green
@@ -289,6 +292,7 @@ class MyClassesAdapter : RecyclerView.Adapter<MyClassesAdapter.MyCoursesAdapterV
             val intent = Intent(context, AClass::class.java)
             val json = Json.encodeToString(datum)
             intent.putExtra("class_data", json)
+            intent.putExtra("class_key", classKey)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             context.startActivity(intent)
             activity.overridePendingTransition(0, 0)

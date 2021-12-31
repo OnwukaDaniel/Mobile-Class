@@ -17,19 +17,22 @@ import com.google.firebase.database.FirebaseDatabase
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.StudentFragmentBinding
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
+import com.iodaniel.mobileclass.teacher_package.classes.StudentRegistrationClass
 
 class StudentFragment(val classInfo: ClassInfo) : Fragment(), TotalStudentListener {
     private lateinit var binding: StudentFragmentBinding
     private var adapter = StudentsAdapter()
-    private var dataset = arrayListOf<String>()
+    private var dataset = arrayListOf<StudentRegistrationClass>()
     private var keyList = arrayListOf<String>()
     private lateinit var totalStudentListener: TotalStudentListener
-    private var registeredRef = FirebaseDatabase.getInstance().reference
-    private val auth = FirebaseAuth.getInstance().currentUser!!.uid
+    private var registeredRef = FirebaseDatabase.getInstance()
+        .reference
+        .child("teacher")
+        .child(FirebaseAuth.getInstance().currentUser!!.uid)
+        .child("registered_students")
+        .child(classInfo.classCode)
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View {
         binding = StudentFragmentBinding.inflate(layoutInflater, container, false)
         totalStudentListener = this
         readDatabase()
@@ -37,15 +40,10 @@ class StudentFragment(val classInfo: ClassInfo) : Fragment(), TotalStudentListen
     }
 
     private fun readDatabase() {
-        registeredRef = registeredRef
-            .child("teacher")
-            .child(auth)
-            .child("registered_students")
-            .child(classInfo.classCode)
-
         registeredRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val snap = snapshot.value as String
+                println("STUDENTS onChildAdded ******************************** ${snapshot.value}")
+                val snap = snapshot.getValue(StudentRegistrationClass::class.java)!!
                 dataset.add(snap)
                 keyList.add(snapshot.key!!)
                 binding.studentCount.text = dataset.size.toString()
@@ -54,7 +52,7 @@ class StudentFragment(val classInfo: ClassInfo) : Fragment(), TotalStudentListen
 
             @SuppressLint("NotifyDataSetChanged")
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                val snap = snapshot.value as String
+                val snap = snapshot.getValue(StudentRegistrationClass::class.java)!!
                 dataset.add(snap)
                 keyList.add(snapshot.key!!)
                 binding.studentCount.text = dataset.size.toString()
@@ -88,31 +86,31 @@ class StudentFragment(val classInfo: ClassInfo) : Fragment(), TotalStudentListen
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
     }
 
-    override fun updateTotalStudents(dataset: ArrayList<String>) {
+    override fun updateTotalStudents(dataset: ArrayList<StudentRegistrationClass>) {
         binding.studentCount.text = dataset.size.toString()
     }
 }
 
 interface TotalStudentListener {
-    fun updateTotalStudents(dataset: ArrayList<String>)
+    fun updateTotalStudents(dataset: ArrayList<StudentRegistrationClass>)
 }
 
 class StudentsAdapter : RecyclerView.Adapter<StudentsAdapter.ViewHolder>() {
 
-    var dataset = arrayListOf<String>()
+    var dataset = arrayListOf<StudentRegistrationClass>()
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val chip: Chip = itemView.findViewById(R.id.student_name_chip)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentsAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.students_row, parent, false)
         return ViewHolder((view))
     }
 
-    override fun onBindViewHolder(holder: StudentsAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val datum = dataset[position]
-        holder.chip.text = datum
+        holder.chip.text = datum.email
     }
 
     override fun getItemCount(): Int = dataset.size

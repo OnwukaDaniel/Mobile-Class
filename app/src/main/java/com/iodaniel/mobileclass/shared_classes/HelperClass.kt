@@ -1,59 +1,36 @@
 package com.iodaniel.mobileclass.shared_classes
 
+import android.app.DownloadManager
+import android.content.Context
+import android.net.Uri
 import android.os.Environment
-import com.iodaniel.mobileclass.shared_classes.HelperClass.FileDownloader.downloadFile
-import java.io.*
-import java.net.HttpURLConnection
-import java.net.MalformedURLException
-import java.net.URL
+import java.io.File
+import java.io.FileNotFoundException
 
+class HelperClass(val url: String, val classCode: String, val extension: String, val context: Context) {
+    val uniqueName = url.split(extension)[0].split("/").last()
+        .replace(".", "_")
+        .replace("%", "_")
+        .replace(":", "_")
 
-class HelperClass {
-    object FileDownloader {
-        private const val MEGABYTE = 1024 * 1024
-        fun downloadFile(fileUrl: String?, directory: File?) {
-            try {
-                val url = URL(fileUrl)
-                val urlConnection: HttpURLConnection = url.openConnection() as HttpURLConnection
-
-                urlConnection.connect()
-                val inputStream: InputStream = urlConnection.inputStream
-                val fileOutputStream = FileOutputStream(directory)
-                val totalSize: Int = urlConnection.contentLength
-                println("TOTAL FILE LENGTH ************************ ${totalSize}")
-                val buffer = ByteArray(MEGABYTE)
-                var bufferLength: Int
-                while (inputStream.read(buffer).also { bufferLength = it } > 0) {
-                    fileOutputStream.write(buffer, 0, bufferLength)
-                }
-                fileOutputStream.close()
-                println("IT IS DONE ************************ ${totalSize}")
-            } catch (e: FileNotFoundException) {
-                e.printStackTrace()
-            } catch (e: MalformedURLException) {
-                e.printStackTrace()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
+    fun requestDownloadPath(): String {
+            val customUri = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + "/$classCode/$uniqueName.$extension")
+        println("DIR TO DOWNLOADS **************************** $customUri")
+        return customUri.toString()
     }
-    fun requestDownload(url: String, saveName: String, extension: String){
-        val fileUrl: String = url // -> http://maven.apache.org/maven-1.x/maven.pdf
 
-        val fileName: String = saveName + extension // -> maven.pdf
-
-        val extStorageDirectory = Environment.getExternalStorageDirectory().toString()
-        val folder = File(extStorageDirectory, "testthreepdf")
-        folder.mkdir()
-
-        val pdfFile = File(folder, fileName)
-
+    fun download(){
         try {
-            pdfFile.createNewFile()
-        } catch (e: IOException) {
+            val request = DownloadManager.Request(Uri.parse(url))
+            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE or DownloadManager.Request.NETWORK_WIFI)
+            request.setTitle("Download")
+            request.setDescription("Downloading File")
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "/$classCode/$uniqueName.$extension")
+            val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            downloadManager.enqueue(request)
+        } catch (e: FileNotFoundException) {
             e.printStackTrace()
         }
-        downloadFile(fileUrl, pdfFile)
-        return
     }
 }

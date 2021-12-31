@@ -50,6 +50,7 @@ class CourseWork(val classInfo: ClassInfo) : Fragment() {
         courseWorkAdapter.dataset = dataset
         courseWorkAdapter.context = requireContext()
         courseWorkAdapter.activity = requireActivity()
+        courseWorkAdapter.classCode = classInfo.classCode
     }
 
     private fun readFromDatabase() {
@@ -91,6 +92,7 @@ class CourseWorkAdapter : RecyclerView.Adapter<CourseWorkAdapter.ViewHolder>() {
     lateinit var dataset: ArrayList<Material>
     lateinit var context: Context
     lateinit var activity: Activity
+    lateinit var classCode: String
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val heading: TextView = itemView.findViewById(R.id.student_lesson_heading)
@@ -108,8 +110,7 @@ class CourseWorkAdapter : RecyclerView.Adapter<CourseWorkAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val datum = dataset[position]
         holder.heading.text = datum.heading
-        holder.numberOfMaterials.text =
-            if (datum.mediaUris.size == 0) "None" else datum.mediaUris.size.toString()
+        holder.numberOfMaterials.text = if (datum.mediaUris.size == 0) "None" else datum.mediaUris.size.toString()
         val date = convertLongToTime(datum.dateCreated.toLong()).split(" ")[0]
         holder.dateCreated.text = date
 
@@ -117,7 +118,8 @@ class CourseWorkAdapter : RecyclerView.Adapter<CourseWorkAdapter.ViewHolder>() {
             val intent = Intent(context, ViewMaterial::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             val json = Json.encodeToString(datum)
-            intent.putExtra("data", json)
+            intent.putExtra("materialData", json)
+            intent.putExtra("classCode", classCode)
             context.startActivity(intent)
             activity.overridePendingTransition(0, 0)
         }

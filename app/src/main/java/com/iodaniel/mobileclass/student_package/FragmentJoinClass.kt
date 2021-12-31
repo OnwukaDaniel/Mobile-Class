@@ -13,8 +13,11 @@ import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.FragmentJoinClassBinding
 import com.iodaniel.mobileclass.student_package.HelperListener.LoadingListener
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
+import com.iodaniel.mobileclass.teacher_package.classes.StudentRegistrationClass
+import java.text.DateFormat
+import java.util.*
 
-class JoinClass : Fragment(), View.OnClickListener, LoadingListener {
+class FragmentJoinClass : Fragment(), View.OnClickListener, LoadingListener {
 
     private lateinit var binding: FragmentJoinClassBinding
     private lateinit var loadingListener: LoadingListener
@@ -26,7 +29,7 @@ class JoinClass : Fragment(), View.OnClickListener, LoadingListener {
     private var allCodesData: ArrayList<HashMap<*, *>> = arrayListOf()
     private var myListOfClassCodes: ArrayList<String> = arrayListOf()
 
-    private var registerRef = FirebaseDatabase.getInstance().reference
+    private var registerationRef = FirebaseDatabase.getInstance().reference
     private var teacherRef = FirebaseDatabase.getInstance().reference
 
     private var newClassCodeRef = FirebaseDatabase.getInstance().reference.child("class_codes")
@@ -43,6 +46,7 @@ class JoinClass : Fragment(), View.OnClickListener, LoadingListener {
         requireActivity().setTheme(R.style.Theme_WhiteTheme)
         binding.joinClass.setOnClickListener(this)
         readDatabase()
+        readNewClass()
         return binding.root
     }
 
@@ -51,7 +55,6 @@ class JoinClass : Fragment(), View.OnClickListener, LoadingListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val snap = snapshot.getValue(ClassInfo::class.java)
                 myListOfClassCodes.add(snap!!.classCode)
-                readNewClass()
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
@@ -103,6 +106,12 @@ class JoinClass : Fragment(), View.OnClickListener, LoadingListener {
     private fun joinClass() {
         loadingListener.loadingProgressBar()
         val inputClassCode = binding.classCodeEt.text.toString().trim()
+        val datetime = Calendar.getInstance().time.time
+        val dateString = DateFormat.getInstance().format(datetime)
+        val registrationData = StudentRegistrationClass()
+        registrationData.email = FirebaseAuth.getInstance().currentUser?.email!!
+        registrationData.datetimeJoined = dateString
+
         if (inputClassCode == "") {
             loadingListener.notLoadingProgressBar()
             Snackbar.make(binding.root, "Empty input", Snackbar.LENGTH_LONG).show()
@@ -131,23 +140,26 @@ class JoinClass : Fragment(), View.OnClickListener, LoadingListener {
                         .child("classes")
                         .child(classInfoData["classCode"] as String)
 
-                    registerRef = registerRef
+                    registerationRef = registerationRef
                         .child("teacher")
                         .child(classInfoData["auth"] as String)
                         .child("registered_students")
                         .child(classInfoData["classCode"] as String)
-                        .child(auth)
+                        .child(FirebaseAuth.getInstance().currentUser!!.uid)
+                        //.child(auth)
 
                     teacherRef.addValueEventListener(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
                             val course = (snapshot.value)
                             myClassCodeRef.push().setValue(course).addOnCompleteListener {
-                                loadingListener.notLoadingProgressBar()
-                                Snackbar.make(binding.root, "Joined !", Snackbar.LENGTH_LONG).show()
-                                val intent = Intent(requireContext(), ActivityMyClasses::class.java)
-                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                                startActivity(intent)
-                                requireActivity().overridePendingTransition(0, 0)
+                                registerationRef.setValue(registrationData).addOnCompleteListener {
+                                    loadingListener.notLoadingProgressBar()
+                                    Snackbar.make(binding.root, "Joined !", Snackbar.LENGTH_LONG).show()
+                                    val intent = Intent(requireContext(), ActivityMyClasses::class.java)
+                                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                    startActivity(intent)
+                                    requireActivity().overridePendingTransition(0, 0)
+                                }
                             }
                         }
 

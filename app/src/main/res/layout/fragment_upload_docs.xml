@@ -8,21 +8,54 @@
     android:orientation="vertical"
     tools:context=".teacher_package.singleclass.assignment_package.UploadDocs">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@drawable/rounded_toolbar_background"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/upload_question_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/amaranth"
+                android:gravity="center"
+                android:text="Question"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <ImageView
+            android:id="@+id/upload_question_back_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="15dp"
+            android:src="@drawable/ic_back_arrow"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/black" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="15dp"
         android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:fontFamily="@font/chivo"
-            android:gravity="center"
-            android:text="Question"
-            android:textColor="@color/black"
-            android:textSize="30sp" />
 
         <EditText
             android:id="@+id/upload_question_question"
@@ -52,15 +85,33 @@
             android:textColor="@color/white"
             android:text="Select Attachment" />
 
-        <com.google.android.material.chip.Chip
+        <LinearLayout
             android:id="@+id/upload_attachment_file_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
-            android:backgroundTint="@color/black"
-            android:visibility="gone"
-            android:textColor="@color/white"
-            android:text="Attachment" />
+            android:padding="5dp"
+            android:orientation="horizontal"
+            android:background="@drawable/rounded_background_radio_group" >
+
+            <TextView
+                android:id="@+id/upload_attachment_file_attachment_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Attachment"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="5dp"
+                android:textColor="@color/teal_700"/>
+
+            <ImageView
+                android:id="@+id/upload_question_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                app:tint="@color/purple_100"
+                android:src="@drawable/ic_cancel"/>
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/upload_question_upload"

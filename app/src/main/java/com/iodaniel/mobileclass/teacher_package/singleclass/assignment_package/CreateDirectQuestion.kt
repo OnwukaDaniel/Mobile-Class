@@ -48,6 +48,8 @@ class CreateDirectQuestion(val classInfo: ClassInfo) : Fragment(),
             multiChoiceRef.setValue(hash).addOnCompleteListener {
                 requireActivity().onBackPressed()
                 progressBarController.hideProgressBar()
+                Snackbar.make(binding.root, "Uploaded successfully", Snackbar.LENGTH_LONG)
+                    .show()
             }.addOnFailureListener {
                 progressBarController.hideProgressBar()
                 Snackbar.make(binding.root, "Error occurred!!!", Snackbar.LENGTH_LONG)
@@ -65,7 +67,6 @@ class CreateDirectQuestion(val classInfo: ClassInfo) : Fragment(),
         dialog.window?.setLayout(WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT)
         dialog.show()
-
     }
 
     override fun hideProgressBar() {

@@ -49,7 +49,7 @@ class LessonsFragment(private val classInfo: ClassInfo) : Fragment() {
         adapter = LessonRvAdapter()
         adapter.dataSet = listOfLessons
         binding.rvLessons.adapter = adapter
-        adapter.activity = requireActivity()
+        try{ adapter.activity = requireActivity() }catch (e:Exception){}
         binding.rvLessons.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
     }
@@ -159,7 +159,7 @@ class LessonRvAdapter : RecyclerView.Adapter<LessonRvAdapter.ViewHolder>() {
             val json = Gson().toJson(datum)
             intent.putExtra("material", json)
             context.startActivity(intent)
-            activity.overridePendingTransition(0, 0)
+            try{ activity.overridePendingTransition(0, 0) }catch (e:Exception){}
         }
     }
 

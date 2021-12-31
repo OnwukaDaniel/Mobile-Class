@@ -13,9 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.ActivityViewAssignmentBinding
 import com.iodaniel.mobileclass.teacher_package.classes.MultiChoiceQuestion
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class ViewAssignment(
     var data: MultiChoiceQuestion? = null,
@@ -32,31 +29,22 @@ class ViewAssignment(
 
         if (multipleChoiceQuestions.isEmpty()) {
             binding.viewQuestionQuestion.setText(data!!.question)
-            binding.viewQuestionExtraNote.setText(data!!.extraNote)
+            val extraNote = data!!.extraNote
+            if (extraNote =="") binding.viewQuestionExtraNote.visibility = View.GONE else
+                binding.viewQuestionExtraNote.setText(extraNote)
             if (data!!.instructions != "") {
+                binding.viewQuestionMultipleChoiceLayout.visibility = View.GONE
                 binding.viewQuestionAssignmentInstruction.visibility = View.VISIBLE
                 binding.viewQuestionAssignmentInstruction.setText(data!!.instructions)
             }
         } else if (multipleChoiceQuestions.isNotEmpty()) {
-            println("DATA ********************************** $multipleChoiceQuestions")
-            binding.multiChoiceSingleQuestionSection.visibility = View.GONE
+            binding.viewAssignmentSingleQuestionSection.visibility = View.GONE
             adapter = MultiChoiceQuestionAdapter()
             binding.rvMultipleChoice.adapter = adapter
             binding.rvMultipleChoice.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             adapter.dataset = multipleChoiceQuestions
         }
-
-        /*binding.multiChoiceRowPrevButton.setOnClickListener {
-            runBlocking{ launch(Dispatchers.Main){ binding.rvMultipleChoice.scrollToPosition(1) } }
-        }
-
-        binding.multiChoiceRowNextButton.setOnClickListener {
-            runBlocking{ launch(Dispatchers.Main){ binding.rvMultipleChoice.scrollToPosition(0) } }
-        }*/
-
-
-
         return binding.root
     }
 }
@@ -83,10 +71,7 @@ class MultiChoiceQuestionAdapter : RecyclerView.Adapter<MultiChoiceQuestionAdapt
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        println("DATA SIZE ********************************** ${dataset.size}")
-
         try{
-            println("DATA AT POSITION 1 ********************************** ${dataset[position]}")
             val datum = dataset[position]
             holder.question.text = datum["question"] as String
             holder.instruction.text = datum["instructions"] as String

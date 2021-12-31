@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -92,7 +93,6 @@ class Assignments(val classInfo: ClassInfo) : Fragment(), HelperListener {
             }
         })
 
-
         uploadDocsRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val snap = snapshot.getValue(MultiChoiceQuestion::class.java)
@@ -122,8 +122,6 @@ class Assignments(val classInfo: ClassInfo) : Fragment(), HelperListener {
             override fun onCancelled(error: DatabaseError) {
             }
         })
-
-
 
         directQueRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
@@ -169,12 +167,12 @@ class Assignments(val classInfo: ClassInfo) : Fragment(), HelperListener {
 
     override fun helperClickListener(datum: MultiChoiceQuestion) {
         requireActivity().supportFragmentManager.beginTransaction().addToBackStack("dataS")
-            .replace(R.id.a_class_frame_student, ViewAssignmentStudent(datum)).commit()
+            .replace(R.id.a_class_frame_student, ViewAssignmentStudentListener(datum)).commit()
     }
 
     override fun helperClickListenerMultipleChoice(datum: ArrayList<HashMap<*, *>>) {
         requireActivity().supportFragmentManager.beginTransaction().addToBackStack("data_multiple_choice_questionS")
-            .replace(R.id.a_class_frame_student, ViewAssignmentStudent(multipleChoiceQuestions = datum)).commit()
+            .replace(R.id.a_class_frame_student, ViewAssignmentStudentListener(multipleChoiceQuestions = datum)).commit()
     }
 }
 
@@ -187,7 +185,8 @@ class AssignmentsAdapter : RecyclerView.Adapter<AssignmentsAdapter.ViewHolder>()
     lateinit var helperListener: HelperListener
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val txt: TextView = itemView.findViewById(R.id.assignment_row_chip_student)
+        val txt: TextView = itemView.findViewById(R.id.assignment_row_chip_student_text)
+        val layout: LinearLayout = itemView.findViewById(R.id.assignment_row_chip_student)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -204,7 +203,7 @@ class AssignmentsAdapter : RecyclerView.Adapter<AssignmentsAdapter.ViewHolder>()
             val name = "Assignment ${position + 1}"
             holder.txt.text = name
 
-            holder.txt.setOnClickListener {
+            holder.layout.setOnClickListener {
                 helperListener.helperClickListener(datum)
             }
         } else if (position >= dataset.size) {
@@ -213,7 +212,7 @@ class AssignmentsAdapter : RecyclerView.Adapter<AssignmentsAdapter.ViewHolder>()
             holder.txt.text = name
 
             try {
-                holder.txt.setOnClickListener {
+                holder.layout.setOnClickListener {
                     helperListener.helperClickListenerMultipleChoice(datum)
                 }
             } catch (e: Exception) {

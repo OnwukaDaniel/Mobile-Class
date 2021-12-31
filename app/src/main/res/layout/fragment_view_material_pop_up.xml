@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@color/black"
+    android:weightSum="20"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/view_material_popup_file_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        android:layout_weight="7">
+
+        <ImageView
+            android:id="@+id/view_material_popup_imageview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+
+        <View
+            android:id="@+id/view_material_popup_uploadAudio"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/music_image"
+            android:visibility="gone"/>
+
+        <VideoView
+            android:id="@+id/view_material_popup_uploadVideoView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <com.github.barteksc.pdfviewer.PDFView
+            android:id="@+id/view_material_popup_pdfView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="13"
+        android:orientation="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/rv_view_material_popup"/>
+
+    </LinearLayout>
+
+</LinearLayout>

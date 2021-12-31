@@ -31,6 +31,7 @@ import com.iodaniel.mobileclass.shared_classes.InternetConnection
 import com.iodaniel.mobileclass.shared_classes.TeacherStudentListener
 import com.iodaniel.mobileclass.student_package.HelperListener.LoadingListener
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
+import com.iodaniel.mobileclass.teacher_package.styling_package.FragmentChangeTheme
 import kotlinx.coroutines.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -161,7 +162,12 @@ class ActivityMyClasses : AppCompatActivity(), OnClickListener, LoadingListener,
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_sample -> return true
+            R.id.change_theme -> {
+                supportFragmentManager.beginTransaction().addToBackStack("styles")
+                    .replace(R.id.drawer_my_classes_root, FragmentChangeTheme())
+                    .commit()
+                return true
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -184,7 +190,7 @@ class ActivityMyClasses : AppCompatActivity(), OnClickListener, LoadingListener,
         when (v?.id) {
             R.id.fab_my_class_add_classes -> {
                 supportFragmentManager.beginTransaction().addToBackStack("new_course")
-                    .replace(R.id.drawer_my_classes_root, JoinClass()).commit()
+                    .replace(R.id.drawer_my_classes_root, FragmentJoinClass()).commit()
             }
             R.id.drawer_icon_my_class -> {
                 binding.drawerMyClassesRoot.openDrawer(GravityCompat.START)

@@ -22,48 +22,44 @@ class AClass : FragmentActivity(), View.OnClickListener {
     }
     private lateinit var viewPagerAdapter: ViewPagerAdapter
     private lateinit var classInfo: ClassInfo
+    private lateinit var classKey: String
+    var dataset: ArrayList<Fragment> = arrayListOf()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setActionBar(binding.aClassToolbar)
-
         binding.aClassBack.setOnClickListener(this)
+
         if (intent.hasExtra("class_data")) {
             try {
                 val json = intent.getStringExtra("class_data")!!
+                classKey = intent.getStringExtra("class_key")!!
+                //TODO: IN DEVELOPMENT-> REMOVE CLASS FROM STUDENT AND TEACHER
                 classInfo = Json.decodeFromString(json)
+                dataset = arrayListOf(StudentFragment(classInfo), LessonsFragment(classInfo), Assignments(classInfo))
                 binding.className.text = classInfo.className
                 binding.classCode.text = classInfo.classCode
+                viewPager()
             } catch (e: Exception) {
                 println("INTENT EXCEPTION *************************** ${e.printStackTrace()}")
             }
         }
-        viewPager()
     }
 
     private fun viewPager() {
-        viewPagerAdapter = ViewPagerAdapter(this)
-        binding.aClassViewpager.adapter = viewPagerAdapter
         val data = arrayListOf("Student", "Lessons", "Assignments")
-        viewPagerAdapter.dataset = arrayListOf(
-            StudentFragment(classInfo),
-            LessonsFragment(classInfo),
-            Assignments(classInfo)
-        )
+        viewPagerAdapter = ViewPagerAdapter(this)
+        viewPagerAdapter.dataset = dataset
+        binding.aClassViewpager.adapter = viewPagerAdapter
         TabLayoutMediator(binding.aClassTabLayout, binding.aClassViewpager) { tab, position ->
             tab.text = data[position]
         }.attach()
     }
 
     inner class ViewPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
-        var dataset: ArrayList<Fragment> =
-            arrayListOf(
-                StudentFragment(classInfo),
-                LessonsFragment(classInfo),
-                Assignments(classInfo)
-            )
-
+        lateinit var dataset: ArrayList<Fragment>
         override fun getItemCount(): Int = dataset.size
         override fun createFragment(position: Int): Fragment {
             return dataset[position]
@@ -86,6 +82,7 @@ class AClass : FragmentActivity(), View.OnClickListener {
         val view = layoutInflater.inflate(R.layout.delete, null)
         val alertDialog = AlertDialog.Builder(this, R.style.WarningDialogs)
         alertDialog.setPositiveButton("Delete") { dialog, which ->
+
             dialog.dismiss()
         }.setNegativeButton("Cancel") { dialog, which ->
             dialog.dismiss()

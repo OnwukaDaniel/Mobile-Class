@@ -213,7 +213,7 @@ class FragmentCreateNewLesson(private val classInfo: ClassInfo) : Fragment(), On
         }
 
         for (file in listOfMedia) { //fileUris
-            val fileUri = Uri.parse(file.split("---").first())
+            val fileUri = Uri.parse(file)
             val contentResolver = requireContext().contentResolver
             val mime = MimeTypeMap.getSingleton()
             val extension = mime.getExtensionFromMimeType(contentResolver?.getType(fileUri))!!
@@ -228,7 +228,8 @@ class FragmentCreateNewLesson(private val classInfo: ClassInfo) : Fragment(), On
                 if (task.isSuccessful) {
                     finalStorageRef.downloadUrl.addOnSuccessListener {
                         val downloadUri = it.toString()
-                        arrayDownloadUris.add("$downloadUri---${file.split("---").last()}")
+                        arrayDownloadUris.add(downloadUri)
+                        print("arrayDownloadUri *********************************** $downloadUri")
                         if (arrayDownloadUris.size == listOfMedia.size) {
                             val material = Material(
                                 courseName = className, note = note, extraNote = extraNote,
@@ -369,7 +370,7 @@ class FragmentCreateNewLesson(private val classInfo: ClassInfo) : Fragment(), On
                 upload()
             }
             R.id.new_lesson_rename_file -> {
-                renameFile()
+                //renameFile()
             }
         }
     }
