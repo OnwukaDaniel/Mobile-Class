@@ -20,6 +20,7 @@ import com.iodaniel.mobileclass.databinding.ActivityAclassBinding
 import com.iodaniel.mobileclass.databinding.ProgressBarDialogBinding
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class AClass : AppCompatActivity(), OnClickListener, HelperListener.LoadingListener {
@@ -60,6 +61,17 @@ class AClass : AppCompatActivity(), OnClickListener, HelperListener.LoadingListe
 
     private fun viewPagerInit() {
         val adapter = ViewPagerAdapter(this)
+        val bundle = Bundle()
+
+        val courseWorkFragment = CourseWork()
+        val assignmentsFragment = FragmentAssignments()
+        val jsonClassInfo = Json.encodeToString(classInfo)
+        bundle.putString("classInfo", jsonClassInfo)
+        courseWorkFragment.arguments = bundle
+        assignmentsFragment.arguments = bundle
+        val dataset = arrayListOf(courseWorkFragment, assignmentsFragment)
+        adapter.dataset = dataset
+
         binding.studentAClassViewPager.adapter = adapter
         val dataNames = arrayListOf("Course Work", "Assignments")
         TabLayoutMediator(
@@ -71,7 +83,7 @@ class AClass : AppCompatActivity(), OnClickListener, HelperListener.LoadingListe
     }
 
     inner class ViewPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
-        var dataset = arrayListOf(CourseWork(classInfo), Assignments(classInfo))
+        lateinit var dataset: ArrayList<Fragment>
         override fun getItemCount(): Int = dataset.size
 
         override fun createFragment(position: Int): Fragment {

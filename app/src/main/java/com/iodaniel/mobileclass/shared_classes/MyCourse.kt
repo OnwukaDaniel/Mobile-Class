@@ -20,7 +20,7 @@ class Material(
     var extraNote: String = "",
     var heading: String = "",
     var mediaUris: ArrayList<String> = arrayListOf(),
-    var classwork: ArrayList<String> = arrayListOf(),
+    var listOfMediaNames: ArrayList<String> = arrayListOf(),
     var test: ArrayList<String> = arrayListOf(),
     var teacherInCharge: String = "",
     var year: String = "",
@@ -38,6 +38,7 @@ class ClassInfo(
     var teacherInChargeUID: String = "",
     var time: String = "",
     var dateModified: String = "",
+    var classCodePushId: String = "",
     var datetime: String = "",
     //colors
     var red: Int = 0,

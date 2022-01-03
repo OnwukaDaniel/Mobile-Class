@@ -1,6 +1,7 @@
 package com.iodaniel.mobileclass.teacher_package.classes
 
 import android.app.Dialog
+import android.content.ContentResolver
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -10,7 +11,6 @@ import android.provider.MediaStore
 import android.view.View
 import android.view.WindowManager
 import android.webkit.MimeTypeMap
-import android.widget.MediaController
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -19,25 +19,31 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.iodaniel.mobileclass.R
+import com.iodaniel.mobileclass.accessing_mobile_app.InternetConnection
 import com.iodaniel.mobileclass.databinding.ClassUploadBinding
 import com.iodaniel.mobileclass.databinding.ProgressBarDialogBinding
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.ProgressBarController
 import java.text.DateFormat
 import java.util.*
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarController {
 
     private val binding by lazy { ClassUploadBinding.inflate(layoutInflater) }
     private var reference = FirebaseDatabase.getInstance().reference
-    private var allClassesRef = FirebaseDatabase.getInstance().reference
+    private var allClassesRef = FirebaseDatabase.getInstance()
+        .reference
+        .child("class_codes")
+        .push()
     private val auth = FirebaseAuth.getInstance().currentUser!!.uid
     private lateinit var progressBarController: ProgressBarController
     private val dialog by lazy { Dialog(this) }
     private var classImage: String = ""
-    private lateinit var controller: MediaController
     private val storageRef = FirebaseStorage.getInstance().reference
     private lateinit var errorSnackBar: Snackbar
+    private val customImages = arrayListOf(R.drawable.study1, R.drawable.study2, R.drawable.study4)
+    private lateinit var cn: InternetConnection
 
     private val pickFileLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult(),
@@ -52,7 +58,6 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
                         val mime = MimeTypeMap.getSingleton()
                         val extensionType =
                             mime.getExtensionFromMimeType(contentResolver?.getType(dataUri!!))!!
-                        println("ACTIVITY RESULT ******************** $extensionType")
                         when (extensionType) {
                             "jpg" -> {
                                 classImage = dataUri!!.toString()
@@ -76,17 +81,13 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         title = "Upload Class Material"
-        errorSnackBar = Snackbar.make(binding.root,
-            "Upload Failed. Please Try again", Snackbar.LENGTH_LONG)
-        initialiseDatabase()
+        val txt = "Upload Failed. Please Try again"
+        cn = InternetConnection(applicationContext)
+        errorSnackBar = Snackbar.make(
+            binding.root, txt, Snackbar.LENGTH_LONG
+        )
         initialiseAllClassInterface()
         initialiseUtils()
-    }
-
-    private fun initialiseDatabase() {
-        allClassesRef = allClassesRef
-            .child("class_codes")
-            .push()
     }
 
     private fun initialiseAllClassInterface() {
@@ -104,23 +105,13 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
 
         val datetime = Calendar.getInstance().time.time
         val dateString = DateFormat.getInstance().format(datetime)
-        println("datetime ****************** $datetime")
         val split = dateString.split(' ')
         val date = split[0].trim()
         val time = split[1].trim() + split[2].trim()
         val className = binding.uploadClassName.text.toString().trim()
 
         val splita = UUID.randomUUID().toString().split("-")
-        val codea = splita[1] + splita[2].substring(0, 1) + splita[4].substring(6, 8)
-
-        val classCode = codea
-
-        val classInfo = ClassInfo(className = className,
-            time = time, datetime = datetime.toString(),
-            teacherInChargeUID = auth, classCode = classCode)
-
-        val details = hashMapOf("classCode" to classInfo.classCode,
-            "auth" to auth)
+        val classCode = splita[1] + splita[2].substring(0, 1) + splita[4].substring(6, 8)
 
         if (className == "") {
             snackBar.setText("Empty Class Name!!!"); snackBar.show()
@@ -128,33 +119,26 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
             return
         }
         if (classImage == "") {
-            reference = reference
-                .child("teacher")
-                .child(auth)
-                .child("classes")
-                .child(classCode)
-            allClassesRef.setValue(details).addOnCompleteListener {
-                reference.setValue(classInfo).addOnCompleteListener {
-                    progressBarController.hideProgressBar()
-                    startActivity(Intent(this, ActivityMyClasses::class.java))
-                    overridePendingTransition(0, 0)
-                }.addOnFailureListener {
-                    progressBarController.hideProgressBar()
-                    errorSnackBar.show()
-                    return@addOnFailureListener
-                }
-            }.addOnFailureListener {
-                progressBarController.hideProgressBar()
-                errorSnackBar.show()
-                return@addOnFailureListener
-            }
-            return
+            val rand = (Math.random() * 2).roundToInt()
+            classImage = (Uri.Builder())
+                .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+                .authority(resources.getResourcePackageName(customImages[rand]))
+                .appendPath(resources.getResourceTypeName(customImages[rand]))
+                .appendPath(resources.getResourceEntryName(customImages[rand]))
+                .build().toString()
         }
 
         val contentResolver = applicationContext.contentResolver
         val mime = MimeTypeMap.getSingleton()
-        val extension =
-            mime.getExtensionFromMimeType(contentResolver?.getType(Uri.parse(classImage)))!!
+
+        val extension = when (classImage.split(".")[0]) {
+            "android" -> {
+                "jpg"
+            }
+            else -> {
+                mime.getExtensionFromMimeType(contentResolver?.getType(Uri.parse(classImage)))!!
+            }
+        }
         val event = (date + time + classImage).replace("//", ".").replace("/", ".")
         val finalStorageRef = storageRef.child("$event.$extension")
         val uploadTask = finalStorageRef.putFile(Uri.parse(classImage))
@@ -176,22 +160,27 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
                         .child("classes")
                         .child(classCodeX)
 
-                    val detailsX = hashMapOf("classCode" to classCodeX,
-                        "auth" to auth)
+                    val detailsX = hashMapOf(
+                        "classCode" to classCodeX,
+                        "auth" to auth
+                    )
 
-                    val classInfoX = ClassInfo(className = className,
-                        time = time,
-                        red = rand,
-                        green = rand,
-                        blue = rand,
-                        classCode = classCodeX,
-                        classImage = downloadUri,
-                        teacherInChargeUID = auth,
-                        datetime = datetime.toString())
+                    val classInfoX = ClassInfo()
+                    classInfoX.className = className
+                    classInfoX.time = time
+                    classInfoX.red = rand
+                    classInfoX.green = rand
+                    classInfoX.blue = rand
+                    classInfoX.classCodePushId = allClassesRef.key!!
+                    classInfoX.classCode = classCodeX
+                    classInfoX.classImage = downloadUri
+                    classInfoX.teacherInChargeUID = auth
+                    classInfoX.datetime = datetime.toString()
+
                     allClassesRef.setValue(detailsX).addOnCompleteListener {
                         reference.setValue(classInfoX).addOnCompleteListener {
                             progressBarController.hideProgressBar()
-                            startActivity(Intent(this, ActivityMyClasses::class.java))
+                            onBackPressed()
                             overridePendingTransition(0, 0)
                         }.addOnFailureListener {
                             progressBarController.hideProgressBar()
@@ -233,8 +222,8 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
     override fun showProgressBar() {
         val progressBarBinding = ProgressBarDialogBinding.inflate(dialog.layoutInflater)
         dialog.setContentView(progressBarBinding.root)
-        dialog.window?.setLayout(WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT)
+        val paramWrap = WindowManager.LayoutParams.WRAP_CONTENT
+        dialog.window?.setLayout(paramWrap, paramWrap)
         dialog.setCancelable(false)
         dialog.show()
     }
@@ -249,7 +238,21 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
                 selectImageFromStorage()
             }
             R.id.upload_button -> {
-                upload()
+                if (cn != null) {
+                    cn.setCustomInternetListener(object :
+                        InternetConnection.CheckInternetConnection {
+                        override fun isConnected() {
+                            upload()
+                        }
+
+                        override fun notConnected() {
+                            val txt = "No active internet!!! Retry"
+                            Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG).show()
+                        }
+                    })
+                } else {
+                    Snackbar.make(binding.root, "Retry", Snackbar.LENGTH_LONG).show()
+                }
             }
         }
     }

@@ -5,18 +5,19 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/app_logo"
-        android:label="AfriLearn"
-        android:roundIcon="@drawable/app_logo"
-        android:requestLegacyExternalStorage="true"
         android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|uiMode|screenLayout"
+        android:icon="@drawable/app_logo"
+        android:label="Afri-Learn"
+        android:requestLegacyExternalStorage="true"
+        android:roundIcon="@drawable/app_logo"
         android:supportsRtl="false"
         android:theme="@style/Theme.MobileClass">
         <activity
@@ -25,18 +26,16 @@
             tools:ignore="Instantiatable" />
         <activity
             android:name=".student_package.AClass"
-            android:theme="@style/Theme.AClass"
-            android:exported="false" />
-        <activity
-            android:name=".teacher_package.singleclass.material.MaterialPage"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
+            android:theme="@style/Theme.AClass" />
         <activity android:name=".accessing_mobile_app.SignInOrSignUp" />
-        <activity android:name=".student_package.StudentInitPage"
-            android:theme="@style/Theme.StudentClass"/>
+        <activity
+            android:name=".student_package.StudentInitPage"
+            android:theme="@style/Theme.StudentClass" />
         <activity android:name=".accessing_mobile_app.SignUp" />
-        <activity android:name=".accessing_mobile_app.SignIn"
-            android:theme="@style/Theme.TeacherPage"/>
+        <activity
+            android:name=".accessing_mobile_app.SignIn"
+            android:theme="@style/Theme.TeacherPage" />
         <activity android:name=".MainActivity" />
         <activity
             android:name=".SplashScreen"
@@ -48,16 +47,19 @@
             </intent-filter>
         </activity>
         <activity
+            android:theme="@style/Theme.TeacherPage"
             android:name=".teacher_package.classes.ClassUpload"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".teacher_package.singleclass.AClass"
             android:theme="@style/Theme.TeacherPage" />
-        <activity android:name=".teacher_package.classes.ActivityMyClasses"
-            android:theme="@style/Theme.TeacherPage"/>
-        <activity android:name=".student_package.ActivityMyClasses"
-            android:theme="@style/Theme.StudentClass"/>
-        <activity android:name=".student_package.ViewMaterial" />
+        <activity
+            android:name=".teacher_package.classes.ActivityMyClasses"
+            android:theme="@style/Theme.TeacherPage" />
+        <activity
+            android:name=".student_package.ActivityMyClasses"/>
+        <activity android:name=".student_package.ViewMaterial"
+            android:theme="@style/Theme.StudentClass"  />
 
         <meta-data
             android:name="preloaded_fonts"

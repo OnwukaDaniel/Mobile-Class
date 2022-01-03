@@ -86,6 +86,13 @@
                     android:textColor="@color/white"
                     android:textSize="16sp" />
 
+                <ImageView
+                    android:id="@+id/copy_class_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:src="@drawable/ic_copy"/>
+
             </LinearLayout>
 
             <com.google.android.material.tabs.TabLayout

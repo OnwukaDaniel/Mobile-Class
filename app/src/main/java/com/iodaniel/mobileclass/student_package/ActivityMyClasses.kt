@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
 import androidx.recyclerview.widget.RecyclerView
@@ -43,8 +44,11 @@ class ActivityMyClasses : AppCompatActivity(), OnClickListener, LoadingListener,
         ActivityMyClassBinding.inflate(layoutInflater)
     }
     private lateinit var loadingListener: LoadingListener
-    private val auth = FirebaseAuth.getInstance().currentUser!!.uid
     private var myClassesRef = FirebaseDatabase.getInstance().reference
+        .child("student")
+        .child(FirebaseAuth.getInstance().currentUser!!.uid)
+        .child("classes")
+        //.orderByChild("/datetime")
     private lateinit var teacherStudentListener: TeacherStudentListener
     private lateinit var drawerStateListener: DrawerStateListener
     private lateinit var internetConnection: InternetConnection
@@ -91,10 +95,6 @@ class ActivityMyClasses : AppCompatActivity(), OnClickListener, LoadingListener,
                 println("*************************************************")
             }
         })*/
-        myClassesRef = myClassesRef
-            .child("student")
-            .child(auth)
-            .child("classes")
     }
 
     private fun readClassData() {
@@ -202,6 +202,16 @@ class ActivityMyClasses : AppCompatActivity(), OnClickListener, LoadingListener,
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_my_classes -> {
+                if (supportFragmentManager.backStackEntryCount == 0) {
+                    binding.drawerMyClassesRoot.closeDrawer(GravityCompat.START)
+                } else {
+                    supportFragmentManager.popBackStack(
+                        null,
+                        FragmentManager.POP_BACK_STACK_INCLUSIVE
+                    )
+                    supportFragmentManager.popBackStack()
+                    binding.drawerMyClassesRoot.closeDrawer(GravityCompat.START)
+                }
                 Snackbar.make(binding.root, "My Classes", Snackbar.LENGTH_LONG).show()
                 return true
             }
@@ -215,7 +225,7 @@ class ActivityMyClasses : AppCompatActivity(), OnClickListener, LoadingListener,
                         runOnUiThread {
                             supportFragmentManager.beginTransaction()
                                 .addToBackStack("accountSettings")
-                                .replace(R.id.drawer_my_classes_root, FragmentAccountSettings(true))
+                                .replace(R.id.drawer_my_classes_root, FragmentAccountSettings())
                                 .commit()
                         }
                     }

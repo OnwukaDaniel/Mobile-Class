@@ -38,15 +38,20 @@ class FragmentJoinClass : Fragment(), View.OnClickListener, LoadingListener {
         .child(FirebaseAuth.getInstance().currentUser!!.uid)
         .child("classes")
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
-    ): View {
-        binding = FragmentJoinClassBinding.inflate(inflater, container, false)
+    override fun onStart() {
+        super.onStart()
         loadingListener = this
         requireActivity().setTheme(R.style.Theme_WhiteTheme)
         binding.joinClass.setOnClickListener(this)
         readDatabase()
         readNewClass()
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
+    ): View {
+        binding = FragmentJoinClassBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 
@@ -172,6 +177,9 @@ class FragmentJoinClass : Fragment(), View.OnClickListener, LoadingListener {
                 } catch (e: Exception) {
                     println(" **************************** ${e.printStackTrace()}")
                 }
+            }
+            if (inputClassCode !in myListOfClassCodes && allCodesData.indexOf(classInfoData) == myListOfClassCodes.size){
+                Snackbar.make(binding.root, "Class doesn't exist", Snackbar.LENGTH_LONG).show()
             }
         }
     }

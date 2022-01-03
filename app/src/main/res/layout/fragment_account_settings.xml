@@ -111,7 +111,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:text="Private Information"
+                android:text="Personal Information"
                 android:textColor="#050505"
                 android:textSize="20sp" />
 

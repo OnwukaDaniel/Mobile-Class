@@ -1,5 +1,6 @@
 package com.iodaniel.mobileclass.student_package
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -19,54 +20,55 @@ import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.FragmentCourseWorkBinding
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.Material
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CourseWork(val classInfo: ClassInfo) : Fragment() {
+class CourseWork : Fragment() {
 
     private lateinit var binding: FragmentCourseWorkBinding
     private var courseWorkAdapter = CourseWorkAdapter()
     private var dataset: ArrayList<Material> = arrayListOf()
     private var keyList: ArrayList<String> = arrayListOf()
     private var stTypeRef = FirebaseDatabase.getInstance().reference
-        .child("materials")
-        .child(classInfo.teacherInChargeUID)
-        .child(classInfo.classCode)
+
+    override fun onStart() {
+        super.onStart()
+        val bundle = arguments
+        val json = bundle!!.getString("classInfo")
+        val classInfo: ClassInfo = Json.decodeFromString(json!!)
+        readFromDatabase(classInfo)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View {
         binding = FragmentCourseWorkBinding.inflate(inflater, container, false)
-        readFromDatabase()
+
         return binding.root
     }
 
-    private fun rvInit() {
-        binding.rvCourseWork.adapter = courseWorkAdapter
-        binding.rvCourseWork.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        courseWorkAdapter.dataset = dataset
-        courseWorkAdapter.context = requireContext()
-        courseWorkAdapter.activity = requireActivity()
-        courseWorkAdapter.classCode = classInfo.classCode
-    }
-
-    private fun readFromDatabase() {
+    private fun readFromDatabase(classInfo: ClassInfo) {
+        stTypeRef = stTypeRef
+            .child("materials")
+            .child(classInfo.teacherInChargeUID)
+            .child(classInfo.classCode)
         stTypeRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val snap = snapshot.getValue(Material::class.java)
                 dataset.add(snap!!)
                 keyList.add(snapshot.key!!)
-                rvInit()
+                rvInit(classInfo)
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 val snap = snapshot.getValue(Material::class.java)
                 dataset.add(snap!!)
                 keyList.add(snapshot.key!!)
-                rvInit()
+                courseWorkAdapter.notifyDataSetChanged()
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
@@ -85,6 +87,16 @@ class CourseWork(val classInfo: ClassInfo) : Fragment() {
             }
         })
     }
+
+    private fun rvInit(classInfo: ClassInfo) {
+        binding.rvCourseWork.adapter = courseWorkAdapter
+        binding.rvCourseWork.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        courseWorkAdapter.dataset = dataset
+        courseWorkAdapter.context = requireContext()
+        courseWorkAdapter.activity = requireActivity()
+        courseWorkAdapter.classCode = classInfo.classCode
+    }
 }
 
 class CourseWorkAdapter : RecyclerView.Adapter<CourseWorkAdapter.ViewHolder>() {
@@ -95,22 +107,22 @@ class CourseWorkAdapter : RecyclerView.Adapter<CourseWorkAdapter.ViewHolder>() {
     lateinit var classCode: String
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val heading: TextView = itemView.findViewById(R.id.student_lesson_heading)
-        val dateCreated: TextView = itemView.findViewById(R.id.student_lesson_date)
-        val numberOfMaterials: TextView = itemView.findViewById(R.id.student_lesson_number)
+        val heading: TextView = itemView.findViewById(R.id.lesson_heading)
+        val dateCreated: TextView = itemView.findViewById(R.id.lesson_date)
+        val numberOfMaterials: TextView = itemView.findViewById(R.id.lesson_number)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context = parent.context
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.coures_work_row, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.lesson_row, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val datum = dataset[position]
         holder.heading.text = datum.heading
-        holder.numberOfMaterials.text = if (datum.mediaUris.size == 0) "None" else datum.mediaUris.size.toString()
+        holder.numberOfMaterials.text =
+            if (datum.mediaUris.size == 0) "None" else datum.mediaUris.size.toString()
         val date = convertLongToTime(datum.dateCreated.toLong()).split(" ")[0]
         holder.dateCreated.text = date
 
@@ -118,12 +130,13 @@ class CourseWorkAdapter : RecyclerView.Adapter<CourseWorkAdapter.ViewHolder>() {
             val intent = Intent(context, ViewMaterial::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             val json = Json.encodeToString(datum)
-            intent.putExtra("materialData", json)
+            intent.putExtra("material", json)
             intent.putExtra("classCode", classCode)
             context.startActivity(intent)
             activity.overridePendingTransition(0, 0)
         }
     }
+
     private fun convertLongToTime(time: Long): String {
         val date = Date(time)
         val format = SimpleDateFormat("yyyy.MM.dd HH:mm")

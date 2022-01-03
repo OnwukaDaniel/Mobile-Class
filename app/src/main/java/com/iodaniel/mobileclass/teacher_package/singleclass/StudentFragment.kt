@@ -18,31 +18,38 @@ import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.StudentFragmentBinding
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.StudentRegistrationClass
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
-class StudentFragment(val classInfo: ClassInfo) : Fragment(), TotalStudentListener {
+class StudentFragment : Fragment(), TotalStudentListener {
     private lateinit var binding: StudentFragmentBinding
     private var adapter = StudentsAdapter()
     private var dataset = arrayListOf<StudentRegistrationClass>()
     private var keyList = arrayListOf<String>()
     private lateinit var totalStudentListener: TotalStudentListener
-    private var registeredRef = FirebaseDatabase.getInstance()
-        .reference
-        .child("teacher")
-        .child(FirebaseAuth.getInstance().currentUser!!.uid)
-        .child("registered_students")
-        .child(classInfo.classCode)
+    private lateinit var classInfo: ClassInfo
+    private var registrationRef = FirebaseDatabase.getInstance().reference
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = StudentFragmentBinding.inflate(layoutInflater, container, false)
+
+        val bundle = arguments
+        val json = bundle!!.getString("classInfo")
+        classInfo = Json.decodeFromString(json!!)
+        registrationRef = registrationRef
+            .child("teacher")
+            .child(FirebaseAuth.getInstance().currentUser!!.uid)
+            .child("registered_students")
+            .child(classInfo.classCode)
+
         totalStudentListener = this
         readDatabase()
         return binding.root
     }
 
     private fun readDatabase() {
-        registeredRef.addChildEventListener(object : ChildEventListener {
+        registrationRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                println("STUDENTS onChildAdded ******************************** ${snapshot.value}")
                 val snap = snapshot.getValue(StudentRegistrationClass::class.java)!!
                 dataset.add(snap)
                 keyList.add(snapshot.key!!)
@@ -68,13 +75,9 @@ class StudentFragment(val classInfo: ClassInfo) : Fragment(), TotalStudentListen
                 adapter.notifyItemRemoved(index)
             }
 
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-                println("Moved STUDENTS ************* $snapshot")
-            }
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
 
-            override fun onCancelled(error: DatabaseError) {
-
-            }
+            override fun onCancelled(error: DatabaseError) {}
         })
     }
 

@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.*
 import android.view.View.OnClickListener
 import android.webkit.MimeTypeMap
@@ -23,32 +22,35 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.iodaniel.mobileclass.R
+import com.iodaniel.mobileclass.accessing_mobile_app.InternetConnection
+import com.iodaniel.mobileclass.accessing_mobile_app.InternetConnection.CheckInternetConnection
 import com.iodaniel.mobileclass.databinding.CreateNewLessonFragmentBinding
 import com.iodaniel.mobileclass.databinding.ProgressBarDialogBinding
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.*
 import com.iodaniel.mobileclass.teacher_package.classes.Material
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import java.text.DateFormat
 import java.util.*
 
-class FragmentCreateNewLesson(private val classInfo: ClassInfo) : Fragment(), OnClickListener,
+class FragmentCreateNewLesson : Fragment(), OnClickListener,
     ProgressBarController, MediaSupport {
 
     private lateinit var binding: CreateNewLessonFragmentBinding
     private var fileName = ""
     private val storageRef = FirebaseStorage.getInstance().reference
     private var stTypeRef = FirebaseDatabase.getInstance().reference
-        .child("materials")
-        .child(FirebaseAuth.getInstance().currentUser!!.uid)
-        .child(classInfo.classCode)
-        .push()
     private lateinit var progressBarController: ProgressBarController
     private lateinit var mediaSupport: MediaSupport
     private val dialog by lazy { Dialog(requireContext()) }
     private var classImage: String = ""
+    private lateinit var classInfo: ClassInfo
+    private lateinit var cn: InternetConnection
 
     private lateinit var controller: MediaController
     private var listOfMedia: ArrayList<String> = arrayListOf()
+    private var listOfMediaNames: ArrayList<String> = arrayListOf()
     private val videoView: VideoView by lazy { binding.newLessonUploadVideoView }
 
     private val pickFileLauncher =
@@ -60,91 +62,95 @@ class FragmentCreateNewLesson(private val classInfo: ClassInfo) : Fragment(), On
                     }
                     if (it.resultCode == AppCompatActivity.RESULT_OK) {
                         val dataUri = it.data!!.data
-                        fileName =
-                            dataUri.toString().substring(dataUri.toString().lastIndexOf("/") + 1)
-                        println("______________________ filename: $fileName")
+                        println("DATA URI ************************** $dataUri")
+                        val split = dataUri.toString().split("/")
+                        fileName = (split[split.size - 2] + split.last()).split("%2F").last()
+                        println("FileName **************************** $fileName")
                         val contentResolver = requireActivity().contentResolver
                         val mime = MimeTypeMap.getSingleton()
-                        val extensionType =
-                            mime.getExtensionFromMimeType(contentResolver?.getType(dataUri!!))!!
+                        var extensionType = ""
+                        try {
+                            extensionType =
+                                mime.getExtensionFromMimeType(contentResolver?.getType(dataUri!!))!!
+                        } catch (e: Exception) {
+                            binding.newLessonFilename.text = "Unsupported File"
+                            return@ActivityResultCallback
+                        }
                         when (extensionType) {
                             "mp4" -> {
-                                println("ACTIVITY RESULT ******************** $extensionType")
                                 mediaSupport.makeMediaPlayersInvisible()
                                 mediaSupport.videoPlayer(dataUri!!)
                                 binding.newLessonFilename.text = fileName
-                                binding.newLessonRenameFile.text = getString(R.string.rename)
-                                listOfMedia.add(dataUri.toString())
+                                listOfMedia.add(dataUri.toString() + "filename$fileName")
+                                listOfMediaNames.add(fileName)
                             }
                             "3gp" -> {
-                                println("ACTIVITY RESULT ******************** $extensionType")
                                 mediaSupport.makeMediaPlayersInvisible()
                                 mediaSupport.videoPlayer(dataUri!!)
                                 binding.newLessonFilename.text = fileName
-                                binding.newLessonRenameFile.text = getString(R.string.rename)
-                                listOfMedia.add(dataUri.toString())
+                                listOfMedia.add(dataUri.toString() + "filename$fileName")
+                                listOfMediaNames.add(fileName)
                             }
                             "mp3" -> {
-                                println("ACTIVITY RESULT ******************** $extensionType")
                                 mediaSupport.makeMediaPlayersInvisible()
                                 mediaSupport.musicReader(dataUri!!)
                                 binding.newLessonFilename.text = fileName
-                                binding.newLessonRenameFile.text = getString(R.string.rename)
-                                listOfMedia.add(dataUri.toString())
+                                listOfMedia.add(dataUri.toString() + "filename$fileName")
+                                listOfMediaNames.add(fileName)
                             }
                             "aac" -> {
-                                println("ACTIVITY RESULT ******************** $extensionType")
                                 mediaSupport.makeMediaPlayersInvisible()
                                 mediaSupport.musicReader(dataUri!!)
                                 binding.newLessonFilename.text = fileName
-                                binding.newLessonRenameFile.text = getString(R.string.rename)
-                                listOfMedia.add(dataUri.toString())
+                                listOfMedia.add(dataUri.toString() + "filename$fileName")
+                                listOfMediaNames.add(fileName)
                             }
                             "wav" -> {
-                                println("ACTIVITY RESULT ******************** $extensionType")
                                 mediaSupport.makeMediaPlayersInvisible()
                                 mediaSupport.musicReader(dataUri!!)
                                 binding.newLessonFilename.text = fileName
-                                binding.newLessonRenameFile.text = getString(R.string.rename)
-                                listOfMedia.add(dataUri.toString())
+                                listOfMedia.add(dataUri.toString() + "filename$fileName")
+                                listOfMediaNames.add(fileName)
                             }
                             "pdf" -> {
-                                println("ACTIVITY RESULT ******************** $extensionType")
                                 mediaSupport.makeMediaPlayersInvisible()
                                 mediaSupport.pdfReader(dataUri!!)
                                 binding.newLessonFilename.text = fileName
-                                binding.newLessonRenameFile.text = getString(R.string.rename)
-                                listOfMedia.add(dataUri.toString())
+                                listOfMedia.add(dataUri.toString() + "filename$fileName")
+                                listOfMediaNames.add(fileName)
                             }
                             "jpg" -> {
-                                println("ACTIVITY RESULT ******************** $extensionType")
                                 mediaSupport.makeMediaPlayersInvisible()
                                 classImage = dataUri!!.toString()
                                 mediaSupport.imageReader(dataUri)
                                 binding.newLessonFilename.text = fileName
-                                binding.newLessonRenameFile.text = getString(R.string.rename)
-                                listOfMedia.add(dataUri.toString())
+                                listOfMedia.add(dataUri.toString() + "filename$fileName")
+                                listOfMediaNames.add(fileName)
                                 binding.newLessonImageview.setImageURI(dataUri)
                             }
                             "png" -> {
-                                println("ACTIVITY RESULT ******************** $extensionType")
                                 mediaSupport.makeMediaPlayersInvisible()
                                 classImage = dataUri!!.toString()
                                 mediaSupport.imageReader(dataUri)
                                 binding.newLessonFilename.text = fileName
-                                binding.newLessonRenameFile.text = getString(R.string.rename)
-                                listOfMedia.add(dataUri.toString())
+                                listOfMedia.add(dataUri.toString() + "filename$fileName")
                                 binding.newLessonImageview.setImageURI(dataUri)
+                                listOfMediaNames.add(fileName)
                             }
                             "jpeg" -> {
-                                println("ACTIVITY RESULT ******************** $extensionType")
-                                //mediaSupport.makeMediaPlayersInvisible()
                                 classImage = dataUri!!.toString()
                                 mediaSupport.imageReader(dataUri)
                                 binding.newLessonFilename.text = fileName
-                                binding.newLessonRenameFile.text = getString(R.string.rename)
-                                listOfMedia.add(dataUri.toString())
+                                listOfMedia.add(dataUri.toString() + "filename$fileName")
                                 binding.newLessonImageview.setImageURI(dataUri)
+                                listOfMediaNames.add(fileName)
+                            }
+                            else -> {
+                                binding.newLessonFilename.text =
+                                    "Added but, View is currently unsupported"
+                                binding.uploadFileLayout.visibility = View.GONE
+                                listOfMedia.add(dataUri.toString() + "filename$fileName")
+                                listOfMediaNames.add(fileName)
                             }
                         }
                     }
@@ -153,10 +159,26 @@ class FragmentCreateNewLesson(private val classInfo: ClassInfo) : Fragment(), On
                 }
             })
 
+    override fun onStart() {
+        super.onStart()
+        cn = InternetConnection(requireContext())
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View {
         binding = CreateNewLessonFragmentBinding.inflate(inflater, container, false)
+
+        val bundle = arguments
+        val json = bundle!!.getString("classInfo")
+        classInfo = Json.decodeFromString(json!!)
+
+        stTypeRef = stTypeRef
+            .child("materials")
+            .child(FirebaseAuth.getInstance().currentUser!!.uid)
+            .child(classInfo.classCode)
+            .push()
+
         binding.newLessonUploadImage.setOnCloseIconClickListener(this)
         initialiseAllClassInterface()
         initialiseUtils()
@@ -171,7 +193,7 @@ class FragmentCreateNewLesson(private val classInfo: ClassInfo) : Fragment(), On
     private fun initialiseUtils() {
         binding.newLessonUploadButton.setOnClickListener(this)
         binding.newLessonUploadImage.setOnClickListener(this)
-        binding.newLessonRenameFile.setOnClickListener(this)
+        //binding.newLessonRenameFile.setOnClickListener(this)
     }
 
     private fun upload() {
@@ -193,15 +215,19 @@ class FragmentCreateNewLesson(private val classInfo: ClassInfo) : Fragment(), On
 
         progressBarController.showProgressBar()
         if (listOfMedia.isEmpty()) {
-            val material = Material(courseName = className, note = note, extraNote = extraNote,
-                heading = heading, time = time, dateCreated = classInfo.datetime)
+            val material = Material(
+                courseName = className, note = note, extraNote = extraNote,
+                heading = heading, time = time, dateCreated = classInfo.datetime
+            )
 
             stTypeRef.setValue(material).addOnCompleteListener {
                 requireActivity().onBackPressed()
                 progressBarController.hideProgressBar()
             }.addOnFailureListener {
-                Snackbar.make(binding.root,
-                    "Error occurred!!!", Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    binding.root,
+                    "Error occurred!!!", Snackbar.LENGTH_LONG
+                ).show()
                 progressBarController.hideProgressBar()
             }
             return
@@ -213,7 +239,7 @@ class FragmentCreateNewLesson(private val classInfo: ClassInfo) : Fragment(), On
         }
 
         for (file in listOfMedia) { //fileUris
-            val fileUri = Uri.parse(file)
+            val fileUri = Uri.parse(file.split("filename").first())
             val contentResolver = requireContext().contentResolver
             val mime = MimeTypeMap.getSingleton()
             val extension = mime.getExtensionFromMimeType(contentResolver?.getType(fileUri))!!
@@ -229,21 +255,26 @@ class FragmentCreateNewLesson(private val classInfo: ClassInfo) : Fragment(), On
                     finalStorageRef.downloadUrl.addOnSuccessListener {
                         val downloadUri = it.toString()
                         arrayDownloadUris.add(downloadUri)
-                        print("arrayDownloadUri *********************************** $downloadUri")
                         if (arrayDownloadUris.size == listOfMedia.size) {
-                            val material = Material(
-                                courseName = className, note = note, extraNote = extraNote,
-                                heading = heading, time = time, mediaUris = arrayDownloadUris,
-                                dateCreated = classInfo.datetime
-                            )
+                            val material = Material()
+                            material.courseName = className
+                            material.note = note
+                            material.extraNote = extraNote
+                            material.heading = heading
+                            material.time = time
+                            material.listOfMediaNames = listOfMediaNames
+                            material.mediaUris = arrayDownloadUris
+                            material.dateCreated = datetime.toString()
 
                             stTypeRef.setValue(material).addOnCompleteListener {
                                 requireActivity().onBackPressed()
                                 progressBarController.hideProgressBar()
                             }.addOnFailureListener {
-                                Snackbar.make(binding.root,
+                                Snackbar.make(
+                                    binding.root,
                                     "Error occurred!!!",
-                                    Snackbar.LENGTH_LONG).show()
+                                    Snackbar.LENGTH_LONG
+                                ).show()
                                 progressBarController.hideProgressBar()
                             }
                         }
@@ -271,16 +302,13 @@ class FragmentCreateNewLesson(private val classInfo: ClassInfo) : Fragment(), On
         pickFileLauncher.launch(intent)
     }
 
-    private fun selectImageFromStorage() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-        pickFileLauncher.launch(intent)
-    }
-
     override fun showProgressBar() {
         val progressBarBinding = ProgressBarDialogBinding.inflate(dialog.layoutInflater)
         dialog.setContentView(progressBarBinding.root)
-        dialog.window?.setLayout(WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setLayout(
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
         dialog.setCancelable(false)
         dialog.setCanceledOnTouchOutside(false)
         dialog.show()
@@ -291,6 +319,7 @@ class FragmentCreateNewLesson(private val classInfo: ClassInfo) : Fragment(), On
     }
 
     override fun videoPlayer(uri: Uri) = try {
+        binding.uploadFileLayout.visibility = View.VISIBLE
         videoView.visibility = View.VISIBLE
         controller = MediaController(requireActivity())
         controller.setAnchorView(videoView)
@@ -303,6 +332,7 @@ class FragmentCreateNewLesson(private val classInfo: ClassInfo) : Fragment(), On
     }
 
     override fun pdfReader(uri: Uri) = try {
+        binding.uploadFileLayout.visibility = View.VISIBLE
         binding.newLessonPdfView.visibility = View.VISIBLE
         binding.newLessonPdfView.fromUri(uri).load()
     } catch (e: Exception) {
@@ -310,6 +340,7 @@ class FragmentCreateNewLesson(private val classInfo: ClassInfo) : Fragment(), On
     }
 
     override fun musicReader(uri: Uri) {
+        binding.uploadFileLayout.visibility = View.VISIBLE
         binding.newLessonUploadAudio.visibility = View.VISIBLE
         val mp = MediaPlayer()
         mp.setDataSource(requireContext(), uri)
@@ -318,6 +349,7 @@ class FragmentCreateNewLesson(private val classInfo: ClassInfo) : Fragment(), On
     }
 
     override fun imageReader(uri: Uri) = try {
+        binding.uploadFileLayout.visibility = View.VISIBLE
         binding.newLessonImageview.visibility = View.VISIBLE
         binding.newLessonImageview.setImageURI(uri)
     } catch (e: Exception) {
@@ -336,7 +368,10 @@ class FragmentCreateNewLesson(private val classInfo: ClassInfo) : Fragment(), On
         val view = layoutInflater.inflate(R.layout.layout_rename_dialog, null)
         val renameTxt = view.findViewById<EditText>(R.id.rename_edit)
         renameTxt.setText(fileName)
-        val alertDialog = AlertDialog.Builder(requireContext(), R.style.ThemeOverlay_MaterialComponents_Dialog_Alert)
+        val alertDialog = AlertDialog.Builder(
+            requireContext(),
+            R.style.ThemeOverlay_MaterialComponents_Dialog_Alert
+        )
         alertDialog.setTitle("Rename")
         alertDialog.setView(view)
         alertDialog.setCancelable(true)
@@ -367,10 +402,21 @@ class FragmentCreateNewLesson(private val classInfo: ClassInfo) : Fragment(), On
                 selectFileFromStorage()
             }
             R.id.new_lesson_upload_button -> {
-                upload()
-            }
-            R.id.new_lesson_rename_file -> {
-                //renameFile()
+                if (cn != null) {
+                    cn.setCustomInternetListener(object : CheckInternetConnection {
+                        override fun isConnected() {
+                            upload()
+                        }
+
+                        override fun notConnected() {
+                            val txt = "No active internet!!! Retry"
+                            Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG).show()
+                        }
+                    })
+                } else {
+                    val txt = "Retry"
+                    Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG).show()
+                }
             }
         }
     }

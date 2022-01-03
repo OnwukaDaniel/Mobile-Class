@@ -18,12 +18,13 @@
             android:layout_marginTop="15dp"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:gravity="center"
+            android:textColor="@color/black"
             android:text="Heading" />
 
         <EditText
             android:id="@+id/create_class_heading"
             android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:inputType="textCapSentences"
@@ -32,9 +33,9 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="30dp"
             android:textSize="20sp"
+            android:textColor="@color/black"
             android:textStyle="bold"
             android:text="Class Note" />
 
@@ -44,7 +45,7 @@
             android:layout_height="wrap_content"
             android:scrollbars="vertical"
             android:minLines="5"
-            android:maxLines="5"
+            android:maxLines="10"
             android:textSize="16sp"
             android:gravity="top"
             android:hint="Note" />
@@ -52,10 +53,10 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:layout_marginTop="20dp"
+            android:textColor="@color/black"
+            android:layout_marginTop="30dp"
             android:text="Extra Note" />
 
         <EditText
@@ -70,70 +71,39 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_marginVertical="30dp"
             android:weightSum="20">
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="8"
-                android:gravity="start"
-                android:orientation="vertical">
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/new_lesson_upload_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/black"
-                    android:textColor="@color/white"
-                    android:padding="5dp"
-                    android:text="Choose a File" />
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/new_lesson_rename_file"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/black"
-                    android:textColor="@color/white"
-                    android:text="Preview of File" />
-
-
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/new_lesson_upload_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#37FF00"
-                    android:textColor="@color/white"
-                    android:padding="5dp"
-                    android:text="Upload" />
-
-            </LinearLayout>
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/upload_file_layout"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                android:layout_height="150dp"
                 android:layout_weight="12">
 
                 <ImageView
                     android:id="@+id/new_lesson_imageview"
                     android:layout_width="match_parent"
+                    android:visibility="gone"
                     android:layout_height="match_parent" />
 
                 <View
                     android:id="@+id/new_lesson_uploadAudio"
                     android:layout_width="match_parent"
+                    android:visibility="gone"
                     android:layout_height="match_parent" />
 
                 <VideoView
                     android:id="@+id/new_lesson_uploadVideoView"
                     android:layout_width="match_parent"
+                    android:visibility="gone"
                     android:layout_height="match_parent" />
 
                 <com.github.barteksc.pdfviewer.PDFView
                     android:id="@+id/new_lesson_pdfView"
                     android:layout_width="match_parent"
+                    android:visibility="gone"
                     android:layout_height="match_parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -142,6 +112,34 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/new_lesson_upload_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/black"
+                    android:textColor="@color/white"
+                    android:layout_marginHorizontal="10dp"
+                    android:padding="5dp"
+                    android:text="Choose a File" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/new_lesson_upload_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:backgroundTint="#37FF00"
+                    android:textColor="@color/white"
+                    android:padding="5dp"
+                    android:text="Upload" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
         <TextView
@@ -149,6 +147,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="end"
+            android:textColor="@color/black"
             android:layout_marginHorizontal="30dp"/>
 
     </LinearLayout>

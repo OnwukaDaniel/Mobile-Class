@@ -15,18 +15,20 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.gson.Gson
 import com.iodaniel.mobileclass.R
+import com.iodaniel.mobileclass.accessing_mobile_app.InternetConnection
 import com.iodaniel.mobileclass.databinding.FragmentCreateMultiChoiceBinding
 import com.iodaniel.mobileclass.databinding.ProgressBarDialogBinding
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.*
 import com.iodaniel.mobileclass.teacher_package.classes.MultiChoiceQuestion
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.*
 import java.util.*
 
-class CreateMultiChoice(
-    private val classInfo: ClassInfo,
-    private val arrayOfQuestions: ArrayList<MultiChoiceQuestion> = arrayListOf(),
-) : Fragment(), View.OnClickListener,
+class CreateMultiChoice: Fragment(), View.OnClickListener,
     ProgressBarController {
 
     private lateinit var binding: FragmentCreateMultiChoiceBinding
@@ -34,13 +36,13 @@ class CreateMultiChoice(
     private lateinit var dialog: Dialog
     private lateinit var progressBarController: ProgressBarController
     private var multiChoiceRef = FirebaseDatabase.getInstance().reference
-        .child("multi_choice_question")
-        .child(FirebaseAuth.getInstance().currentUser!!.uid)
-        .child(classInfo.classCode)
-        .push()
     private var listOfMedia: ArrayList<String> = arrayListOf()
+    private var dataset: ArrayList<MultiChoiceQuestion> = arrayListOf()
     private var fileName = ""
     private var alpha = 0
+    private lateinit var classInfo: ClassInfo
+    private val arrayOfQuestions: ArrayList<MultiChoiceQuestion> = arrayListOf()
+    private lateinit var cn: InternetConnection
 
     private val pickFileLauncher =
         registerForActivityResult(
@@ -67,10 +69,36 @@ class CreateMultiChoice(
             }
         )
 
+    override fun onStart() {
+        super.onStart()
+        cn = InternetConnection(requireContext())
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View {
         binding = FragmentCreateMultiChoiceBinding.inflate(inflater, container, false)
+
+        val bundle = arguments
+        val json = bundle!!.getString("classInfo")
+        classInfo = Json.decodeFromString(json!!)
+
+        val bundleArray = arguments
+        val jsonArray = bundleArray!!.getString("jsonMultiChoiceQuestion", "")
+        if (jsonArray!=""){
+            val gsonArray: JsonElement = Json.parseToJsonElement(jsonArray!!)
+            val sonArray = Json.encodeToJsonElement(gsonArray)
+            for (i in sonArray as JsonArray) {
+                val data: MultiChoiceQuestion = Json.decodeFromJsonElement(i)
+                arrayOfQuestions.add(data)
+            }
+        }
+
+        multiChoiceRef = multiChoiceRef
+            .child("multi_choice_question")
+            .child(FirebaseAuth.getInstance().currentUser!!.uid)
+            .child(classInfo.classCode)
+            .push()
+
         initialiseAllClassInterface()
         return binding.root
     }
@@ -318,10 +346,17 @@ class CreateMultiChoice(
 
     private fun saveDataAndNext(list: MultiChoiceQuestion) {
         arrayOfQuestions.add(list)
-        println("ARRAY OF QUESTIONS SIZE ************************ ${arrayOfQuestions}")
+        val fragment = CreateMultiChoice()
+        val bundle = Bundle()
+        val json = Json.encodeToString(classInfo)
+        bundle.putString("classInfo", json)
+
+        val jsonArray= Gson().toJsonTree(arrayOfQuestions)
+        bundle.putString("jsonMultiChoiceQuestion", jsonArray.toString())
+        fragment.arguments = bundle
         requireActivity().supportFragmentManager.beginTransaction()
             .addToBackStack(arrayOfQuestions.size.toString() + list.datetime)
-            .replace(R.id.multi_choice_root, CreateMultiChoice(classInfo, arrayOfQuestions))
+            .replace(R.id.multi_choice_root, fragment)
             .commit()
     }
 
@@ -333,7 +368,21 @@ class CreateMultiChoice(
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.multi_choice_submit -> {
-                submit()
+                if (cn != null) {
+                    cn.setCustomInternetListener(object :
+                        InternetConnection.CheckInternetConnection {
+                        override fun isConnected() {
+                            submit()
+                        }
+
+                        override fun notConnected() {
+                            val txt = "No active internet!!! Retry"
+                            Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG).show()
+                        }
+                    })
+                } else {
+                    Snackbar.make(binding.root, "Retry", Snackbar.LENGTH_LONG).show()
+                }
             }
             R.id.multi_choice_previous -> {
                 previousData()

@@ -136,7 +136,6 @@
                 android:paddingHorizontal="30dp"
                 android:text="Submit"
                 android:textColor="@color/white"
-                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/multi_choice_row_next_button"
                 app:layout_constraintStart_toEndOf="@+id/multi_choice_row_prev_button"

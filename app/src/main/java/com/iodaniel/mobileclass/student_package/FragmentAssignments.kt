@@ -16,14 +16,17 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.gson.Gson
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.FragmentAssignmentsBinding
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.MultiChoiceQuestion
 import com.iodaniel.mobileclass.teacher_package.singleclass.HelperListener
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
-
-class Assignments(val classInfo: ClassInfo) : Fragment(), HelperListener {
+class FragmentAssignments : Fragment(), HelperListener {
     private lateinit var binding: FragmentAssignmentsBinding
     private lateinit var assignmentAdapter: AssignmentsAdapter
     private var dataSet: ArrayList<MultiChoiceQuestion> = arrayListOf()
@@ -33,31 +36,36 @@ class Assignments(val classInfo: ClassInfo) : Fragment(), HelperListener {
     private var dataSetMultipleChoiceKeyList: ArrayList<String> = arrayListOf()
 
     private var multiChoiceRef = FirebaseDatabase.getInstance().reference
-        .child("multi_choice_question")
-        .child(classInfo.teacherInChargeUID)
-        .child(classInfo.classCode)
     private var uploadDocsRef = FirebaseDatabase.getInstance().reference
-        .child("doc_question")
-        .child(classInfo.teacherInChargeUID)
-        .child(classInfo.classCode)
     private var directQueRef = FirebaseDatabase.getInstance().reference
-        .child("direct_question")
-        .child(classInfo.teacherInChargeUID)
-        .child(classInfo.classCode)
 
+    override fun onStart() {
+        super.onStart()
+        val bundle = arguments
+        val json = bundle!!.getString("classInfo")
+        val classInfo: ClassInfo = Json.decodeFromString(json!!)
+
+        readData(classInfo)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View {
         binding = FragmentAssignmentsBinding.inflate(inflater, container, false)
-        readData()
+
         return binding.root
     }
 
-    private fun readData() {
+    private fun readData(classInfo: ClassInfo) {
+        multiChoiceRef = multiChoiceRef
+            .child("multi_choice_question")
+            .child(classInfo.teacherInChargeUID)
+            .child(classInfo.classCode)
         multiChoiceRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val snap = snapshot.value as ArrayList<HashMap<*, *>>
+                val multiChoiceQuestion = MultiChoiceQuestion()
+                //multiChoiceQuestion.className = snap[""]
                 try {
                     dataSetMultipleChoice.add(snap)
                     dataSetMultipleChoiceKeyList.add(snapshot.key!!)
@@ -93,6 +101,10 @@ class Assignments(val classInfo: ClassInfo) : Fragment(), HelperListener {
             }
         })
 
+        uploadDocsRef = uploadDocsRef
+            .child("doc_question")
+            .child(classInfo.teacherInChargeUID)
+            .child(classInfo.classCode)
         uploadDocsRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val snap = snapshot.getValue(MultiChoiceQuestion::class.java)
@@ -123,6 +135,10 @@ class Assignments(val classInfo: ClassInfo) : Fragment(), HelperListener {
             }
         })
 
+        directQueRef = directQueRef
+            .child("direct_question")
+            .child(classInfo.teacherInChargeUID)
+            .child(classInfo.classCode)
         directQueRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val snap = snapshot.getValue(MultiChoiceQuestion::class.java)
@@ -166,13 +182,28 @@ class Assignments(val classInfo: ClassInfo) : Fragment(), HelperListener {
     }
 
     override fun helperClickListener(datum: MultiChoiceQuestion) {
+        val viewAssignmentStudentFragment = FragmentViewAssignmentStudent()
+        val bundle = Bundle()
+        val jsonMultiChoiceQuestion = Json.encodeToString(datum)
+        bundle.putString("jsonMultiChoiceQuestion", jsonMultiChoiceQuestion)
+        bundle.putString("questionType", "singleQuestion")
+        viewAssignmentStudentFragment.arguments = bundle
+
         requireActivity().supportFragmentManager.beginTransaction().addToBackStack("dataS")
-            .replace(R.id.a_class_frame_student, ViewAssignmentStudentListener(datum)).commit()
+            .replace(R.id.a_class_frame_student, viewAssignmentStudentFragment).commit()
     }
 
     override fun helperClickListenerMultipleChoice(datum: ArrayList<HashMap<*, *>>) {
-        requireActivity().supportFragmentManager.beginTransaction().addToBackStack("data_multiple_choice_questionS")
-            .replace(R.id.a_class_frame_student, ViewAssignmentStudentListener(multipleChoiceQuestions = datum)).commit()
+        val bundle = Bundle()
+        val viewAssignmentStudentFragment = FragmentViewAssignmentStudent()
+        val json=Gson().toJsonTree(datum)
+        bundle.putString("jsonMultiChoiceQuestion", json.toString())
+        bundle.putString("questionType", "multiChoice")
+        viewAssignmentStudentFragment.arguments = bundle
+
+        requireActivity().supportFragmentManager.beginTransaction()
+            .addToBackStack("data_multiple_choice_questionS")
+            .replace(R.id.a_class_frame_student, viewAssignmentStudentFragment).commit()
     }
 }
 
@@ -192,12 +223,12 @@ class AssignmentsAdapter : RecyclerView.Adapter<AssignmentsAdapter.ViewHolder>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context = parent.context
         val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.assignments_row_student, parent, false)
+            LayoutInflater.from(parent.context)
+                .inflate(R.layout.assignments_row_student, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
         if (position < dataset.size) {
             val datum = dataset[position]
             val name = "Assignment ${position + 1}"

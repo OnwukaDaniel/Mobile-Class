@@ -27,9 +27,7 @@ class SplashScreen : AppCompatActivity() {
 
         try {
             Firebase.database.setPersistenceEnabled(true)
-        } catch (e: Exception) {
-
-        }
+        } catch (e: Exception) {}
         val firebaseUser = FirebaseAuth.getInstance().currentUser
         val newUserIntent = Intent(this, SignInOrSignUp::class.java)
         newUserIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
@@ -42,19 +40,23 @@ class SplashScreen : AppCompatActivity() {
             null -> {
                 startActivity(newUserIntent)
                 overridePendingTransition(0, 0)
+                return
             }
             else -> when (userType) {
                 "" -> {
                     startActivity(newUserIntent)
                     overridePendingTransition(0, 0)
+                    return
                 }
                 teacher -> {
                     startActivity(teacherUserIntent)
                     overridePendingTransition(0, 0)
+                    return
                 }
                 student -> {
                     startActivity(studentUserIntent)
                     overridePendingTransition(0, 0)
+                    return
                 }
             }
         }

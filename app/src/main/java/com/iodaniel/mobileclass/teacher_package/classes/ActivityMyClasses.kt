@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -22,7 +23,6 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.gson.Gson
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.accessing_mobile_app.SignInOrSignUp
 import com.iodaniel.mobileclass.databinding.ActivityMyClassBinding
@@ -34,7 +34,8 @@ import kotlinx.coroutines.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-class ActivityMyClasses : AppCompatActivity(), View.OnClickListener, ClassListener, OnNavigationItemSelectedListener {
+class ActivityMyClasses : AppCompatActivity(), View.OnClickListener, ClassListener,
+    OnNavigationItemSelectedListener {
 
     private val binding by lazy {
         ActivityMyClassBinding.inflate(layoutInflater)
@@ -47,6 +48,7 @@ class ActivityMyClasses : AppCompatActivity(), View.OnClickListener, ClassListen
         .child("teacher")
         .child(FirebaseAuth.getInstance().currentUser!!.uid)
         .child("classes")
+        //.orderByChild("/datetime")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +74,10 @@ class ActivityMyClasses : AppCompatActivity(), View.OnClickListener, ClassListen
         binding.drawerIconMyClass.setOnClickListener(this)
         classListener = this
         binding.navViewTeacherPage.setNavigationItemSelectedListener(this)
+
+        val viewH = binding.navViewTeacherPage.getHeaderView(0)
+        val textH: TextView = viewH.findViewById(R.id.header_teacher_page_email)
+        textH.text = FirebaseAuth.getInstance().currentUser?.email
     }
 
     private fun readDatabase() {
@@ -84,17 +90,19 @@ class ActivityMyClasses : AppCompatActivity(), View.OnClickListener, ClassListen
                     val datetime = courses["datetime"].toString()
                     val dateModified = courses["dateModified"].toString()
                     val classImage = courses["classImage"].toString()
+                    val classCodePushId = courses["classCodePushId"].toString()
                     val teacherInChargeName = courses["teacherInChargeName"].toString()
                     val time = courses["time"].toString()
 
-                    val classInfo = ClassInfo(
-                        className = className,
-                        classCode = classCode,
-                        classImage = classImage,
-                        time = time,
-                        datetime = datetime,
-                        teacherInChargeName = teacherInChargeName,
-                    )
+                    val classInfo = ClassInfo()
+                    classInfo.className = className
+                    classInfo.classCode = classCode
+                    classInfo.classImage = classImage
+                    classInfo.time = time
+                    classInfo.classCodePushId = classCodePushId
+                    classInfo.datetime = datetime
+                    classInfo.teacherInChargeName = teacherInChargeName
+
                     listOfCourses.add(classInfo)
                     myCoursesKeyList.add(snapshot.key!!)
                     initRv()
@@ -108,23 +116,25 @@ class ActivityMyClasses : AppCompatActivity(), View.OnClickListener, ClassListen
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 try {
                     val courses = (snapshot.value as HashMap<*, *>)
-                    val gson = Gson().toJson((courses.values.toList()))
                     val className = courses["className"].toString()
                     val classCode = courses["classCode"].toString()
-                    val dateCreated = courses["dateCreated"].toString()
                     val datetime = courses["datetime"].toString()
+                    val dateModified = courses["dateModified"].toString()
                     val classImage = courses["classImage"].toString()
+                    val classCodePushId = courses["classCodePushId"].toString()
                     val teacherInChargeName = courses["teacherInChargeName"].toString()
                     val time = courses["time"].toString()
 
-                    val classInfo = ClassInfo(
-                        className = className,
-                        classCode = classCode,
-                        classImage = classImage,
-                        time = time,
-                        datetime = datetime,
-                        teacherInChargeName = teacherInChargeName,
-                    )
+
+                    val classInfo = ClassInfo()
+                    classInfo.className = className
+                    classInfo.classCode = classCode
+                    classInfo.classImage = classImage
+                    classInfo.time = time
+                    classInfo.classCodePushId = classCodePushId
+                    classInfo.datetime = datetime
+                    classInfo.teacherInChargeName = teacherInChargeName
+
                     listOfCourses.add(classInfo)
                     myCoursesKeyList.add(snapshot.key!!)
                     rvAdapter.notifyDataSetChanged()
@@ -183,6 +193,16 @@ class ActivityMyClasses : AppCompatActivity(), View.OnClickListener, ClassListen
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_my_classes -> {
+                if (supportFragmentManager.backStackEntryCount == 0) {
+                    binding.drawerMyClassesRoot.closeDrawer(GravityCompat.START)
+                } else {
+                    supportFragmentManager.popBackStack(
+                        null,
+                        FragmentManager.POP_BACK_STACK_INCLUSIVE
+                    )
+                    supportFragmentManager.popBackStack()
+                    binding.drawerMyClassesRoot.closeDrawer(GravityCompat.START)
+                }
                 Snackbar.make(binding.root, "My Classes", Snackbar.LENGTH_LONG).show()
                 return true
             }
@@ -203,7 +223,8 @@ class ActivityMyClasses : AppCompatActivity(), View.OnClickListener, ClassListen
                         runOnUiThread {
                             supportFragmentManager.beginTransaction()
                                 .addToBackStack("accountSettings")
-                                .replace(R.id.drawer_my_classes_root, FragmentAccountSettings(true)).commit()
+                                .replace(R.id.drawer_my_classes_root, FragmentAccountSettings())
+                                .commit()
                         }
                     }
                 }
@@ -216,10 +237,10 @@ class ActivityMyClasses : AppCompatActivity(), View.OnClickListener, ClassListen
     }
 
     override fun onBackPressed() {
-        if(supportFragmentManager.backStackEntryCount<1) {
+        if (supportFragmentManager.backStackEntryCount < 1) {
             super.onBackPressed()
             finish()
-        } else{
+        } else {
             supportFragmentManager.popBackStack()
         }
     }
@@ -264,7 +285,7 @@ class MyClassesAdapter : RecyclerView.Adapter<MyClassesAdapter.MyCoursesAdapterV
     class MyCoursesAdapterViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val image: ImageView = view.findViewById(R.id.teacher_class_image)
         val className: TextView = view.findViewById(R.id.teacher_class_name)
-        val teacherInChargeName: TextView = view.findViewById(R.id.teacher_year)
+        //val teacherInChargeName: TextView = view.findViewById(R.id.teacher_year)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyCoursesAdapterViewHolder {
@@ -284,10 +305,10 @@ class MyClassesAdapter : RecyclerView.Adapter<MyClassesAdapter.MyCoursesAdapterV
         Glide.with(context).load(imageUri).centerCrop().into(holder.image)
         holder.image.setColorFilter(Color.argb(80, red, green, blue))
         holder.className.text = datum.className
-        if (holder.teacherInChargeName.text != "") {
+        /*if (holder.teacherInChargeName.text != "") {
             holder.teacherInChargeName.visibility = View.VISIBLE
             holder.teacherInChargeName.text = datum.teacherInChargeName
-        }
+        }*/
         holder.itemView.setOnClickListener {
             val intent = Intent(context, AClass::class.java)
             val json = Json.encodeToString(datum)

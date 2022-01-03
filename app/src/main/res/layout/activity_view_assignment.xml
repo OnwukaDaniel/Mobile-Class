@@ -80,30 +80,6 @@
 
         </LinearLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <!--<Button
-                android:id="@+id/multi_choice_row_prev_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Previous"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Button
-                android:id="@+id/multi_choice_row_next_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Next"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />-->
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
     </LinearLayout>
 
 </LinearLayout>

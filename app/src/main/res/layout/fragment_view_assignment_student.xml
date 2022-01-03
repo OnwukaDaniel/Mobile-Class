@@ -41,7 +41,7 @@
                     android:gravity="center"
                     android:text="Assessment"
                     android:textColor="@color/black"
-                    android:textSize="23sp" />
+                    android:textSize="22sp" />
 
             </androidx.appcompat.widget.Toolbar>
 
@@ -64,174 +64,183 @@
             android:layout_height="match_parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/view_assignment_questions_root"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="10dp"
-                android:orientation="vertical">
+                android:layout_marginVertical="10dp">
 
-                <LinearLayout
-                    android:id="@+id/view_assignment_single_question_section"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/view_assignment_questions_root"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="15dp"
-                    android:orientation="vertical"
-                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
-                    <TextView
-                        android:id="@+id/view_question_assignment_instruction"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Assignment Instructions"
-                        android:visibility="gone" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginVertical="10dp"
-                        android:gravity="start|top"
-                        android:maxLines="1"
-                        android:text="Assessment question"
-                        android:textColor="@color/black"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:id="@+id/view_question_question"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="start|top"
-                        android:hint="Share question here"
-                        android:maxLines="8"
-                        android:minLines="3"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginVertical="10dp"
-                        android:gravity="start|top"
-                        android:maxLines="1"
-                        android:text="Extra note"
-                        android:textColor="@color/black"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:id="@+id/view_question_extra_note"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="start|top"
-                        android:hint="Extra note"
-                        android:textSize="16sp" />
-
-                </LinearLayout>
-
-
-                <LinearLayout
-                    android:id="@+id/view_assignment_multiple_question_root"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rvMultipleChoiceStudent"
+                    <LinearLayout
+                        android:id="@+id/view_assignment_single_question_section"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="15dp"
-                        android:nestedScrollingEnabled="false"
+                        android:orientation="vertical"
+                        android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent">
 
-                </LinearLayout>
+                        <TextView
+                            android:id="@+id/view_question_assignment_instruction"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Assignment Instructions"
+                            android:visibility="gone" />
 
-                <LinearLayout
-                    android:id="@+id/view_assignment_result_question_root"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="50dp"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="10dp"
+                            android:gravity="start|top"
+                            android:maxLines="1"
+                            android:text="Assessment question"
+                            android:textColor="@color/black"
+                            android:textSize="16sp" />
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                        <TextView
+                            android:id="@+id/view_question_question"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start|top"
+                            android:hint="Share question here"
+                            android:maxLines="8"
+                            android:minLines="3"
+                            android:textSize="16sp" />
 
-                        <ProgressBar
-                            android:id="@+id/view_assignment_progress_bar"
-                            style="?android:attr/progressBarStyleHorizontal"
-                            android:layout_width="200dp"
-                            android:layout_height="200dp"
-                            android:indeterminate="false"
-                            android:max="100"
-                            android:progress="65"
-                            android:progressDrawable="@drawable/circle_progress"
-                            app:layout_constraintBottom_toBottomOf="parent"
+                        <TextView
+                            android:id="@+id/view_question_extra_note_header"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="10dp"
+                            android:gravity="start|top"
+                            android:maxLines="1"
+                            android:text="Extra note"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/view_question_extra_note"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start|top"
+                            android:textSize="16sp" />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/view_assignment_multiple_question_root"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvMultipleChoiceStudent"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="15dp"
+                            android:nestedScrollingEnabled="false"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
-                        <TextView
-                            android:id="@+id/view_assignment_score"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="6"
-                            android:fontFamily="@font/amaranth"
-                            android:gravity="center"
-                            android:text="100%"
-                            android:textSize="29sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="@+id/view_assignment_progress_bar"
-                            app:layout_constraintStart_toStartOf="@+id/view_assignment_progress_bar"
-                            app:layout_constraintTop_toTopOf="@+id/view_assignment_progress_bar" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                    </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/view_assignment_result_question_root"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="10dp"
-                        android:layout_marginVertical="50dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="50dp"
                         android:gravity="center"
-                        android:orientation="horizontal"
-                        android:weightSum="20">
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="1dp"
-                            android:layout_weight="7"
-                            android:background="@color/black" />
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
 
-                        <TextView
-                            android:layout_width="0dp"
+                            <ProgressBar
+                                android:id="@+id/view_assignment_progress_bar"
+                                style="?android:attr/progressBarStyleHorizontal"
+                                android:layout_width="200dp"
+                                android:layout_height="200dp"
+                                android:indeterminate="false"
+                                android:max="100"
+                                android:progress="65"
+                                android:progressDrawable="@drawable/circle_progress"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/view_assignment_score"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="6"
+                                android:fontFamily="@font/amaranth"
+                                android:gravity="center"
+                                android:text="100%"
+                                android:textSize="29sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="@+id/view_assignment_progress_bar"
+                                app:layout_constraintStart_toStartOf="@+id/view_assignment_progress_bar"
+                                app:layout_constraintTop_toTopOf="@+id/view_assignment_progress_bar" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="6"
-                            android:fontFamily="@font/amaranth"
+                            android:layout_marginHorizontal="10dp"
+                            android:layout_marginVertical="50dp"
                             android:gravity="center"
-                            android:text="Your Score"
-                            android:textSize="20sp" />
+                            android:orientation="horizontal"
+                            android:weightSum="20">
 
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="1dp"
-                            android:layout_weight="7"
-                            android:background="@color/black" />
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="1dp"
+                                android:layout_weight="7"
+                                android:background="@color/black" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="6"
+                                android:fontFamily="@font/amaranth"
+                                android:gravity="center"
+                                android:text="Your Score"
+                                android:textSize="20sp" />
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="1dp"
+                                android:layout_weight="7"
+                                android:background="@color/black" />
+
+                        </LinearLayout>
 
                     </LinearLayout>
 
-                </LinearLayout>
 
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </ScrollView>

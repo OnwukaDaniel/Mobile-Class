@@ -18,15 +18,18 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.iodaniel.mobileclass.R
+import com.iodaniel.mobileclass.accessing_mobile_app.InternetConnection
 import com.iodaniel.mobileclass.databinding.FragmentUploadDocsBinding
 import com.iodaniel.mobileclass.databinding.ProgressBarDialogBinding
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.MediaSupport
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.ProgressBarController
 import com.iodaniel.mobileclass.teacher_package.classes.MultiChoiceQuestion
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import java.util.*
 
-class UploadDocs(val classInfo: ClassInfo) : Fragment(), ProgressBarController,
+class UploadDocs: Fragment(), ProgressBarController,
     MediaSupport, View.OnClickListener {
 
     private lateinit var binding: FragmentUploadDocsBinding
@@ -35,12 +38,15 @@ class UploadDocs(val classInfo: ClassInfo) : Fragment(), ProgressBarController,
     private var fileName = ""
     private lateinit var progressBarController: ProgressBarController
     private var multiChoiceRef = FirebaseDatabase.getInstance().reference
-        .child("doc_question")
-        .child(FirebaseAuth.getInstance().currentUser!!.uid)
-        .child(classInfo.classCode)
-        .push()
     private var listOfMedia: ArrayList<String> = arrayListOf()
     private lateinit var mediaSupport: MediaSupport
+    private lateinit var classInfo: ClassInfo
+    private lateinit var cn: InternetConnection
+
+    override fun onStart() {
+        super.onStart()
+        cn = InternetConnection(requireContext())
+    }
 
     private val pickFileLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult(),
@@ -50,64 +56,44 @@ class UploadDocs(val classInfo: ClassInfo) : Fragment(), ProgressBarController,
                     if (it.resultCode == AppCompatActivity.RESULT_OK) {
                         val dataUri = it.data!!.data
                         fileName = "Attachment"
-                        println("______________________ filename: $fileName")
                         val contentResolver = requireActivity().contentResolver
                         val mime = MimeTypeMap.getSingleton()
-                        val extensionType =
-                            mime.getExtensionFromMimeType(contentResolver?.getType(dataUri!!))!!
-                        when (extensionType) {
+                        when (mime.getExtensionFromMimeType(contentResolver?.getType(dataUri!!))!!) {
                             "mp4" -> {
-                                println("ACTIVITY RESULT ******************** $extensionType")
-                                mediaSupport.makeMediaPlayersInvisible()
-                                mediaSupport.videoPlayer(dataUri!!)
                                 listOfMedia.add(dataUri.toString())
+                                mediaSupport.videoPlayer(dataUri!!)
                             }
                             "3gp" -> {
-                                println("ACTIVITY RESULT ******************** $extensionType")
-                                mediaSupport.makeMediaPlayersInvisible()
-                                mediaSupport.videoPlayer(dataUri!!)
                                 listOfMedia.add(dataUri.toString())
+                                mediaSupport.videoPlayer(dataUri!!)
                             }
                             "mp3" -> {
-                                println("ACTIVITY RESULT ******************** $extensionType")
-                                mediaSupport.makeMediaPlayersInvisible()
-                                mediaSupport.musicReader(dataUri!!)
                                 listOfMedia.add(dataUri.toString())
+                                mediaSupport.musicReader(dataUri!!)
                             }
                             "aac" -> {
-                                println("ACTIVITY RESULT ******************** $extensionType")
-                                mediaSupport.makeMediaPlayersInvisible()
-                                mediaSupport.musicReader(dataUri!!)
                                 listOfMedia.add(dataUri.toString())
+                                mediaSupport.musicReader(dataUri!!)
                             }
                             "wav" -> {
-                                println("ACTIVITY RESULT ******************** $extensionType")
-                                mediaSupport.makeMediaPlayersInvisible()
-                                mediaSupport.musicReader(dataUri!!)
                                 listOfMedia.add(dataUri.toString())
+                                mediaSupport.musicReader(dataUri!!)
                             }
                             "pdf" -> {
-                                println("ACTIVITY RESULT ******************** $extensionType")
-                                mediaSupport.makeMediaPlayersInvisible()
-                                mediaSupport.pdfReader(dataUri!!)
                                 listOfMedia.add(dataUri.toString())
+                                mediaSupport.pdfReader(dataUri!!)
                             }
                             "jpg" -> {
-                                println("ACTIVITY RESULT ******************** $extensionType")
-                                mediaSupport.makeMediaPlayersInvisible()
-                                mediaSupport.imageReader(dataUri!!)
                                 listOfMedia.add(dataUri.toString())
+                                mediaSupport.imageReader(dataUri!!)
                             }
                             "png" -> {
-                                println("ACTIVITY RESULT ******************** $extensionType")
-                                mediaSupport.makeMediaPlayersInvisible()
-                                mediaSupport.imageReader(dataUri!!)
                                 listOfMedia.add(dataUri.toString())
+                                mediaSupport.imageReader(dataUri!!)
                             }
                             "jpeg" -> {
-                                println("ACTIVITY RESULT ******************** $extensionType")
-                                mediaSupport.imageReader(dataUri!!)
                                 listOfMedia.add(dataUri.toString())
+                                mediaSupport.imageReader(dataUri!!)
                             }
                         }
                     }
@@ -128,6 +114,16 @@ class UploadDocs(val classInfo: ClassInfo) : Fragment(), ProgressBarController,
         binding.uploadAttachment.setOnClickListener(this)
         binding.uploadQuestionBackArrow.setOnClickListener(this)
         mediaSupport = this
+
+        val bundle = arguments
+        val json = bundle!!.getString("classInfo")
+        classInfo = Json.decodeFromString(json!!)
+
+        multiChoiceRef = multiChoiceRef
+            .child("doc_question")
+            .child(FirebaseAuth.getInstance().currentUser!!.uid)
+            .child(classInfo.classCode)
+            .push()
         return binding.root
     }
 
@@ -136,10 +132,24 @@ class UploadDocs(val classInfo: ClassInfo) : Fragment(), ProgressBarController,
             R.id.upload_question_cancel -> {
                 listOfMedia = arrayListOf()
                 binding.uploadAttachmentFileView.visibility = View.GONE
-                Snackbar.make(binding.root, "Cleared all attachment", Snackbar.LENGTH_LONG).show()
+                Snackbar.make(binding.root, "Cleared all attachments", Snackbar.LENGTH_LONG).show()
             }
             R.id.upload_question_upload -> {
-                uploadQueDoc()
+                if (cn != null) {
+                    cn.setCustomInternetListener(object :
+                        InternetConnection.CheckInternetConnection {
+                        override fun isConnected() {
+                            uploadQueDoc()
+                        }
+
+                        override fun notConnected() {
+                            val txt = "No active internet!!! Retry"
+                            Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG).show()
+                        }
+                    })
+                } else {
+                    Snackbar.make(binding.root, "Retry", Snackbar.LENGTH_LONG).show()
+                }
             }
             R.id.upload_question_back_arrow -> {
                 requireActivity().onBackPressed()
@@ -187,31 +197,24 @@ class UploadDocs(val classInfo: ClassInfo) : Fragment(), ProgressBarController,
                         arrayDownloadUris.add("$downloadUri}")
                         if (arrayDownloadUris.size == listOfMedia.size) {
 
-                            val docQuestion = MultiChoiceQuestion(
-                                className = classInfo.className,
-                                classCode = classInfo.classCode,
-                                teacherInChargeName = classInfo.teacherInChargeName,
-                                teacherInChargeUID = classInfo.teacherInChargeUID,
-                                datetime = dateTime,
-                                question = question,
-                                extraNote = extraNote,
-                                mediaUris = arrayDownloadUris,
-                            )
+                            val docQuestion = MultiChoiceQuestion()
+                            docQuestion.className= classInfo.className
+                            docQuestion.classCode= classInfo.classCode
+                            docQuestion.teacherInChargeName= classInfo.teacherInChargeName
+                            docQuestion.teacherInChargeUID= classInfo.teacherInChargeUID
+                            docQuestion.datetime = dateTime
+                            docQuestion.question = question
+                            docQuestion.extraNote = extraNote
+                            docQuestion.mediaUris = arrayDownloadUris
+
                             multiChoiceRef.setValue(docQuestion).addOnCompleteListener {
+                                val txt = "Uploaded successfully"
+                                Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG).show()
                                 requireActivity().onBackPressed()
-                                Snackbar.make(
-                                    binding.root,
-                                    "Uploaded successfully",
-                                    Snackbar.LENGTH_LONG
-                                ).show()
                                 progressBarController.hideProgressBar()
                             }.addOnFailureListener {
-                                Snackbar.make(
-                                    binding.root,
-                                    "Error occurred!!!",
-                                    Snackbar.LENGTH_LONG
-                                )
-                                    .show()
+                                val txt = "Error occurred!!!"
+                                Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG).show()
                             }
                         }
                     }
@@ -231,10 +234,8 @@ class UploadDocs(val classInfo: ClassInfo) : Fragment(), ProgressBarController,
         dialog.setContentView(progressBarBinding.root)
         dialog.setCancelable(false)
         dialog.setCanceledOnTouchOutside(false)
-        dialog.window?.setLayout(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT
-        )
+        val paramWrap = WindowManager.LayoutParams.WRAP_CONTENT
+        dialog.window?.setLayout(paramWrap, paramWrap)
         dialog.show()
     }
 
@@ -244,26 +245,26 @@ class UploadDocs(val classInfo: ClassInfo) : Fragment(), ProgressBarController,
 
     override fun videoPlayer(uri: Uri) = try {
         binding.uploadAttachmentFileView.visibility = View.VISIBLE
-        binding.uploadAttachmentFileAttachmentText.text = fileName
+        binding.uploadAttachmentFileAttachmentText.text = listOfMedia.size.toString()
     } catch (e: Exception) {
         print("ACTIVITY RESULT ERROR ******************* ${e.printStackTrace()}")
     }
 
     override fun pdfReader(uri: Uri) = try {
         binding.uploadAttachmentFileView.visibility = View.VISIBLE
-        binding.uploadAttachmentFileAttachmentText.text = fileName
+        binding.uploadAttachmentFileAttachmentText.text = listOfMedia.size.toString()
     } catch (e: Exception) {
         print("ACTIVITY RESULT ERROR ******************* ${e.printStackTrace()}")
     }
 
     override fun musicReader(uri: Uri) {
         binding.uploadAttachmentFileView.visibility = View.VISIBLE
-        binding.uploadAttachmentFileAttachmentText.text = fileName
+        binding.uploadAttachmentFileAttachmentText.text = listOfMedia.size.toString()
     }
 
     override fun imageReader(uri: Uri) = try {
         binding.uploadAttachmentFileView.visibility = View.VISIBLE
-        binding.uploadAttachmentFileAttachmentText.text = fileName
+        binding.uploadAttachmentFileAttachmentText.text = listOfMedia.size.toString()
     } catch (e: Exception) {
         print("ACTIVITY RESULT ERROR ******************* ${e.printStackTrace()}")
     }

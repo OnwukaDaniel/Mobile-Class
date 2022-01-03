@@ -16,38 +16,53 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.gson.Gson
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.AssignmentBinding
+import com.iodaniel.mobileclass.student_package.FragmentViewAssignmentStudent
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.MultiChoiceQuestion
 import com.iodaniel.mobileclass.teacher_package.singleclass.AssignmentsAdapter.ViewHolder
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import java.text.SimpleDateFormat
+import java.util.*
 
-class Assignments(val classInfo: ClassInfo) : Fragment(), HelperListener {
+class FragmentAssignments : Fragment(), HelperListener {
     private lateinit var binding: AssignmentBinding
     private lateinit var assignmentAdapter: AssignmentsAdapter
     private var dataSet: ArrayList<MultiChoiceQuestion> = arrayListOf()
     private var dataSetMultipleChoice: ArrayList<ArrayList<HashMap<*, *>>> = arrayListOf()
-
+    private lateinit var classInfo: ClassInfo
     private var dataSetKeyList: ArrayList<String> = arrayListOf()
     private var dataSetMultipleChoiceKeyList: ArrayList<String> = arrayListOf()
 
     private var multiChoiceRef = FirebaseDatabase.getInstance().reference
-        .child("multi_choice_question")
-        .child(FirebaseAuth.getInstance().currentUser!!.uid)
-        .child(classInfo.classCode)
     private var uploadDocsRef = FirebaseDatabase.getInstance().reference
-        .child("doc_question")
-        .child(FirebaseAuth.getInstance().currentUser!!.uid)
-        .child(classInfo.classCode)
     private var directQueRef = FirebaseDatabase.getInstance().reference
-        .child("direct_question")
-        .child(FirebaseAuth.getInstance().currentUser!!.uid)
-        .child(classInfo.classCode)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View {
         binding = AssignmentBinding.inflate(layoutInflater, container, false)
+        val bundle = arguments
+        val json = bundle!!.getString("classInfo")
+        classInfo = Json.decodeFromString(json!!)
+
+        multiChoiceRef = multiChoiceRef
+            .child("multi_choice_question")
+            .child(FirebaseAuth.getInstance().currentUser!!.uid)
+            .child(classInfo.classCode)
+        uploadDocsRef = uploadDocsRef
+            .child("doc_question")
+            .child(FirebaseAuth.getInstance().currentUser!!.uid)
+            .child(classInfo.classCode)
+        directQueRef = directQueRef
+            .child("direct_question")
+            .child(FirebaseAuth.getInstance().currentUser!!.uid)
+            .child(classInfo.classCode)
+
         readData()
         return binding.root
     }
@@ -92,7 +107,6 @@ class Assignments(val classInfo: ClassInfo) : Fragment(), HelperListener {
             }
         })
 
-
         uploadDocsRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val snap = snapshot.getValue(MultiChoiceQuestion::class.java)
@@ -107,7 +121,6 @@ class Assignments(val classInfo: ClassInfo) : Fragment(), HelperListener {
                 dataSet.add(snap!!)
                 dataSetKeyList.add(snapshot.key!!)
                 assignmentAdapter.notifyDataSetChanged()
-                rvInit()
             }
 
             @SuppressLint("NotifyDataSetChanged")
@@ -125,14 +138,12 @@ class Assignments(val classInfo: ClassInfo) : Fragment(), HelperListener {
             }
         })
 
-
-
         directQueRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val snap = snapshot.getValue(MultiChoiceQuestion::class.java)
                 dataSet.add(snap!!)
                 dataSetKeyList.add(snapshot.key!!)
-                println("SNAP ******************** ${snap.question}")
+                println("SNAP ******************** ${snap.datetime}")
                 rvInit()
             }
 
@@ -145,8 +156,8 @@ class Assignments(val classInfo: ClassInfo) : Fragment(), HelperListener {
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
                 val index = dataSetKeyList.indexOf(snapshot.key)
-                dataSetMultipleChoiceKeyList.removeAt(index)
-                dataSetMultipleChoice.removeAt(index)
+                dataSetKeyList.removeAt(index)
+                dataSet.removeAt(index)
                 assignmentAdapter.notifyItemRemoved(index)
             }
 
@@ -159,6 +170,9 @@ class Assignments(val classInfo: ClassInfo) : Fragment(), HelperListener {
     }
 
     private fun rvInit() {
+        /*dataSet = dataSet.shuffled().sortedBy {
+            it.datetime
+        } as ArrayList<MultiChoiceQuestion>*/
         assignmentAdapter = AssignmentsAdapter()
         binding.rvAssignments.adapter = assignmentAdapter
         binding.rvAssignments.layoutManager =
@@ -170,13 +184,29 @@ class Assignments(val classInfo: ClassInfo) : Fragment(), HelperListener {
     }
 
     override fun helperClickListener(datum: MultiChoiceQuestion) {
-        requireActivity().supportFragmentManager.beginTransaction().addToBackStack("data")
-            .replace(R.id.a_class_frame, ViewAssignment(datum)).commit()
+        val viewAssignmentStudentFragment = FragmentViewAssignmentStudent()
+        val bundle = Bundle()
+        val jsonMultiChoiceQuestion = Json.encodeToString(datum)
+        bundle.putString("jsonMultiChoiceQuestion", jsonMultiChoiceQuestion)
+        bundle.putString("questionType", "singleQuestion")
+        viewAssignmentStudentFragment.arguments = bundle
+
+        requireActivity().supportFragmentManager.beginTransaction().addToBackStack("dataS")
+            .replace(R.id.a_class_frame, viewAssignmentStudentFragment).commit()
     }
 
     override fun helperClickListenerMultipleChoice(datum: ArrayList<HashMap<*, *>>) {
-        requireActivity().supportFragmentManager.beginTransaction().addToBackStack("data_multiple_choice_question")
-            .replace(R.id.a_class_frame, ViewAssignment(multipleChoiceQuestions = datum)).commit()
+        val bundle = Bundle()
+        val viewAssignmentStudentFragment = FragmentViewAssignmentStudent()
+        val json= Gson().toJsonTree(datum)
+        bundle.putString("jsonMultiChoiceQuestion", json.toString())
+        bundle.putString("questionType", "multiChoice")
+        bundle.putString("viewType", "teacher")
+        viewAssignmentStudentFragment.arguments = bundle
+
+        requireActivity().supportFragmentManager.beginTransaction()
+            .addToBackStack("data_multiple_choice_questionS")
+            .replace(R.id.a_class_frame, viewAssignmentStudentFragment).commit()
     }
 }
 
@@ -200,11 +230,14 @@ class AssignmentsAdapter : RecyclerView.Adapter<ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
         if (position < dataset.size) {
             val datum = dataset[position]
-            val name = "Assignment ${position + 1}"
-            holder.chip.text = name
+            try{
+                val name = "Assignment ${position + 1}"
+                holder.chip.text = name
+            } catch (e: Exception){
+
+            }
 
             holder.chip.setOnClickListener {
                 helperListener.helperClickListener(datum)
@@ -221,6 +254,13 @@ class AssignmentsAdapter : RecyclerView.Adapter<ViewHolder>() {
             } catch (e: Exception) {
             }
         }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    fun convertLongToTime(time: Long): String {
+        val date = Date(time)
+        val format = SimpleDateFormat("yyyy.MM.dd HH:mm")
+        return format.format(date)
     }
 
     override fun getItemCount(): Int = dataset.size + dataSetMultipleChoice.size

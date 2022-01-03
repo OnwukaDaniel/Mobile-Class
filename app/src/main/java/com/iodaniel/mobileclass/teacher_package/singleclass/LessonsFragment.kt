@@ -20,36 +20,53 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.Gson
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.LessonFragmentBinding
+import com.iodaniel.mobileclass.student_package.ViewMaterial
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.Material
-import com.iodaniel.mobileclass.teacher_package.singleclass.material.MaterialPage
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
 import java.util.*
 
-class LessonsFragment(private val classInfo: ClassInfo) : Fragment() {
-
+class LessonsFragment : Fragment() {
     private lateinit var binding: LessonFragmentBinding
     private lateinit var adapter: LessonRvAdapter
     private var listOfLessons: ArrayList<Material> = arrayListOf()
     private var keyList = arrayListOf<String>()
+    private lateinit var classInfo: ClassInfo
     private var stTypeRef = FirebaseDatabase.getInstance().reference
-        .child("materials")
-        .child(FirebaseAuth.getInstance().currentUser!!.uid)
-        .child(classInfo.classCode)
+
+    override fun onStart() {
+        super.onStart()
+        val bundle = arguments
+        val json = bundle!!.getString("classInfo")
+        classInfo = Json.decodeFromString(json!!)
+
+        stTypeRef = stTypeRef
+            .child("materials")
+            .child(FirebaseAuth.getInstance().currentUser!!.uid)
+            .child(classInfo.classCode)
+
+        readFromDatabase()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View {
         binding = LessonFragmentBinding.inflate(layoutInflater, container, false)
-        readFromDatabase()
+
         return binding.root
     }
 
     private fun rvInit() {
         adapter = LessonRvAdapter()
         adapter.dataSet = listOfLessons
+        adapter.classInfo = classInfo
         binding.rvLessons.adapter = adapter
-        try{ adapter.activity = requireActivity() }catch (e:Exception){}
+        try {
+            adapter.activity = requireActivity()
+        } catch (e: Exception) {
+        }
         binding.rvLessons.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
     }
@@ -77,7 +94,6 @@ class LessonsFragment(private val classInfo: ClassInfo) : Fragment() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-
             }
 
             @SuppressLint("NotifyDataSetChanged")
@@ -91,8 +107,8 @@ class LessonsFragment(private val classInfo: ClassInfo) : Fragment() {
 
                     val mediaUris =
                         if (lessonSnap["mediaUris"] != null) lessonSnap["mediaUris"] as ArrayList<String> else arrayListOf()
-                    val classwork =
-                        if (lessonSnap["classwork"] != null) lessonSnap["classwork"] as ArrayList<String> else arrayListOf()
+                    val listOfMediaNames =
+                        if (lessonSnap["listOfMediaNames"] != null) lessonSnap["listOfMediaNames"] as ArrayList<String> else arrayListOf()
                     val test =
                         if (lessonSnap["test"] != null) lessonSnap["test"] as ArrayList<String> else arrayListOf()
 
@@ -102,18 +118,20 @@ class LessonsFragment(private val classInfo: ClassInfo) : Fragment() {
                     val dateModified = lessonSnap["dateModified"].toString()
                     val dateCreated = lessonSnap["dateCreated"].toString()
 
-                    val material = Material(courseName,
-                        note,
-                        extraNote,
-                        heading,
-                        mediaUris = mediaUris,
-                        classwork = classwork,
-                        test,
-                        teacherInCharge,
-                        year,
-                        time,
-                        dateModified,
-                        dateCreated)
+                    val material = Material()
+                    material.courseName = courseName
+                    material.note = note
+                    material.extraNote = extraNote
+                    material.heading = heading
+                    material.test = test
+                    material.mediaUris = mediaUris
+                    material.listOfMediaNames = listOfMediaNames
+                    material.teacherInCharge = teacherInCharge
+                    material.year = year
+                    material.time = time
+                    material.dateModified = dateModified
+                    material.dateCreated = dateCreated
+
                     listOfLessons.add(material)
                     keyList.add(snapshot.key!!)
                     rvInit()
@@ -131,6 +149,7 @@ class LessonRvAdapter : RecyclerView.Adapter<LessonRvAdapter.ViewHolder>() {
     var dataSet: ArrayList<Material> = arrayListOf()
     lateinit var context: Context
     lateinit var activity: Activity
+    lateinit var classInfo: ClassInfo
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val lesson_heading: TextView = itemView.findViewById(R.id.lesson_heading)
@@ -152,14 +171,19 @@ class LessonRvAdapter : RecyclerView.Adapter<LessonRvAdapter.ViewHolder>() {
             if (datum.mediaUris.size == 0) "None" else datum.mediaUris.size.toString()
         val date = convertLongToTime(datum.dateCreated.toLong()).split(" ")[0]
         holder.lesson_date.text = date
+        println("fileName fileName ************************************ ${datum.listOfMediaNames}")
 
         holder.itemView.setOnClickListener {
-            val intent = Intent(context, MaterialPage::class.java)
+            val intent = Intent(context, ViewMaterial::class.java)
 
             val json = Gson().toJson(datum)
             intent.putExtra("material", json)
+            intent.putExtra("classCode", classInfo.classCode)
             context.startActivity(intent)
-            try{ activity.overridePendingTransition(0, 0) }catch (e:Exception){}
+            try {
+                activity.overridePendingTransition(0, 0)
+            } catch (e: Exception) {
+            }
         }
     }
 
