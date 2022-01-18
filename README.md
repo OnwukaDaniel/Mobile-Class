@@ -4,17 +4,20 @@ This is a Free sourced Educational Mobile application
 The idea behind this mobile application is to increase teaching efficiency for all educational level.
 The major features of the application is to assist teachers teaching exercise and students learning.
 
-![Screenshot_20220103-183836](https://user-images.githubusercontent.com/66129851/147963479-9e9fc15e-dda2-49fc-88df-d6b9fcb5a373.png)
+![Screenshot_20220118-195258](https://user-images.githubusercontent.com/66129851/150012109-58c07223-3ba4-440c-b9ad-e0f0597845ef.png)
+
 
 # Users can sign up as a teacher or student account.
 # SIgn up page
-![Screenshot_20220103-183843](https://user-images.githubusercontent.com/66129851/147963912-aecd1857-3074-4401-8974-d70686dfb7ba.png)
+
+![Screenshot_20220118-195307](https://user-images.githubusercontent.com/66129851/150012274-a79f0396-ce33-4ff3-9b7a-efe21f581ae7.png)
+
 
 #
 #
 #
 # Sign In page
-![Screenshot_20220103-183852](https://user-images.githubusercontent.com/66129851/147964693-88163327-010f-4486-bbb5-b363a98e383b.png)
+![Screenshot_20220118-195313](https://user-images.githubusercontent.com/66129851/150012402-3232d07a-e9a1-4eae-a6f9-b5f43752a819.png)
 
 #
 #
