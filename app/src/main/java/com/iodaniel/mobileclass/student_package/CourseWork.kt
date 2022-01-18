@@ -32,7 +32,7 @@ class CourseWork : Fragment() {
     private var courseWorkAdapter = CourseWorkAdapter()
     private var dataset: ArrayList<Material> = arrayListOf()
     private var keyList: ArrayList<String> = arrayListOf()
-    private var stTypeRef = FirebaseDatabase.getInstance().reference
+    private var classMaterialsReference = FirebaseDatabase.getInstance().reference
 
     override fun onStart() {
         super.onStart()
@@ -46,16 +46,16 @@ class CourseWork : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View {
         binding = FragmentCourseWorkBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
     private fun readFromDatabase(classInfo: ClassInfo) {
-        stTypeRef = stTypeRef
+        classMaterialsReference = classMaterialsReference
             .child("materials")
             .child(classInfo.teacherInChargeUID)
             .child(classInfo.classCode)
-        stTypeRef.addChildEventListener(object : ChildEventListener {
+
+        classMaterialsReference.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val snap = snapshot.getValue(Material::class.java)
                 dataset.add(snap!!)
@@ -78,13 +78,9 @@ class CourseWork : Fragment() {
                 courseWorkAdapter.notifyItemRemoved(index)
             }
 
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
 
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-
-            }
+            override fun onCancelled(error: DatabaseError) {}
         })
     }
 

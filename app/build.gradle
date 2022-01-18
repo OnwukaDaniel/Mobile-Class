@@ -45,10 +45,8 @@ dependencies {
     implementation 'androidx.activity:activity-ktx:1.4.0'
     implementation 'android.arch.lifecycle:common:1.1.1'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     implementation platform('com.google.firebase:firebase-bom:29.0.1')
-    implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-database-ktx'
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-storage-ktx'

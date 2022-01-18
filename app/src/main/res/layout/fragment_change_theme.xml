@@ -4,101 +4,110 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clickable="true"
+    android:background="#99000000"
     android:focusable="true"
+    android:clickable="true"
     android:id="@+id/student_root_theme"
     tools:context=".teacher_package.styling_package.FragmentChangeTheme">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cardView_theme"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="5dp"
-            android:layout_marginVertical="5dp"
-            android:background="@drawable/rounded_toolbar_background"
-            android:orientation="horizontal"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginVertical="100dp"
+            android:layout_marginHorizontal="50dp"
+            android:background="@drawable/rounded_background"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            android:focusable="true"
+            android:clickable="true"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar_my_classses_theme"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cardView_theme"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:layout_marginVertical="5dp"
+                android:background="@drawable/rounded_toolbar_background"
+                android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar_my_classses_theme"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:fontFamily="@font/amaranth"
-                    android:gravity="center"
-                    android:text="My Classes"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-            </androidx.appcompat.widget.Toolbar>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:fontFamily="@font/amaranth"
+                        android:gravity="center"
+                        android:text="My Classes"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
-            <ImageView
-                android:id="@+id/drawer_icon_my_class_theme"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:layout_margin="10dp"
-                android:src="@drawable/ic_baseline_menu_24"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/black" />
+                </androidx.appcompat.widget.Toolbar>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <ImageView
+                    android:id="@+id/drawer_icon_my_class_theme"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/ic_baseline_menu_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/black" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="5dp">
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="500dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_height="match_parent"
+                android:layout_margin="5dp">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_listOfCourses_theme"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scrollbars="vertical"
-                    tools:layout_editor_absoluteX="2dp" />
+                    android:layout_height="500dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_listOfCourses_theme"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        tools:listitem="@layout/my_classes_row"
+                        android:scrollbars="vertical"
+                        tools:layout_editor_absoluteX="2dp" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_my_class_add_classes_theme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:backgroundTint="@color/purple_500"
+                    android:contentDescription="Create new class"
+                    android:src="@drawable/ic_add"
+                    app:fabSize="mini"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:rippleColor="@color/white"
+                    app:tint="@color/white" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_my_class_add_classes_theme"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                android:backgroundTint="@color/purple_500"
-                android:contentDescription="Create new class"
-                android:src="@drawable/ic_add"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:rippleColor="@color/white"
-                app:tint="@color/white" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </LinearLayout>
+        </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,7 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.IBinder
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -14,8 +16,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.SignInBinding
+import com.iodaniel.mobileclass.shared_classes.ActivityMyClasses
 import com.iodaniel.mobileclass.student_package.StudentInitPage
-import com.iodaniel.mobileclass.teacher_package.classes.ActivityMyClasses
 
 class SignIn : AppCompatActivity(), View.OnClickListener, HelperListener.LoadingListener {
     private val binding by lazy {
@@ -40,12 +42,18 @@ class SignIn : AppCompatActivity(), View.OnClickListener, HelperListener.Loading
         loadingProgressBar = this
     }
 
+    fun hideKeyboard(context: Context, windowToken: IBinder){
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(windowToken, 0)
+    }
+
     private fun signIn() {
         val email = binding.signupEmail.text.toString()
         val password = binding.signupPassword.text.toString()
         if (email == "") return
         if (password == "") return
         loadingProgressBar.loadingProgressBar()
+        hideKeyboard(applicationContext, binding.root.windowToken)
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
                 val arrayOfUserInfo: ArrayList<HashMap<*, *>> = arrayListOf()
@@ -105,8 +113,7 @@ class SignIn : AppCompatActivity(), View.OnClickListener, HelperListener.Loading
                 })
             }.addOnFailureListener {
                 loadingProgressBar.notLoadingProgressBar()
-                val snackbar =
-                    Snackbar.make(binding.root, it.localizedMessage!!, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(binding.root, it.localizedMessage!!, Snackbar.LENGTH_LONG).show()
             }
     }
 

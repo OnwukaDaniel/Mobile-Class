@@ -62,10 +62,8 @@ class FragmentCreateNewLesson : Fragment(), OnClickListener,
                     }
                     if (it.resultCode == AppCompatActivity.RESULT_OK) {
                         val dataUri = it.data!!.data
-                        println("DATA URI ************************** $dataUri")
                         val split = dataUri.toString().split("/")
                         fileName = (split[split.size - 2] + split.last()).split("%2F").last()
-                        println("FileName **************************** $fileName")
                         val contentResolver = requireActivity().contentResolver
                         val mime = MimeTypeMap.getSingleton()
                         var extensionType = ""

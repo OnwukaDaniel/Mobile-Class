@@ -42,11 +42,13 @@ class ViewMaterial : AppCompatActivity(), View.OnClickListener {
     private lateinit var datum: Material
     private lateinit var classCode: String
     private var adapter = ViewMaterialAdapter()
-    private var listOfMediaNames: java.util.ArrayList<String> = arrayListOf()
-
+    private val writeExternalPermission = Manifest.permission.WRITE_EXTERNAL_STORAGE
+    private val permissionGranted = PackageManager.PERMISSION_GRANTED
     private val permissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            readData(datum)
+            if (isGranted){
+                readData(datum)
+            }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,20 +60,16 @@ class ViewMaterial : AppCompatActivity(), View.OnClickListener {
             classCode = intent.getStringExtra("classCode")!!
             datum = Json.decodeFromString(json!!)
 
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
+            if (ContextCompat.checkSelfPermission(this, writeExternalPermission) == permissionGranted) {
                 readData(datum)
-            } else permissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            } else
+                permissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
     }
 
     private fun readData(datum: Material) {
         if (datum.mediaUris.size > 0) binding.viewMaterialNumMaterials.text =
             datum.mediaUris.size.toString()
-        println("fileName fileName ************************************ ${datum.listOfMediaNames}")
         binding.viewMaterialHeading.text = datum.heading
         binding.viewMaterialBody.text = datum.note
         binding.viewMaterialExtraNote.text = datum.extraNote
@@ -117,7 +115,6 @@ class ViewMaterialAdapter : RecyclerView.Adapter<ViewMaterialAdapter.ViewHolder>
         val fileName = listOfMediaNames[position]
         val extension = dataset[position].split(".").last().split("?")[0]
         holder.textView.text = fileName
-        println("DATA NAME *************************************** $datum")
 
         val helperClass = HelperClass(datum, classCode, extension, context)
         val fullyQualifiedName = "/$classCode/${helperClass.uniqueName}.$extension"

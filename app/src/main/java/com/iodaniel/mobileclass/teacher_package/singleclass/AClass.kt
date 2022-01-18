@@ -55,7 +55,7 @@ class AClass : FragmentActivity(), OnClickListener, HelperListener.LoadingListen
             try {
                 loadingListener.loadingProgressBar()
                 val json = intent.getStringExtra("class_data")!!
-                classKey = intent.getStringExtra("class_key")!!
+                classKey = intent.getStringExtra("class_data_key")!!
                 //TODO: IN DEVELOPMENT-> REMOVE CLASS FROM STUDENT AND TEACHER
                 classInfo = Json.decodeFromString(json)
 

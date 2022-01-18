@@ -86,7 +86,6 @@ class LessonsFragment : Fragment() {
                 val index = keyList.indexOf(snapshot.key)
                 keyList.removeAt(index)
                 listOfLessons.removeAt(index)
-                binding.rvLessons.adapter!!.notifyItemRemoved(index)
                 adapter.notifyItemRemoved(index)
             }
 
@@ -99,7 +98,8 @@ class LessonsFragment : Fragment() {
             @SuppressLint("NotifyDataSetChanged")
             fun readData(snapshot: DataSnapshot) {
                 try {
-                    val lessonSnap = (snapshot.value as HashMap<*, *>)
+                    val material = snapshot.getValue(Material::class.java)!!
+                    /*val lessonSnap = (snapshot.value as HashMap<*, *>)
                     val courseName = lessonSnap["courseName"].toString()
                     val note = lessonSnap["note"].toString()
                     val extraNote = lessonSnap["extraNote"].toString()
@@ -130,8 +130,7 @@ class LessonsFragment : Fragment() {
                     material.year = year
                     material.time = time
                     material.dateModified = dateModified
-                    material.dateCreated = dateCreated
-
+                    material.dateCreated = dateCreated*/
                     listOfLessons.add(material)
                     keyList.add(snapshot.key!!)
                     rvInit()
@@ -171,7 +170,6 @@ class LessonRvAdapter : RecyclerView.Adapter<LessonRvAdapter.ViewHolder>() {
             if (datum.mediaUris.size == 0) "None" else datum.mediaUris.size.toString()
         val date = convertLongToTime(datum.dateCreated.toLong()).split(" ")[0]
         holder.lesson_date.text = date
-        println("fileName fileName ************************************ ${datum.listOfMediaNames}")
 
         holder.itemView.setOnClickListener {
             val intent = Intent(context, ViewMaterial::class.java)

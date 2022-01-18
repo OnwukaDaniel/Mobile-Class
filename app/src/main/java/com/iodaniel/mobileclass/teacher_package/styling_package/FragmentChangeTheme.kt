@@ -21,7 +21,6 @@ class FragmentChangeTheme : Fragment(), View.OnClickListener {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FragmentChangeThemeBinding.inflate(layoutInflater, container, false)
-        //Snackbar.make(binding.root, "Tap on Widgets to change Style", Snackbar.LENGTH_LONG).show()
         changes()
         return binding.root
     }
@@ -30,6 +29,7 @@ class FragmentChangeTheme : Fragment(), View.OnClickListener {
         binding.fabMyClassAddClassesTheme.setOnClickListener(this)
         binding.rvListOfCoursesTheme.setOnClickListener(this)
         binding.toolbarMyClasssesTheme.setOnClickListener(this)
+        binding.studentRootTheme.setOnClickListener(this)
     }
 
     private fun dialogChangeFabColor() {
@@ -63,6 +63,9 @@ class FragmentChangeTheme : Fragment(), View.OnClickListener {
             }
             R.id.fab_my_class_add_classes_theme -> {
                 dialogChangeFabColor()
+            }
+            R.id.student_root_theme -> {
+                requireActivity().supportFragmentManager.popBackStack()
             }
         }
     }
@@ -107,7 +110,6 @@ class DialogAdapter : RecyclerView.Adapter<DialogAdapter.ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val datum = dataset[position]
-        println("SHOWING ********************************** SHOWING")
         holder.text.text = datum
     }
 

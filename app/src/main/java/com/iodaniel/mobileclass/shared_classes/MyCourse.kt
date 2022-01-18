@@ -47,7 +47,7 @@ class ClassInfo(
 ) {}
 
 @Serializable
-class MultiChoiceQuestion(
+class AssignmentQuestion(
     var className: String = "",
     var classCode: String = "",
     var teacherInChargeName: String = "",

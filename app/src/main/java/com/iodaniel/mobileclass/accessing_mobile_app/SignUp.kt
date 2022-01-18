@@ -4,7 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.IBinder
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
@@ -12,8 +14,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.SignUpBinding
+import com.iodaniel.mobileclass.shared_classes.ActivityMyClasses
 import com.iodaniel.mobileclass.student_package.StudentInitPage
-import com.iodaniel.mobileclass.teacher_package.classes.ActivityMyClasses
 
 class SignUp : AppCompatActivity(), View.OnClickListener, HelperListener.LoadingListener {
 
@@ -57,6 +59,11 @@ class SignUp : AppCompatActivity(), View.OnClickListener, HelperListener.Loading
         }
     }
 
+    private fun hideKeyboard(context: Context, windowToken: IBinder){
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(windowToken, 0)
+    }
+
     private fun signUp() {
         val email = binding.signupEmail.text.toString()
         val password = binding.signupPassword.text.toString()
@@ -77,6 +84,7 @@ class SignUp : AppCompatActivity(), View.OnClickListener, HelperListener.Loading
             return
         }
         loadingListener.loadingProgressBar()
+        hideKeyboard(applicationContext, binding.root.windowToken)
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener {
                 pref = getSharedPreferences("userType", Context.MODE_PRIVATE)

@@ -21,7 +21,7 @@ import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.AssignmentBinding
 import com.iodaniel.mobileclass.student_package.FragmentViewAssignmentStudent
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
-import com.iodaniel.mobileclass.teacher_package.classes.MultiChoiceQuestion
+import com.iodaniel.mobileclass.teacher_package.classes.AssignmentQuestion
 import com.iodaniel.mobileclass.teacher_package.singleclass.AssignmentsAdapter.ViewHolder
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -32,7 +32,7 @@ import java.util.*
 class FragmentAssignments : Fragment(), HelperListener {
     private lateinit var binding: AssignmentBinding
     private lateinit var assignmentAdapter: AssignmentsAdapter
-    private var dataSet: ArrayList<MultiChoiceQuestion> = arrayListOf()
+    private var dataSet: ArrayList<AssignmentQuestion> = arrayListOf()
     private var dataSetMultipleChoice: ArrayList<ArrayList<HashMap<*, *>>> = arrayListOf()
     private lateinit var classInfo: ClassInfo
     private var dataSetKeyList: ArrayList<String> = arrayListOf()
@@ -109,7 +109,7 @@ class FragmentAssignments : Fragment(), HelperListener {
 
         uploadDocsRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val snap = snapshot.getValue(MultiChoiceQuestion::class.java)
+                val snap = snapshot.getValue(AssignmentQuestion::class.java)
                 dataSet.add(snap!!)
                 dataSetKeyList.add(snapshot.key!!)
                 rvInit()
@@ -117,7 +117,7 @@ class FragmentAssignments : Fragment(), HelperListener {
 
             @SuppressLint("NotifyDataSetChanged")
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                val snap = snapshot.getValue(MultiChoiceQuestion::class.java)
+                val snap = snapshot.getValue(AssignmentQuestion::class.java)
                 dataSet.add(snap!!)
                 dataSetKeyList.add(snapshot.key!!)
                 assignmentAdapter.notifyDataSetChanged()
@@ -140,7 +140,7 @@ class FragmentAssignments : Fragment(), HelperListener {
 
         directQueRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val snap = snapshot.getValue(MultiChoiceQuestion::class.java)
+                val snap = snapshot.getValue(AssignmentQuestion::class.java)
                 dataSet.add(snap!!)
                 dataSetKeyList.add(snapshot.key!!)
                 println("SNAP ******************** ${snap.datetime}")
@@ -148,7 +148,7 @@ class FragmentAssignments : Fragment(), HelperListener {
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                val snap = snapshot.getValue(MultiChoiceQuestion::class.java)
+                val snap = snapshot.getValue(AssignmentQuestion::class.java)
                 dataSet.add(snap!!)
                 dataSetKeyList.add(snapshot.key!!)
                 rvInit()
@@ -183,7 +183,7 @@ class FragmentAssignments : Fragment(), HelperListener {
         assignmentAdapter.helperListener = this
     }
 
-    override fun helperClickListener(datum: MultiChoiceQuestion) {
+    override fun singleQuestionHelper(datum: AssignmentQuestion) {
         val viewAssignmentStudentFragment = FragmentViewAssignmentStudent()
         val bundle = Bundle()
         val jsonMultiChoiceQuestion = Json.encodeToString(datum)
@@ -195,7 +195,7 @@ class FragmentAssignments : Fragment(), HelperListener {
             .replace(R.id.a_class_frame, viewAssignmentStudentFragment).commit()
     }
 
-    override fun helperClickListenerMultipleChoice(datum: ArrayList<HashMap<*, *>>) {
+    override fun multipleChoiceHelper(datum: ArrayList<HashMap<*, *>>) {
         val bundle = Bundle()
         val viewAssignmentStudentFragment = FragmentViewAssignmentStudent()
         val json= Gson().toJsonTree(datum)
@@ -212,7 +212,7 @@ class FragmentAssignments : Fragment(), HelperListener {
 
 class AssignmentsAdapter : RecyclerView.Adapter<ViewHolder>() {
 
-    lateinit var dataset: ArrayList<MultiChoiceQuestion>
+    lateinit var dataset: ArrayList<AssignmentQuestion>
     lateinit var dataSetMultipleChoice: ArrayList<ArrayList<HashMap<*, *>>>
     lateinit var context: Context
     lateinit var activity: Activity
@@ -240,7 +240,7 @@ class AssignmentsAdapter : RecyclerView.Adapter<ViewHolder>() {
             }
 
             holder.chip.setOnClickListener {
-                helperListener.helperClickListener(datum)
+                helperListener.singleQuestionHelper(datum)
             }
         } else if (position >= dataset.size) {
             val datum = dataSetMultipleChoice[position - dataset.size]
@@ -249,7 +249,7 @@ class AssignmentsAdapter : RecyclerView.Adapter<ViewHolder>() {
 
             try {
                 holder.chip.setOnClickListener {
-                    helperListener.helperClickListenerMultipleChoice(datum)
+                    helperListener.multipleChoiceHelper(datum)
                 }
             } catch (e: Exception) {
             }
@@ -267,6 +267,6 @@ class AssignmentsAdapter : RecyclerView.Adapter<ViewHolder>() {
 }
 
 interface HelperListener {
-    fun helperClickListener(datum: MultiChoiceQuestion)
-    fun helperClickListenerMultipleChoice(datum: ArrayList<HashMap<*, *>>)
+    fun singleQuestionHelper(datum: AssignmentQuestion)
+    fun multipleChoiceHelper(datum: ArrayList<HashMap<*, *>>)
 }

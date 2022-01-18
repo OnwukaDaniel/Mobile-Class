@@ -53,13 +53,11 @@
         <activity
             android:name=".teacher_package.singleclass.AClass"
             android:theme="@style/Theme.TeacherPage" />
-        <activity
-            android:name=".teacher_package.classes.ActivityMyClasses"
-            android:theme="@style/Theme.TeacherPage" />
-        <activity
-            android:name=".student_package.ActivityMyClasses"/>
+
         <activity android:name=".student_package.ViewMaterial"
             android:theme="@style/Theme.StudentClass"  />
+        <activity android:name=".shared_classes.ActivityMyClasses"
+            android:theme="@style/Theme.TeacherPage"/>
 
         <meta-data
             android:name="preloaded_fonts"

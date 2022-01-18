@@ -21,10 +21,10 @@ import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.accessing_mobile_app.InternetConnection
 import com.iodaniel.mobileclass.databinding.FragmentUploadDocsBinding
 import com.iodaniel.mobileclass.databinding.ProgressBarDialogBinding
+import com.iodaniel.mobileclass.teacher_package.classes.AssignmentQuestion
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.MediaSupport
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.ProgressBarController
-import com.iodaniel.mobileclass.teacher_package.classes.MultiChoiceQuestion
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.util.*
@@ -55,6 +55,9 @@ class UploadDocs: Fragment(), ProgressBarController,
                     if (it.data!!.data == null) return@ActivityResultCallback
                     if (it.resultCode == AppCompatActivity.RESULT_OK) {
                         val dataUri = it.data!!.data
+                        val split = dataUri.toString().split("/")
+                        //fileName = (split[split.size - 2] + split.last()).split("%2F").last()
+
                         fileName = "Attachment"
                         val contentResolver = requireActivity().contentResolver
                         val mime = MimeTypeMap.getSingleton()
@@ -197,7 +200,7 @@ class UploadDocs: Fragment(), ProgressBarController,
                         arrayDownloadUris.add("$downloadUri}")
                         if (arrayDownloadUris.size == listOfMedia.size) {
 
-                            val docQuestion = MultiChoiceQuestion()
+                            val docQuestion = AssignmentQuestion()
                             docQuestion.className= classInfo.className
                             docQuestion.classCode= classInfo.classCode
                             docQuestion.teacherInChargeName= classInfo.teacherInChargeName

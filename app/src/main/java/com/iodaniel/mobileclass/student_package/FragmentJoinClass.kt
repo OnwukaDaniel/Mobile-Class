@@ -79,7 +79,7 @@ class FragmentJoinClass : Fragment(), View.OnClickListener, LoadingListener {
         })
     }
 
-    private fun readNewClass(){
+    private fun readNewClass() {
         newClassCodeRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 snap = snapshot.value!! as HashMap<*, *>
@@ -124,14 +124,21 @@ class FragmentJoinClass : Fragment(), View.OnClickListener, LoadingListener {
         }
         if (allCodesData.isEmpty()) {
             loadingListener.notLoadingProgressBar()
-            Snackbar.make(binding.root, "Class doesn't exist or Poor network connection", Snackbar.LENGTH_LONG).show()
+            Snackbar.make(
+                binding.root,
+                "Class doesn't exist or Poor network connection",
+                Snackbar.LENGTH_LONG
+            ).show()
             return
         }
         for (classInfoData in allCodesData) {
-            if (inputClassCode in myListOfClassCodes){
+            if (inputClassCode in myListOfClassCodes) {
                 loadingListener.notLoadingProgressBar()
                 Snackbar.make(binding.root, "Class already exist", Snackbar.LENGTH_LONG).show()
-                val intent = Intent(requireContext(), ActivityMyClasses::class.java)
+                val intent = Intent(
+                    requireContext(),
+                    com.iodaniel.mobileclass.shared_classes.ActivityMyClasses::class.java
+                )
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 startActivity(intent)
                 requireActivity().overridePendingTransition(0, 0)
@@ -151,7 +158,7 @@ class FragmentJoinClass : Fragment(), View.OnClickListener, LoadingListener {
                         .child("registered_students")
                         .child(classInfoData["classCode"] as String)
                         .child(FirebaseAuth.getInstance().currentUser!!.uid)
-                        //.child(auth)
+                    //.child(auth)
 
                     teacherRef.addValueEventListener(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
@@ -159,8 +166,10 @@ class FragmentJoinClass : Fragment(), View.OnClickListener, LoadingListener {
                             myClassCodeRef.push().setValue(course).addOnCompleteListener {
                                 registerationRef.setValue(registrationData).addOnCompleteListener {
                                     loadingListener.notLoadingProgressBar()
-                                    Snackbar.make(binding.root, "Joined !", Snackbar.LENGTH_LONG).show()
-                                    val intent = Intent(requireContext(), ActivityMyClasses::class.java)
+                                    Snackbar.make(binding.root, "Joined !", Snackbar.LENGTH_LONG)
+                                        .show()
+                                    val intent =
+                                        Intent(requireContext(), com.iodaniel.mobileclass.shared_classes.ActivityMyClasses::class.java)
                                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                                     startActivity(intent)
                                     requireActivity().overridePendingTransition(0, 0)
@@ -170,7 +179,7 @@ class FragmentJoinClass : Fragment(), View.OnClickListener, LoadingListener {
 
                         override fun onCancelled(error: DatabaseError) {
                             val txt = "Database Error!!! Please try again"
-                            Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG).show()
+                            //Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG).show()
                         }
                     })
 
@@ -178,8 +187,8 @@ class FragmentJoinClass : Fragment(), View.OnClickListener, LoadingListener {
                     println(" **************************** ${e.printStackTrace()}")
                 }
             }
-            if (inputClassCode !in myListOfClassCodes && allCodesData.indexOf(classInfoData) == myListOfClassCodes.size){
-                Snackbar.make(binding.root, "Class doesn't exist", Snackbar.LENGTH_LONG).show()
+            if (inputClassCode !in myListOfClassCodes && allCodesData.indexOf(classInfoData) == myListOfClassCodes.size) {
+                //Snackbar.make(binding.root, "Class doesn't exist", Snackbar.LENGTH_LONG).show()
             }
         }
     }

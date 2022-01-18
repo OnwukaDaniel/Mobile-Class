@@ -16,7 +16,7 @@ import com.iodaniel.mobileclass.databinding.FragmentCreateDirectQuestionBinding
 import com.iodaniel.mobileclass.databinding.ProgressBarDialogBinding
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.ProgressBarController
-import com.iodaniel.mobileclass.teacher_package.classes.MultiChoiceQuestion
+import com.iodaniel.mobileclass.teacher_package.classes.AssignmentQuestion
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
@@ -62,7 +62,7 @@ class CreateDirectQuestion : Fragment(), ProgressBarController {
     private fun upload(){
         val question = binding.directQuestionQuestion.text.toString().trim()
         val extraNote = binding.directQuestionExtraNote.text.toString().trim()
-        val hash = MultiChoiceQuestion(question = question, extraNote = extraNote)
+        val hash = AssignmentQuestion(question = question, extraNote = extraNote)
 
         if (question == "") return
         progressBarController.showProgressBar()

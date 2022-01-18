@@ -9,14 +9,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="30dp"
+        android:layout_gravity="center"
         android:orientation="vertical">
 
-        <com.google.android.material.imageview.ShapeableImageView
-            style="@style/Widget.MaterialComponents.CircularProgressIndicator"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:scaleType="centerCrop"
             android:layout_gravity="center"
-            android:src="@drawable/login" />
+            android:src="@drawable/app_icon" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Login to your account"
+            android:textStyle="bold"
+            android:layout_margin="10dp"
+            android:textSize="18sp"
+            android:textColor="@color/black"/>
 
         <EditText
             android:id="@+id/signup_email"
@@ -44,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="15dp"
-            android:backgroundTint="@color/purple_500"
+            android:backgroundTint="@color/app_primary_color"
             android:inputType="textCapWords"
             android:maxLines="1">
 

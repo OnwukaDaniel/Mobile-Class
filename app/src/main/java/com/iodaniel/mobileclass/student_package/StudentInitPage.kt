@@ -6,6 +6,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.StudentPageBinding
+import com.iodaniel.mobileclass.shared_classes.ActivityMyClasses
 
 class StudentInitPage : AppCompatActivity(), View.OnClickListener {
 

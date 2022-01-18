@@ -22,7 +22,7 @@ import com.iodaniel.mobileclass.databinding.FragmentCreateMultiChoiceBinding
 import com.iodaniel.mobileclass.databinding.ProgressBarDialogBinding
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.*
-import com.iodaniel.mobileclass.teacher_package.classes.MultiChoiceQuestion
+import com.iodaniel.mobileclass.teacher_package.classes.AssignmentQuestion
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
@@ -37,11 +37,11 @@ class CreateMultiChoice: Fragment(), View.OnClickListener,
     private lateinit var progressBarController: ProgressBarController
     private var multiChoiceRef = FirebaseDatabase.getInstance().reference
     private var listOfMedia: ArrayList<String> = arrayListOf()
-    private var dataset: ArrayList<MultiChoiceQuestion> = arrayListOf()
+    private var dataset: ArrayList<AssignmentQuestion> = arrayListOf()
     private var fileName = ""
     private var alpha = 0
     private lateinit var classInfo: ClassInfo
-    private val arrayOfQuestions: ArrayList<MultiChoiceQuestion> = arrayListOf()
+    private val arrayOfQuestions: ArrayList<AssignmentQuestion> = arrayListOf()
     private lateinit var cn: InternetConnection
 
     private val pickFileLauncher =
@@ -88,7 +88,7 @@ class CreateMultiChoice: Fragment(), View.OnClickListener,
             val gsonArray: JsonElement = Json.parseToJsonElement(jsonArray!!)
             val sonArray = Json.encodeToJsonElement(gsonArray)
             for (i in sonArray as JsonArray) {
-                val data: MultiChoiceQuestion = Json.decodeFromJsonElement(i)
+                val data: AssignmentQuestion = Json.decodeFromJsonElement(i)
                 arrayOfQuestions.add(data)
             }
         }
@@ -160,7 +160,7 @@ class CreateMultiChoice: Fragment(), View.OnClickListener,
         val arrayDownloadUris = arrayListOf<String>()
 
         if (listOfMedia.isEmpty()) {
-            val multiChoice = MultiChoiceQuestion()
+            val multiChoice = AssignmentQuestion()
             multiChoice.classCode = classInfo.classCode
             multiChoice.teacherInChargeName = classInfo.teacherInChargeName
             multiChoice.teacherInChargeUID = classInfo.teacherInChargeUID
@@ -208,7 +208,7 @@ class CreateMultiChoice: Fragment(), View.OnClickListener,
                         arrayDownloadUris.add("$downloadUri}")
                         if (arrayDownloadUris.size == listOfMedia.size) {
 
-                            val multiChoice = MultiChoiceQuestion()
+                            val multiChoice = AssignmentQuestion()
                             multiChoice.classCode = classInfo.classCode
                             multiChoice.teacherInChargeName = classInfo.teacherInChargeName
                             multiChoice.teacherInChargeUID = classInfo.teacherInChargeUID
@@ -261,7 +261,7 @@ class CreateMultiChoice: Fragment(), View.OnClickListener,
         val arrayDownloadUris = arrayListOf<String>()
 
         if (listOfMedia.isEmpty()) {
-            val multiChoice = MultiChoiceQuestion()
+            val multiChoice = AssignmentQuestion()
             multiChoice.classCode = classInfo.classCode
             multiChoice.teacherInChargeName = classInfo.teacherInChargeName
             multiChoice.teacherInChargeUID = classInfo.teacherInChargeUID
@@ -297,7 +297,7 @@ class CreateMultiChoice: Fragment(), View.OnClickListener,
                         arrayDownloadUris.add("$downloadUri}")
                         if (arrayDownloadUris.size == listOfMedia.size) {
 
-                            val multiChoice = MultiChoiceQuestion()
+                            val multiChoice = AssignmentQuestion()
                             multiChoice.classCode = classInfo.classCode
                             multiChoice.teacherInChargeName = classInfo.teacherInChargeName
                             multiChoice.teacherInChargeUID = classInfo.teacherInChargeUID
@@ -344,7 +344,7 @@ class CreateMultiChoice: Fragment(), View.OnClickListener,
         }
     }
 
-    private fun saveDataAndNext(list: MultiChoiceQuestion) {
+    private fun saveDataAndNext(list: AssignmentQuestion) {
         arrayOfQuestions.add(list)
         val fragment = CreateMultiChoice()
         val bundle = Bundle()

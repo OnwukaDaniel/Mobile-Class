@@ -38,16 +38,18 @@ class AClass : AppCompatActivity(), OnClickListener, HelperListener.LoadingListe
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setSupportActionBar(binding.aClassToolbar)
+        title = ""
         binding.aClassToolbar.setOnClickListener(this)
         loadingListener = this
+
         getIntentData()
     }
 
     private fun getIntentData() {
         if (intent.hasExtra("class_data")) {
-            val json = intent.getStringExtra("class_data")
+            val jsonData = intent.getStringExtra("class_data")
             val classKey = intent.getStringExtra("class_data_key")
-            classInfo = Json.decodeFromString(json!!)
+            classInfo = Json.decodeFromString(jsonData!!)
             binding.studentAClassName.text = classInfo.className
 
             myClassesRef = myClassesRef
@@ -65,6 +67,7 @@ class AClass : AppCompatActivity(), OnClickListener, HelperListener.LoadingListe
 
         val courseWorkFragment = CourseWork()
         val assignmentsFragment = FragmentAssignments()
+
         val jsonClassInfo = Json.encodeToString(classInfo)
         bundle.putString("classInfo", jsonClassInfo)
         courseWorkFragment.arguments = bundle
@@ -73,13 +76,14 @@ class AClass : AppCompatActivity(), OnClickListener, HelperListener.LoadingListe
         adapter.dataset = dataset
 
         binding.studentAClassViewPager.adapter = adapter
-        val dataNames = arrayListOf("Course Work", "Assignments")
-        TabLayoutMediator(
+        val dataNames = arrayListOf("Materials", "Assignments")
+        val tabLM = TabLayoutMediator(
             binding.studentAClassTabLayout,
             binding.studentAClassViewPager
         ) { tab, position ->
             tab.text = dataNames[position]
-        }.attach()
+        }
+        if (!tabLM.isAttached) tabLM.attach()
     }
 
     inner class ViewPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
