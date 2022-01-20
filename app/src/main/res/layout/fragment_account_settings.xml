@@ -88,8 +88,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
+                android:fontFamily="@font/open_sans"
                 android:hint="@string/name"
                 android:inputType="textPersonName"
+                android:textColor="#1A1313"
                 tools:ignore="DuplicateSpeakableTextCheck,SpeakableTextPresentCheck" />
 
             <TextView
@@ -102,9 +104,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
+                android:fontFamily="@font/open_sans"
                 android:hint="@string/username"
                 android:inputType="textPersonName"
-                android:minHeight="48dp" />
+                android:minHeight="48dp"
+                android:textColor="#1A1313" />
 
             <TextView
                 android:id="@+id/Student_PrivateInfo"
@@ -125,8 +129,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
+                android:fontFamily="@font/open_sans"
                 android:hint="E-mail"
-                android:inputType="textEmailAddress"/>
+                android:inputType="textEmailAddress"
+                android:textColor="#1A1313" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -138,9 +144,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
+                android:fontFamily="@font/open_sans"
                 android:hint="Phone"
                 android:inputType="phone"
-                android:minHeight="48dp" />
+                android:minHeight="48dp"
+                android:textColor="#1A1313" />
 
             <TextView
                 android:id="@+id/textView8"

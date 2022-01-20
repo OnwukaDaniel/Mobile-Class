@@ -48,12 +48,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
-                        android:fontFamily="@font/amaranth"
+                        android:fontFamily="@font/open_sans"
                         android:gravity="center"
                         android:text="My Classes"
                         android:textColor="@color/black"
                         android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        tools:layout_editor_absoluteX="16dp"
+                        tools:layout_editor_absoluteY="16dp" />
 
                 </androidx.appcompat.widget.Toolbar>
 

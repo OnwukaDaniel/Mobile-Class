@@ -6,11 +6,12 @@
     android:layout_height="wrap_content">
 
     <com.google.android.material.chip.Chip
+        android:id="@+id/student_name_chip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/black"
-        android:textColor="@color/white"
-        android:id="@+id/student_name_chip"
-        android:text="Student Name"/>
+        android:fontFamily="@font/open_sans"
+        android:text="Student Name"
+        android:textColor="@color/white" />
 
 </LinearLayout>

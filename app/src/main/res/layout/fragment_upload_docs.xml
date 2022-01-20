@@ -30,12 +30,14 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/amaranth"
+                android:layout_gravity="center"
+                android:fontFamily="@font/open_sans"
                 android:gravity="center"
                 android:text="Question"
-                android:layout_gravity="center"
                 android:textColor="@color/black"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                tools:layout_editor_absoluteX="16dp"
+                tools:layout_editor_absoluteY="16dp" />
 
         </androidx.appcompat.widget.Toolbar>
 
@@ -63,10 +65,12 @@
             android:id="@+id/upload_question_question"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/open_sans"
             android:gravity="start|top"
             android:hint="Share question here"
             android:maxLines="8"
             android:minLines="5"
+            android:textColor="#1A1313"
             android:textSize="16sp" />
 
         <EditText
@@ -77,6 +81,7 @@
             android:hint="Extra note"
             android:maxLines="1"
             android:minLines="2"
+            android:textColor="#1A1313"
             android:textSize="16sp" />
 
         <Button

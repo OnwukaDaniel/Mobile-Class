@@ -25,11 +25,11 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/averia_gruesa_libre"
+                android:fontFamily="@font/open_sans"
                 android:gravity="start"
                 android:text="Choose assessment type."
                 android:textColor="@color/black"
-                android:textSize="28dp"
+                android:textSize="25dp"
                 android:textStyle="bold" />
 
         </LinearLayout>
@@ -58,15 +58,17 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/open_sans"
                         android:text="Multi-choice question"
-                        android:textSize="18sp"
                         android:textColor="@color/white"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="20dp"
+                        android:fontFamily="@font/open_sans"
                         android:gravity="start"
                         android:text="Create Multi-choice"
                         android:textColor="@color/white"
@@ -111,6 +113,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/open_sans"
                         android:text="Upload Material Task"
                         android:textColor="@color/white"
                         android:textSize="18sp"
@@ -120,9 +123,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="20dp"
-                        android:textColor="@color/white"
+                        android:fontFamily="@font/open_sans"
                         android:gravity="start"
                         android:text="Choose a file"
+                        android:textColor="@color/white"
                         android:textSize="12dp" />
 
                 </LinearLayout>
@@ -164,19 +168,21 @@
 
                     <TextView
                         android:layout_width="match_parent"
-                        android:textColor="@color/white"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/open_sans"
                         android:text="Direct question"
+                        android:textColor="@color/white"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
                         android:layout_marginHorizontal="20dp"
+                        android:fontFamily="@font/open_sans"
                         android:gravity="start"
                         android:text="Ask students a direct question"
+                        android:textColor="@color/white"
                         android:textSize="12dp" />
 
                 </LinearLayout>

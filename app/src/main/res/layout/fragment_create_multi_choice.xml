@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="20sp"
-                android:fontFamily="@font/chivo"
+                android:fontFamily="@font/open_sans"
                 android:text="Multiple-Choice Questions"
                 android:textColor="@color/black"
                 android:textSize="25sp" />
@@ -36,7 +36,9 @@
                 android:id="@+id/multi_choice_question_assignment_instruction"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Assignment Instructions" />
+                android:fontFamily="@font/open_sans"
+                android:hint="Assignment Instructions"
+                android:textColor="#1A1313" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -49,6 +51,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/black"
+                    android:fontFamily="@font/open_sans"
                     android:text="Choose File"
                     android:textColor="@color/white" />
 
@@ -65,9 +68,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="10dp"
+                android:fontFamily="@font/open_sans"
                 android:gravity="top"
                 android:hint="Question here"
-                android:minLines="4" />
+                android:minLines="4"
+                android:textColor="#1A1313" />
 
             <EditText
                 android:id="@+id/multi_choice_extra_note"
@@ -75,9 +80,11 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:layout_marginVertical="10dp"
+                android:fontFamily="@font/open_sans"
                 android:gravity="start"
                 android:hint="Extra Note"
-                android:paddingEnd="70dp" />
+                android:paddingEnd="70dp"
+                android:textColor="#1A1313" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -89,6 +96,7 @@
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/black"
+                    android:fontFamily="@font/open_sans"
                     android:text="A"
                     android:textColor="@color/white" />
 
@@ -98,7 +106,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:layout_marginHorizontal="10dp"
-                    android:hint="Option A"/>
+                    android:fontFamily="@font/open_sans"
+                    android:hint="Option A" />
 
             </LinearLayout>
 
@@ -112,6 +121,7 @@
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/black"
+                    android:fontFamily="@font/open_sans"
                     android:text="B"
                     android:textColor="@color/white" />
 
@@ -121,7 +131,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:layout_marginHorizontal="10dp"
-                    android:hint="Option B"/>
+                    android:fontFamily="@font/open_sans"
+                    android:hint="Option B" />
 
             </LinearLayout>
 
@@ -135,6 +146,7 @@
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/black"
+                    android:fontFamily="@font/open_sans"
                     android:text="C"
                     android:textColor="@color/white" />
 
@@ -144,7 +156,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:layout_marginHorizontal="10dp"
-                    android:hint="Option C"/>
+                    android:fontFamily="@font/open_sans"
+                    android:hint="Option C" />
 
             </LinearLayout>
 
@@ -158,6 +171,7 @@
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/black"
+                    android:fontFamily="@font/open_sans"
                     android:text="D"
                     android:textColor="@color/white" />
 
@@ -167,7 +181,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:layout_marginHorizontal="10dp"
-                    android:hint="Option D"/>
+                    android:fontFamily="@font/open_sans"
+                    android:hint="Option D" />
 
             </LinearLayout>
 

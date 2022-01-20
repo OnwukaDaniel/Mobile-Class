@@ -37,7 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginHorizontal="50dp"
-                android:fontFamily="@font/amaranth"
+                android:fontFamily="@font/open_sans"
                 android:gravity="center"
                 android:text="Afri-Learn"
                 android:textColor="@color/black"
@@ -67,10 +67,12 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_weight="14"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:src="@drawable/progress_cartoon"/>
+                    android:layout_marginBottom="10dp"
+                    android:layout_weight="14"
+                    android:src="@drawable/progress_cartoon"
+                    app:srcCompat="@drawable/logo_icon" />
 
 
                 <LinearLayout

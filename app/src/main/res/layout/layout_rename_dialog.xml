@@ -9,9 +9,10 @@
         android:id="@+id/rename_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:inputType="textCapSentences"
         android:layout_marginHorizontal="30dp"
-        android:hint="FileName"/>
+        android:layout_marginBottom="5dp"
+        android:fontFamily="@font/open_sans"
+        android:hint="FileName"
+        android:inputType="textCapSentences" />
 
 </LinearLayout>

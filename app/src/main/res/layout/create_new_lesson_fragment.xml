@@ -16,57 +16,63 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:textSize="20sp"
-            android:textStyle="bold"
+            android:fontFamily="@font/open_sans"
+            android:text="Heading"
             android:textColor="@color/black"
-            android:text="Heading" />
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/create_class_heading"
             android:layout_width="match_parent"
-            android:layout_marginTop="10dp"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/open_sans"
+            android:hint="Heading"
             android:inputType="textCapSentences"
-            android:hint="Heading" />
+            android:textSize="16sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:textSize="20sp"
+            android:fontFamily="@font/open_sans"
+            android:text="Class Note"
             android:textColor="@color/black"
-            android:textStyle="bold"
-            android:text="Class Note" />
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/create_class_note"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="vertical"
-            android:minLines="5"
-            android:maxLines="10"
-            android:textSize="16sp"
+            android:fontFamily="@font/open_sans"
             android:gravity="top"
-            android:hint="Note" />
+            android:hint="Note"
+            android:maxLines="10"
+            android:minLines="5"
+            android:scrollbars="vertical"
+            android:textSize="16sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
             android:layout_marginTop="30dp"
-            android:text="Extra Note" />
+            android:fontFamily="@font/open_sans"
+            android:text="Extra Note"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/create_class_extra_note"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="vertical"
-            android:textSize="16sp"
+            android:fontFamily="@font/open_sans"
+            android:hint="Extra Note"
             android:maxLines="3"
-            android:hint="Extra Note" />
+            android:scrollbars="vertical"
+            android:textSize="16sp" />
 
         <LinearLayout
             android:layout_width="match_parent"

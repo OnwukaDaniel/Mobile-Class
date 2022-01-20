@@ -41,6 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:fontFamily="@font/open_sans"
                 android:text="Create New Class"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
@@ -65,8 +66,10 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="14"
                     android:autofillHints="Title"
+                    android:fontFamily="@font/open_sans"
                     android:inputType="textCapWords"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:textColor="#1A1313" />
 
             </LinearLayout>
 

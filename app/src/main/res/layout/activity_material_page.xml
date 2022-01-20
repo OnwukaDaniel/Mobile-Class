@@ -15,6 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
+            android:fontFamily="@font/open_sans"
             android:gravity="center"
             android:text="Heading"
             android:textColor="@color/black"
@@ -25,12 +26,15 @@
             android:id="@+id/create_class_heading"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="Heading" />
+            android:fontFamily="@font/open_sans"
+            android:hint="Heading"
+            android:textColor="#1A1313" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:fontFamily="@font/open_sans"
             android:gravity="center"
             android:text="Class Note"
             android:textColor="@color/black"
@@ -42,18 +46,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/edit_text_background1"
+            android:fontFamily="@font/open_sans"
             android:gravity="top"
             android:hint="Note"
             android:lines="8"
             android:maxLines="8"
             android:padding="4dp"
             android:scrollbars="vertical"
+            android:textColor="#1A1313"
             android:textSize="15sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:fontFamily="@font/open_sans"
             android:gravity="center"
             android:text="Extra Note"
             android:textColor="@color/black"
@@ -65,7 +72,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="22dp"
-            android:hint="Extra Note" />
+            android:fontFamily="@font/open_sans"
+            android:hint="Extra Note"
+            android:textColor="#1A1313" />
 
         <LinearLayout
             android:layout_width="match_parent"

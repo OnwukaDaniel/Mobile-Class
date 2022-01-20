@@ -16,40 +16,45 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Question"
-            android:fontFamily="@font/chivo"
-            android:textColor="@color/black"
             android:layout_margin="10dp"
+            android:fontFamily="@font/open_sans"
             android:gravity="center"
-            android:textSize="30sp"/>
+            android:text="Question"
+            android:textColor="@color/black"
+            android:textSize="30sp" />
 
         <EditText
             android:id="@+id/direct_question_question"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minLines="5"
-            android:maxLines="8"
+            android:fontFamily="@font/open_sans"
             android:gravity="start|top"
-            android:textSize="16sp"
-            android:hint="Share question here"/>
+            android:hint="Share question here"
+            android:maxLines="8"
+            android:minLines="5"
+            android:textColor="#1A1313"
+            android:textSize="16sp" />
 
         <EditText
             android:id="@+id/direct_question_extra_note"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minLines="2"
-            android:maxLines="1"
+            android:fontFamily="@font/open_sans"
             android:gravity="start|top"
-            android:textSize="16sp"
-            android:hint="Extra note"/>
+            android:hint="Extra note"
+            android:maxLines="1"
+            android:minLines="2"
+            android:textColor="#1A1313"
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/direct_question_upload"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/black"
+            android:fontFamily="@font/open_sans"
             android:text="Upload"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white" />
 
     </LinearLayout>
 </LinearLayout>
