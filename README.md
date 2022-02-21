@@ -31,7 +31,7 @@ The major features of the application is to assist teachers teaching exercise an
 #
 #
 # Landing page for teachers with courses in view
-![Screenshot_20220103-181803](https://user-images.githubusercontent.com/66129851/147965447-5f6f89ce-9a6a-41f6-bfea-084d3ec6e8ce.png)
+![Screenshot_20220220-154016](https://user-images.githubusercontent.com/66129851/154848918-b509d4ae-0f1f-4097-9004-98892bdfa04e.png)
 
 #
 #
@@ -44,11 +44,18 @@ The major features of the application is to assist teachers teaching exercise an
 #
 #
 # List of course materials in teacher view
-![Screenshot_20220103-182600](https://user-images.githubusercontent.com/66129851/147966157-1091c6e4-67cf-4f51-bcca-e8747618abb5.png)
+![Screenshot_20220220-154016](https://user-images.githubusercontent.com/66129851/154849106-a209ac52-fe01-45fe-a216-cd650fad5039.png)
 
 #
 #
 #
+# List of students who enrolled for the course
+![Screenshot_20220220-153951](https://user-images.githubusercontent.com/66129851/154849316-fcf81224-e332-428d-a610-d49e50405893.png)
+#
+#
+#
+#
+
 # Teachers can create assesmets/assignment for students
 ![Screenshot_20220103-182609](https://user-images.githubusercontent.com/66129851/147966211-0845f7a7-5f08-4df5-8303-d1da1c3f7363.png)
 
@@ -89,5 +96,7 @@ The major features of the application is to assist teachers teaching exercise an
 # Student view of courses
 ![Screenshot_20220103-184026](https://user-images.githubusercontent.com/66129851/147967056-e6a34b0b-51e1-4b96-a80b-20cc23c7cc15.png)
 
+# Course Exercise
+![Screenshot_20220220-154036](https://user-images.githubusercontent.com/66129851/154849242-eb109c72-e645-4722-9bd9-4b5db308f658.png)
 
 
