@@ -1,5 +1,6 @@
 package com.iodaniel.mobileclass.student_package
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DownloadManager
@@ -7,6 +8,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
 import android.view.LayoutInflater
@@ -17,6 +19,8 @@ import android.view.ViewGroup
 import android.webkit.MimeTypeMap
 import android.widget.*
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -26,6 +30,7 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.FragmentViewAssignmentStudentBinding
 import com.iodaniel.mobileclass.shared_classes.HelperClass
@@ -34,12 +39,9 @@ import com.iodaniel.mobileclass.teacher_package.classes.AssignmentQuestion
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.*
 import java.io.File
 
-
-class FragmentViewAssignmentStudent : Fragment(), OnClickListener, ScrollClickHelpers,
+class FragmentViewAssignment : Fragment(), OnClickListener, ScrollClickHelpers,
     AssignmentViewTypeListener {
 
     private lateinit var binding: FragmentViewAssignmentStudentBinding
@@ -48,7 +50,23 @@ class FragmentViewAssignmentStudent : Fragment(), OnClickListener, ScrollClickHe
     private var dataset: ArrayList<AssignmentQuestion> = arrayListOf()
     private lateinit var assignmentViewTypeListener: AssignmentViewTypeListener
     lateinit var scrollClickHelpers: ScrollClickHelpers
-    private val fileAdapter = FileRecyclerViewAdapter()
+    private val writeExternalPermission = Manifest.permission.WRITE_EXTERNAL_STORAGE
+    private val permissionGranted = PackageManager.PERMISSION_GRANTED
+
+    private lateinit var assignmentQuestion: AssignmentQuestion
+
+    private val permissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            val txt = "Afri-Learn requires permission to show media"
+            if (isGranted) {
+                showViews()
+            } else {
+                Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG)
+                    .setAction("Grant Permission") {
+                        requestPermission()
+                    }
+            }
+        }
 
     override fun onStart() {
         super.onStart()
@@ -61,17 +79,18 @@ class FragmentViewAssignmentStudent : Fragment(), OnClickListener, ScrollClickHe
             override fun handleOnBackPressed() {
             }
         })
-
-        val questionTypeBundle = arguments
-        when (questionTypeBundle!!.getString("questionType")) {
-            "singleQuestion" -> {
-                singleQuestionFun()
-            }
-            "multiChoice" -> {
-                multiChoiceViewFun()
-            }
-        }
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                writeExternalPermission
+            ) == permissionGranted
+        ) showViews()
+        else requestPermission()
     }
+
+    private fun requestPermission() {
+        permissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
@@ -80,31 +99,38 @@ class FragmentViewAssignmentStudent : Fragment(), OnClickListener, ScrollClickHe
         return binding.root
     }
 
+    private fun showViews() {
+        val failedTxt = "Failed to load Questions"
+        val infoJson = requireArguments().getString("questionData")!!
+        assignmentQuestion = Gson().fromJson(infoJson, AssignmentQuestion::class.java)
+        when (assignmentQuestion.questionType) {
+            getString(R.string.DIRECTQUESTION) -> assignmentViewTypeListener.questionsOnlyView()
+            getString(R.string.DOCUMENTQUESTION) -> assignmentViewTypeListener.questionsOnlyView()
+            getString(R.string.MULTIPLECHOICEQUESTION) -> multiChoiceViewFun()
+            else -> Snackbar.make(binding.root, failedTxt, Snackbar.LENGTH_INDEFINITE).show()
+        }
+    }
+
     @SuppressLint("ShowToast")
     private fun multiChoiceViewFun() {
         try {
-            val bundle = arguments
-            val json = bundle!!.getString("jsonMultiChoiceQuestion")
-            val gson: JsonElement = Json.parseToJsonElement(json!!)
-            val son = Json.encodeToJsonElement(gson)
-            for (i in son as JsonArray) {
-                val data: AssignmentQuestion = Json.decodeFromJsonElement(i)
-                dataset.add(data)
-            }
-            if (bundle.getString("viewType", "") == "teacher") {
+            /*if (bundle.getString("viewType", "") == "teacher") {
                 adapter.viewType = "teacher"
                 Toast.makeText(context, "View Only!!!", Toast.LENGTH_LONG).show()
-            }
+            }*/
             assignmentViewTypeListener.multiChoiceView()
-            PagerSnapHelper().attachToRecyclerView(binding.rvMultipleChoiceStudent)
-            binding.rvMultipleChoiceStudent.adapter = adapter
+            adapter.dataset = assignmentQuestion.arrAssignment
+            adapter.root = binding.root
+            adapter.activity = requireActivity()
+
             binding.rvMultipleChoiceStudent.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-            adapter.dataset = dataset
-            adapter.root = binding.root
+            binding.rvMultipleChoiceStudent.adapter = adapter
+            println("MULTIPLE CHOICE ***************************** ${assignmentQuestion.arrAssignment[0].question}")
+
             smoothScroller = LinearSmoothScroller(requireContext())
+            PagerSnapHelper().attachToRecyclerView(binding.rvMultipleChoiceStudent)
             adapter.scrollClickHelpers = scrollClickHelpers
-            adapter.activity = requireActivity()
 
             binding.rvMultipleChoiceStudent.addOnItemTouchListener(object :
                 RecyclerView.SimpleOnItemTouchListener() {
@@ -117,12 +143,9 @@ class FragmentViewAssignmentStudent : Fragment(), OnClickListener, ScrollClickHe
         }
     }
 
-    private fun singleQuestionFun() {
+    private fun directQuestionFun() {
         val bundle = arguments
-        val json = bundle!!.getString("jsonMultiChoiceQuestion")
-        val assignmentQuestion: AssignmentQuestion = Json.decodeFromString(json!!)
-
-        assignmentViewTypeListener.questionsOnlyView()
+        /*assignmentViewTypeListener.questionsOnlyView()
         binding.viewQuestionQuestion.text = assignmentQuestion.question
         binding.viewQuestionExtraNote.text = assignmentQuestion.extraNote
         if (assignmentQuestion.instructions != "") {
@@ -138,9 +161,10 @@ class FragmentViewAssignmentStudent : Fragment(), OnClickListener, ScrollClickHe
             fileAdapter.dataset = assignmentQuestion.mediaUris
             fileAdapter.activity = requireActivity()
             fileAdapter.classCode = assignmentQuestion.classCode
-            binding.rvAssignmentDocument.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+            binding.rvAssignmentDocument.layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
             binding.rvAssignmentDocument.adapter = fileAdapter
-        }
+        }*/
     }
 
     override fun onClick(v: View?) {
@@ -162,6 +186,8 @@ class FragmentViewAssignmentStudent : Fragment(), OnClickListener, ScrollClickHe
     }
 
     override fun questionsOnlyView() {
+        binding.viewQuestionQuestion.text = assignmentQuestion.question
+
         binding.viewAssignmentToolbarText.text = "Direct Questions"
         binding.viewAssignmentResultQuestionRoot.visibility = View.GONE
         binding.viewAssignmentMultipleQuestionRoot.visibility = View.GONE
@@ -277,6 +303,7 @@ class MultiChoiceQuestionAdapter : RecyclerView.Adapter<MultiChoiceQuestionAdapt
     private var solutionSubmitted: ArrayList<String> = arrayListOf()
     private var solutions: ArrayList<String> = arrayListOf()
     lateinit var activity: Activity
+    lateinit var context: Context
     lateinit var root: View
     lateinit var scrollClickHelpers: ScrollClickHelpers
     var viewType: String = "student"
@@ -299,6 +326,7 @@ class MultiChoiceQuestionAdapter : RecyclerView.Adapter<MultiChoiceQuestionAdapt
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        context = parent.context
         solutions = arrayListOf()
         for (i in 0 until dataset.size) solutions.add(dataset[i].solution)
         val view = LayoutInflater.from(parent.context)
@@ -314,14 +342,10 @@ class MultiChoiceQuestionAdapter : RecyclerView.Adapter<MultiChoiceQuestionAdapt
             }
             "teacher" -> {
                 holder.submit.visibility = View.GONE
-                try {
-                    snackbar.show()
-                } catch (e: Exception) {
-                }
+                Toast.makeText(context, "View Only", Toast.LENGTH_LONG).show()
             }
         }
         try {
-
             val datum = dataset[position]
             holder.question.text = datum.question
             holder.instruction.text = datum.instructions
@@ -374,7 +398,9 @@ class MultiChoiceQuestionAdapter : RecyclerView.Adapter<MultiChoiceQuestionAdapt
             }
 
             holder.submit.setOnClickListener {
-                submit()
+                val txt = "Pick an Option"
+                if (solutionSubmitted.size < solutions.size)
+                    Snackbar.make(holder.itemView, txt, Snackbar.LENGTH_LONG).show() else submit()
             }
         } catch (e: Exception) {
             println("EXCEPTION ******************************** ${e.printStackTrace()}")
@@ -397,7 +423,7 @@ class MultiChoiceQuestionAdapter : RecyclerView.Adapter<MultiChoiceQuestionAdapt
                     activityX.supportFragmentManager.popBackStack()
                     activityX.supportFragmentManager.beginTransaction()
                         .addToBackStack("review_of_answers")
-                        .replace(R.id.a_class_frame_student, fragmentResult)
+                        .replace(R.id.view_material_nested_root, fragmentResult)
                         .commit()
                 }
             }
@@ -407,11 +433,9 @@ class MultiChoiceQuestionAdapter : RecyclerView.Adapter<MultiChoiceQuestionAdapt
     }
 
     private fun evaluateAssessment(): Int {
-        var numberOfCorrectQuestion = 0
-        for (i in 0 until dataset.size) if (solutions[i] == solutionSubmitted[i]) {
-            numberOfCorrectQuestion++
-        }
-        return numberOfCorrectQuestion
+        var correctQuestions = 0
+        for (i in 0 until dataset.size) if (solutions[i] == solutionSubmitted[i]) correctQuestions++
+        return correctQuestions
     }
 
     override fun getItemCount(): Int = dataset.size

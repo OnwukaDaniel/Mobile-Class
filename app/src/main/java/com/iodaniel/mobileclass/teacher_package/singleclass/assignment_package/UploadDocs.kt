@@ -1,5 +1,6 @@
 package com.iodaniel.mobileclass.teacher_package.singleclass.assignment_package
 
+import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.MimeTypeMap
+import android.widget.DatePicker
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +19,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.gson.Gson
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.accessing_mobile_app.InternetConnection
 import com.iodaniel.mobileclass.databinding.FragmentUploadDocsBinding
@@ -25,23 +28,32 @@ import com.iodaniel.mobileclass.teacher_package.classes.AssignmentQuestion
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.MediaSupport
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.ProgressBarController
+import com.iodaniel.mobileclass.teacher_package.classes.Material
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.util.*
 
-class UploadDocs: Fragment(), ProgressBarController,
-    MediaSupport, View.OnClickListener {
+class UploadDocs : Fragment(), ProgressBarController,
+    MediaSupport, View.OnClickListener,
+    DatePickerDialog.OnDateSetListener {
 
     private lateinit var binding: FragmentUploadDocsBinding
     private val storageRef = FirebaseStorage.getInstance().reference
     private lateinit var dialog: Dialog
     private var fileName = ""
     private lateinit var progressBarController: ProgressBarController
-    private var multiChoiceRef = FirebaseDatabase.getInstance().reference
+    private var docRef = FirebaseDatabase.getInstance().reference
     private var listOfMedia: ArrayList<String> = arrayListOf()
     private lateinit var mediaSupport: MediaSupport
     private lateinit var classInfo: ClassInfo
+    private lateinit var material: Material
     private lateinit var cn: InternetConnection
+    private val calender: Calendar = Calendar.getInstance()
+    private var dueDate: String = "No due date..."
+    private val months = arrayListOf(
+        "January", "February", "March", "April", "May", "June", "July",
+        "August", "September", "October", "November", "December"
+    )
 
     override fun onStart() {
         super.onStart()
@@ -116,16 +128,22 @@ class UploadDocs: Fragment(), ProgressBarController,
         binding.uploadQuestionUpload.setOnClickListener(this)
         binding.uploadAttachment.setOnClickListener(this)
         binding.uploadQuestionBackArrow.setOnClickListener(this)
+        binding.uploadQuestionSetDeadline.setOnClickListener(this)
+        binding.uploadQuestionDateCancel.setOnClickListener(this)
         mediaSupport = this
 
         val bundle = arguments
         val json = bundle!!.getString("classInfo")
         classInfo = Json.decodeFromString(json!!)
 
-        multiChoiceRef = multiChoiceRef
+        val materialJson = bundle.getString("materialJson")
+        material = Gson().fromJson(materialJson, Material::class.java)
+
+        docRef = docRef
             .child("doc_question")
             .child(FirebaseAuth.getInstance().currentUser!!.uid)
             .child(classInfo.classCode)
+            .child(material.dateCreated)
             .push()
         return binding.root
     }
@@ -162,6 +180,19 @@ class UploadDocs: Fragment(), ProgressBarController,
                 intent.addCategory(Intent.CATEGORY_OPENABLE)
                 intent.type = "*/*"
                 pickFileLauncher.launch(intent)
+            }
+            R.id.upload_question_set_deadline -> {
+                val day = calender.get(Calendar.DATE)
+                val month = calender.get(Calendar.MONTH)
+                val year = calender.get(Calendar.YEAR)
+                val dateDialogPicker = DatePickerDialog(requireContext(), this, year, month, day)
+                dateDialogPicker.show()
+            }
+            R.id.upload_question_date_cancel -> {
+                dueDate = "No due date..."
+                binding.uploadQuestionDateText.text = "Set deadline..."
+                binding.uploadQuestionRealDate.text = ""
+                Snackbar.make(binding.root, "Cleared deadline", Snackbar.LENGTH_SHORT).show()
             }
         }
     }
@@ -201,16 +232,18 @@ class UploadDocs: Fragment(), ProgressBarController,
                         if (arrayDownloadUris.size == listOfMedia.size) {
 
                             val docQuestion = AssignmentQuestion()
-                            docQuestion.className= classInfo.className
-                            docQuestion.classCode= classInfo.classCode
-                            docQuestion.teacherInChargeName= classInfo.teacherInChargeName
-                            docQuestion.teacherInChargeUID= classInfo.teacherInChargeUID
+                            docQuestion.className = classInfo.className
+                            docQuestion.classCode = classInfo.classCode
+                            docQuestion.teacherInChargeName = classInfo.teacherInChargeName
+                            docQuestion.teacherInChargeUID = classInfo.teacherInChargeUID
                             docQuestion.datetime = dateTime
                             docQuestion.question = question
                             docQuestion.extraNote = extraNote
                             docQuestion.mediaUris = arrayDownloadUris
+                            docQuestion.dueDate = dueDate
+                            docQuestion.questionType = getString(R.string.DOCUMENTQUESTION)
 
-                            multiChoiceRef.setValue(docQuestion).addOnCompleteListener {
+                            docRef.setValue(docQuestion).addOnCompleteListener {
                                 val txt = "Uploaded successfully"
                                 Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG).show()
                                 requireActivity().onBackPressed()
@@ -274,5 +307,13 @@ class UploadDocs: Fragment(), ProgressBarController,
 
     override fun makeMediaPlayersInvisible() {
 
+    }
+
+    override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
+        dueDate = "$dayOfMonth+.$month+.$year"
+        binding.uploadQuestionDateText.text = "Due on:"
+        binding.uploadQuestionRealDate.text = "$dayOfMonth, ${months[month]}, $year"
+        val txt = "Day: $dayOfMonth, Month: ${months[month]}, Year: $year"
+        Snackbar.make(binding.root, txt, Snackbar.LENGTH_SHORT).show()
     }
 }

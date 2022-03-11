@@ -11,32 +11,28 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.gson.Gson
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.AssignmentBinding
-import com.iodaniel.mobileclass.student_package.FragmentViewAssignmentStudent
+import com.iodaniel.mobileclass.student_package.FragmentViewAssignment
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
-import com.iodaniel.mobileclass.teacher_package.classes.AssignmentQuestion
 import com.iodaniel.mobileclass.teacher_package.singleclass.AssignmentsAdapter.ViewHolder
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
 import java.util.*
 
-class FragmentAssignments : Fragment(), HelperListener {
+class FragmentAssignments : Fragment(), ViewAssignmentHelper {
     private lateinit var binding: AssignmentBinding
     private lateinit var assignmentAdapter: AssignmentsAdapter
-    private var dataSet: ArrayList<AssignmentQuestion> = arrayListOf()
-    private var dataSetMultipleChoice: ArrayList<ArrayList<HashMap<*, *>>> = arrayListOf()
+    private var questionDataset: ArrayList<String> = arrayListOf()
+    private var questionTypeDataset: ArrayList<String> = arrayListOf()
     private lateinit var classInfo: ClassInfo
-    private var dataSetKeyList: ArrayList<String> = arrayListOf()
-    private var dataSetMultipleChoiceKeyList: ArrayList<String> = arrayListOf()
+    private var keyList: ArrayList<String> = arrayListOf()
+    private lateinit var viewAssignmentHelper: ViewAssignmentHelper
 
     private var multiChoiceRef = FirebaseDatabase.getInstance().reference
     private var uploadDocsRef = FirebaseDatabase.getInstance().reference
@@ -46,21 +42,22 @@ class FragmentAssignments : Fragment(), HelperListener {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View {
         binding = AssignmentBinding.inflate(layoutInflater, container, false)
+        viewAssignmentHelper = this
         val bundle = arguments
         val json = bundle!!.getString("classInfo")
         classInfo = Json.decodeFromString(json!!)
 
         multiChoiceRef = multiChoiceRef
             .child("multi_choice_question")
-            .child(FirebaseAuth.getInstance().currentUser!!.uid)
+            .child(classInfo.teacherInChargeUID)
             .child(classInfo.classCode)
         uploadDocsRef = uploadDocsRef
             .child("doc_question")
-            .child(FirebaseAuth.getInstance().currentUser!!.uid)
+            .child(classInfo.teacherInChargeUID)
             .child(classInfo.classCode)
         directQueRef = directQueRef
             .child("direct_question")
-            .child(FirebaseAuth.getInstance().currentUser!!.uid)
+            .child(classInfo.teacherInChargeUID)
             .child(classInfo.classCode)
 
         readData()
@@ -70,33 +67,22 @@ class FragmentAssignments : Fragment(), HelperListener {
     private fun readData() {
         multiChoiceRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val snap = snapshot.value as ArrayList<HashMap<*, *>>
-                try {
-                    dataSetMultipleChoice.add(snap)
-                    dataSetMultipleChoiceKeyList.add(snapshot.key!!)
-                    rvInit()
-                } catch (e: Exception) {
-                    println("********************* ${e.printStackTrace()}")
-                }
+                questionDataset.add(snapshot.key!!)
+                questionTypeDataset.add("multiChoice")
+                keyList.add(snapshot.key!!)
+                rvInit()
             }
 
             @SuppressLint("NotifyDataSetChanged")
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                val snap = snapshot.value as ArrayList<HashMap<*, *>>
-                try {
-                    dataSetMultipleChoice.add(snap)
-                    dataSetMultipleChoiceKeyList.add(snapshot.key!!)
-                    assignmentAdapter.notifyDataSetChanged()
-                } catch (e: Exception) {
-                    println("********************* ${e.printStackTrace()}")
-                }
             }
 
             @SuppressLint("NotifyDataSetChanged")
             override fun onChildRemoved(snapshot: DataSnapshot) {
-                val index = dataSetMultipleChoiceKeyList.indexOf(snapshot.key)
-                dataSetMultipleChoiceKeyList.removeAt(index)
-                dataSetMultipleChoice.removeAt(index)
+                val index = keyList.indexOf(snapshot.key)
+                keyList.removeAt(index)
+                questionDataset.removeAt(index)
+                questionTypeDataset.removeAt(index)
                 assignmentAdapter.notifyItemRemoved(index)
             }
 
@@ -109,25 +95,23 @@ class FragmentAssignments : Fragment(), HelperListener {
 
         uploadDocsRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val snap = snapshot.getValue(AssignmentQuestion::class.java)
-                dataSet.add(snap!!)
-                dataSetKeyList.add(snapshot.key!!)
+                questionDataset.add(snapshot.key!!)
+                questionTypeDataset.add("uploadDocs")
+                keyList.add(snapshot.key!!)
                 rvInit()
             }
 
             @SuppressLint("NotifyDataSetChanged")
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                val snap = snapshot.getValue(AssignmentQuestion::class.java)
-                dataSet.add(snap!!)
-                dataSetKeyList.add(snapshot.key!!)
-                assignmentAdapter.notifyDataSetChanged()
+
             }
 
             @SuppressLint("NotifyDataSetChanged")
             override fun onChildRemoved(snapshot: DataSnapshot) {
-                val index = dataSetKeyList.indexOf(snapshot.key)
-                dataSetKeyList.removeAt(index)
-                dataSet.removeAt(index)
+                val index = keyList.indexOf(snapshot.key)
+                keyList.removeAt(index)
+                questionDataset.removeAt(index)
+                questionTypeDataset.removeAt(index)
                 assignmentAdapter.notifyItemRemoved(index)
             }
 
@@ -140,24 +124,21 @@ class FragmentAssignments : Fragment(), HelperListener {
 
         directQueRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val snap = snapshot.getValue(AssignmentQuestion::class.java)
-                dataSet.add(snap!!)
-                dataSetKeyList.add(snapshot.key!!)
-                println("SNAP ******************** ${snap.datetime}")
+                questionDataset.add(snapshot.key!!)
+                questionTypeDataset.add("directQue")
+                keyList.add(snapshot.key!!)
                 rvInit()
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                val snap = snapshot.getValue(AssignmentQuestion::class.java)
-                dataSet.add(snap!!)
-                dataSetKeyList.add(snapshot.key!!)
-                rvInit()
+
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
-                val index = dataSetKeyList.indexOf(snapshot.key)
-                dataSetKeyList.removeAt(index)
-                dataSet.removeAt(index)
+                val index = keyList.indexOf(snapshot.key)
+                keyList.removeAt(index)
+                questionDataset.removeAt(index)
+                questionTypeDataset.removeAt(index)
                 assignmentAdapter.notifyItemRemoved(index)
             }
 
@@ -170,53 +151,32 @@ class FragmentAssignments : Fragment(), HelperListener {
     }
 
     private fun rvInit() {
-        /*dataSet = dataSet.shuffled().sortedBy {
-            it.datetime
-        } as ArrayList<MultiChoiceQuestion>*/
         assignmentAdapter = AssignmentsAdapter()
         binding.rvAssignments.adapter = assignmentAdapter
         binding.rvAssignments.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        assignmentAdapter.dataset = dataSet
-        assignmentAdapter.dataSetMultipleChoice = dataSetMultipleChoice
+        assignmentAdapter.questionDataset = questionDataset
+        assignmentAdapter.questionTypeDataset = questionTypeDataset
         assignmentAdapter.activity = requireActivity()
-        assignmentAdapter.helperListener = this
+        assignmentAdapter.classInfo = classInfo
+        assignmentAdapter.viewAssignmentHelper = viewAssignmentHelper
     }
 
-    override fun singleQuestionHelper(datum: AssignmentQuestion) {
-        val viewAssignmentStudentFragment = FragmentViewAssignmentStudent()
-        val bundle = Bundle()
-        val jsonMultiChoiceQuestion = Json.encodeToString(datum)
-        bundle.putString("jsonMultiChoiceQuestion", jsonMultiChoiceQuestion)
-        bundle.putString("questionType", "singleQuestion")
-        viewAssignmentStudentFragment.arguments = bundle
-
-        requireActivity().supportFragmentManager.beginTransaction().addToBackStack("dataS")
-            .replace(R.id.a_class_frame, viewAssignmentStudentFragment).commit()
-    }
-
-    override fun multipleChoiceHelper(datum: ArrayList<HashMap<*, *>>) {
-        val bundle = Bundle()
-        val viewAssignmentStudentFragment = FragmentViewAssignmentStudent()
-        val json= Gson().toJsonTree(datum)
-        bundle.putString("jsonMultiChoiceQuestion", json.toString())
-        bundle.putString("questionType", "multiChoice")
-        bundle.putString("viewType", "teacher")
-        viewAssignmentStudentFragment.arguments = bundle
-
+    override fun inflateFragment(viewAssignmentStudentFragment: Fragment) {
         requireActivity().supportFragmentManager.beginTransaction()
-            .addToBackStack("data_multiple_choice_questionS")
+            .addToBackStack("dataS")
             .replace(R.id.a_class_frame, viewAssignmentStudentFragment).commit()
     }
 }
 
 class AssignmentsAdapter : RecyclerView.Adapter<ViewHolder>() {
 
-    lateinit var dataset: ArrayList<AssignmentQuestion>
-    lateinit var dataSetMultipleChoice: ArrayList<ArrayList<HashMap<*, *>>>
+    lateinit var questionDataset: ArrayList<String>
+    lateinit var questionTypeDataset: ArrayList<String>
     lateinit var context: Context
     lateinit var activity: Activity
-    lateinit var helperListener: HelperListener
+    lateinit var classInfo: ClassInfo
+    lateinit var viewAssignmentHelper: ViewAssignmentHelper
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val chip: Chip = itemView.findViewById(R.id.assignment_row_chip)
@@ -230,29 +190,21 @@ class AssignmentsAdapter : RecyclerView.Adapter<ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if (position < dataset.size) {
-            val datum = dataset[position]
-            try{
-                val name = "Assignment ${position + 1}"
-                holder.chip.text = name
-            } catch (e: Exception){
+        val datum = questionDataset[position]
+        val questionType = questionTypeDataset[position]
+        val name = "Assignment ${position + 1}"
+        holder.chip.text = name
 
-            }
-
-            holder.chip.setOnClickListener {
-                helperListener.singleQuestionHelper(datum)
-            }
-        } else if (position >= dataset.size) {
-            val datum = dataSetMultipleChoice[position - dataset.size]
-            val name = "Assignment ${position + 1}"
-            holder.chip.text = name
-
-            try {
-                holder.chip.setOnClickListener {
-                    helperListener.multipleChoiceHelper(datum)
-                }
-            } catch (e: Exception) {
-            }
+        holder.chip.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("datum", datum)
+            bundle.putString("questionType", questionType)
+            bundle.putString("classCode", classInfo.classCode)
+            val viewAssignmentStudentFragment = FragmentViewAssignment()
+            viewAssignmentStudentFragment.arguments = bundle
+            if (viewAssignmentHelper != null) viewAssignmentHelper.inflateFragment(
+                viewAssignmentStudentFragment
+            )
         }
     }
 
@@ -263,10 +215,9 @@ class AssignmentsAdapter : RecyclerView.Adapter<ViewHolder>() {
         return format.format(date)
     }
 
-    override fun getItemCount(): Int = dataset.size + dataSetMultipleChoice.size
+    override fun getItemCount(): Int = questionDataset.size
 }
 
-interface HelperListener {
-    fun singleQuestionHelper(datum: AssignmentQuestion)
-    fun multipleChoiceHelper(datum: ArrayList<HashMap<*, *>>)
+interface ViewAssignmentHelper {
+    fun inflateFragment(viewAssignmentStudentFragment: Fragment)
 }

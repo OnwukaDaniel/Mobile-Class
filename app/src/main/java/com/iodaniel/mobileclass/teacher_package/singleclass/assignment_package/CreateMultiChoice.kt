@@ -10,7 +10,6 @@ import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -20,15 +19,17 @@ import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.accessing_mobile_app.InternetConnection
 import com.iodaniel.mobileclass.databinding.FragmentCreateMultiChoiceBinding
 import com.iodaniel.mobileclass.databinding.ProgressBarDialogBinding
+import com.iodaniel.mobileclass.shared_classes.ActivityMyClasses
+import com.iodaniel.mobileclass.teacher_package.classes.AssignmentQuestion
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.*
-import com.iodaniel.mobileclass.teacher_package.classes.AssignmentQuestion
+import com.iodaniel.mobileclass.teacher_package.classes.Material
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import java.util.*
 
-class CreateMultiChoice: Fragment(), View.OnClickListener,
+class CreateMultiChoice : Fragment(), View.OnClickListener,
     ProgressBarController {
 
     private lateinit var binding: FragmentCreateMultiChoiceBinding
@@ -37,10 +38,10 @@ class CreateMultiChoice: Fragment(), View.OnClickListener,
     private lateinit var progressBarController: ProgressBarController
     private var multiChoiceRef = FirebaseDatabase.getInstance().reference
     private var listOfMedia: ArrayList<String> = arrayListOf()
-    private var dataset: ArrayList<AssignmentQuestion> = arrayListOf()
     private var fileName = ""
     private var alpha = 0
     private lateinit var classInfo: ClassInfo
+    private lateinit var material: Material
     private val arrayOfQuestions: ArrayList<AssignmentQuestion> = arrayListOf()
     private lateinit var cn: InternetConnection
 
@@ -72,19 +73,25 @@ class CreateMultiChoice: Fragment(), View.OnClickListener,
     override fun onStart() {
         super.onStart()
         cn = InternetConnection(requireContext())
+        initialiseAllClassInterface()
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View {
         binding = FragmentCreateMultiChoiceBinding.inflate(inflater, container, false)
-
         val bundle = arguments
         val json = bundle!!.getString("classInfo")
         classInfo = Json.decodeFromString(json!!)
 
+        println("MATERIAL GSON PRELOG *******************")
+        val materialJson = bundle.getString("materialJson")
+        println("MATERIAL GSON ******************* $materialJson")
+        material = Gson().fromJson(materialJson, Material::class.java)
+
         val bundleArray = arguments
         val jsonArray = bundleArray!!.getString("jsonMultiChoiceQuestion", "")
-        if (jsonArray!=""){
+        if (jsonArray != "") {
             val gsonArray: JsonElement = Json.parseToJsonElement(jsonArray!!)
             val sonArray = Json.encodeToJsonElement(gsonArray)
             for (i in sonArray as JsonArray) {
@@ -97,9 +104,8 @@ class CreateMultiChoice: Fragment(), View.OnClickListener,
             .child("multi_choice_question")
             .child(FirebaseAuth.getInstance().currentUser!!.uid)
             .child(classInfo.classCode)
+            .child(material.dateCreated)
             .push()
-
-        initialiseAllClassInterface()
         return binding.root
     }
 
@@ -133,22 +139,25 @@ class CreateMultiChoice: Fragment(), View.OnClickListener,
         val optionB = binding.optionB.text.toString().trim()
         val optionC = binding.optionC.text.toString().trim()
         val optionD = binding.optionD.text.toString().trim()
-        val optionE = if (binding.optionE.visibility == View.VISIBLE) {
+        println("PAST HERE 1 ****************************** ")
+        val optionE = if (binding.eLayout.visibility != View.GONE) {
             allAvailableOptions.add("E")
             binding.optionE.text.toString().trim()
         } else ""
-        if (binding.optionE.visibility == View.VISIBLE && optionE == "") return
+        if (binding.eLayout.visibility != View.GONE && optionE == "") return
 
+        println("PAST HERE 2 ****************************** ")
         val solution = binding.multiChoiceQuestionSolution.text.toString().trim()
         val extraNote = binding.multiChoiceExtraNote.text.toString().trim()
         if (question == "") return
         if (optionA == "" || optionB == "" || optionC == "" || optionD == "") return
+        println("PAST HERE 3 ****************************** ")
         if (solution == "") {
             Snackbar.make(binding.root, "No solution set!", Snackbar.LENGTH_LONG).show()
             return
         }
         if (solution !in allAvailableOptions) {
-            val txt = "Solution not found in option!\nReview options and solution."
+            val txt = "Solution not found in options!\nReview options and solution."
             Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG).show()
             return
         }
@@ -173,13 +182,22 @@ class CreateMultiChoice: Fragment(), View.OnClickListener,
             multiChoice.options = optionsArray
             arrayOfQuestions.add(multiChoice)
 
+            val uploadQuestion = AssignmentQuestion()
+            uploadQuestion.questionType = getString(R.string.MULTIPLECHOICEQUESTION)
+            uploadQuestion.arrAssignment= arrayOfQuestions
+
+            uploadQuestion.questionType = "multi"
+            uploadQuestion.classCode = classInfo.classCode
+            uploadQuestion.teacherInChargeName = classInfo.teacherInChargeName
+            uploadQuestion.teacherInChargeUID = classInfo.teacherInChargeUID
+            uploadQuestion.datetime = dateTime
+
             println("arrayOfQuestions.toList() ********************* ${arrayOfQuestions.toList()}")
-            multiChoiceRef.setValue(arrayOfQuestions.toList()).addOnCompleteListener {
+            multiChoiceRef.setValue(uploadQuestion).addOnCompleteListener {
                 Snackbar.make(binding.root, "Uploaded successfully", Snackbar.LENGTH_LONG).show()
-                requireActivity().supportFragmentManager.popBackStack(
-                    null,
-                    FragmentManager.POP_BACK_STACK_INCLUSIVE
-                )
+                val intent = Intent(requireContext(), ActivityMyClasses::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                requireActivity().onBackPressed()
                 progressBarController.hideProgressBar()
             }.addOnFailureListener {
                 progressBarController.hideProgressBar()
@@ -209,10 +227,6 @@ class CreateMultiChoice: Fragment(), View.OnClickListener,
                         if (arrayDownloadUris.size == listOfMedia.size) {
 
                             val multiChoice = AssignmentQuestion()
-                            multiChoice.classCode = classInfo.classCode
-                            multiChoice.teacherInChargeName = classInfo.teacherInChargeName
-                            multiChoice.teacherInChargeUID = classInfo.teacherInChargeUID
-                            multiChoice.datetime = dateTime
                             multiChoice.instructions = instructions
                             multiChoice.question = question
                             multiChoice.solution = solution
@@ -221,12 +235,22 @@ class CreateMultiChoice: Fragment(), View.OnClickListener,
                             multiChoice.options = optionsArray
                             arrayOfQuestions.add(multiChoice)
 
-                            multiChoiceRef.setValue(arrayOfQuestions.toList())
+                            val uploadQuestion = AssignmentQuestion()
+                            uploadQuestion.questionType = getString(R.string.MULTIPLECHOICEQUESTION)
+                            uploadQuestion.arrAssignment= arrayOfQuestions
+
+                            uploadQuestion.classCode = classInfo.classCode
+                            uploadQuestion.teacherInChargeName = classInfo.teacherInChargeName
+                            uploadQuestion.teacherInChargeUID = classInfo.teacherInChargeUID
+                            uploadQuestion.datetime = dateTime
+
+                            multiChoiceRef.setValue(uploadQuestion)
                                 .addOnCompleteListener {
-                                    requireActivity().supportFragmentManager.popBackStack(
-                                        null,
-                                        FragmentManager.POP_BACK_STACK_INCLUSIVE
-                                    )
+                                    val intent =
+                                        Intent(requireContext(), ActivityMyClasses::class.java)
+                                    intent.flags =
+                                        Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                                    requireActivity().onBackPressed()
                                     val text = "Uploaded successfully"
                                     Snackbar.make(binding.root, text, Snackbar.LENGTH_LONG).show()
                                     progressBarController.hideProgressBar()
@@ -351,7 +375,10 @@ class CreateMultiChoice: Fragment(), View.OnClickListener,
         val json = Json.encodeToString(classInfo)
         bundle.putString("classInfo", json)
 
-        val jsonArray= Gson().toJsonTree(arrayOfQuestions)
+        val materialJson = Gson().toJson(material)
+        bundle.putString("materialJson", materialJson)
+
+        val jsonArray = Gson().toJsonTree(arrayOfQuestions)
         bundle.putString("jsonMultiChoiceQuestion", jsonArray.toString())
         fragment.arguments = bundle
         requireActivity().supportFragmentManager.beginTransaction()
@@ -371,9 +398,7 @@ class CreateMultiChoice: Fragment(), View.OnClickListener,
                 if (cn != null) {
                     cn.setCustomInternetListener(object :
                         InternetConnection.CheckInternetConnection {
-                        override fun isConnected() {
-                            submit()
-                        }
+                        override fun isConnected() = submit()
 
                         override fun notConnected() {
                             val txt = "No active internet!!! Retry"

@@ -5,10 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.chip.Chip
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -21,7 +21,7 @@ import com.iodaniel.mobileclass.teacher_package.classes.StudentRegistrationClass
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
-class StudentFragment : Fragment(), TotalStudentListener {
+class FragmentStudent : Fragment(), TotalStudentListener {
     private lateinit var binding: StudentFragmentBinding
     private var adapter = StudentsAdapter()
     private var dataset = arrayListOf<StudentRegistrationClass>()
@@ -30,9 +30,8 @@ class StudentFragment : Fragment(), TotalStudentListener {
     private lateinit var classInfo: ClassInfo
     private var registrationRef = FirebaseDatabase.getInstance().reference
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = StudentFragmentBinding.inflate(layoutInflater, container, false)
-
+    override fun onStart() {
+        super.onStart()
         val bundle = arguments
         val json = bundle!!.getString("classInfo")
         classInfo = Json.decodeFromString(json!!)
@@ -44,6 +43,12 @@ class StudentFragment : Fragment(), TotalStudentListener {
 
         totalStudentListener = this
         readDatabase()
+        rvInit()
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding = StudentFragmentBinding.inflate(layoutInflater, container, false)
+
         return binding.root
     }
 
@@ -54,7 +59,7 @@ class StudentFragment : Fragment(), TotalStudentListener {
                 dataset.add(snap)
                 keyList.add(snapshot.key!!)
                 binding.studentCount.text = dataset.size.toString()
-                rvInit()
+                binding.rvStudents.adapter!!.notifyItemInserted(dataset.size)
             }
 
             @SuppressLint("NotifyDataSetChanged")
@@ -103,7 +108,7 @@ class StudentsAdapter : RecyclerView.Adapter<StudentsAdapter.ViewHolder>() {
     var dataset = arrayListOf<StudentRegistrationClass>()
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val chip: Chip = itemView.findViewById(R.id.student_name_chip)
+        val tv: TextView = itemView.findViewById(R.id.student_name_chip)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -113,7 +118,7 @@ class StudentsAdapter : RecyclerView.Adapter<StudentsAdapter.ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val datum = dataset[position]
-        holder.chip.text = datum.email
+        holder.tv.text = datum.email
     }
 
     override fun getItemCount(): Int = dataset.size

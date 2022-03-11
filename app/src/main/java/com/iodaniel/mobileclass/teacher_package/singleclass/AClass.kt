@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -14,6 +15,7 @@ import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
@@ -23,6 +25,9 @@ import com.iodaniel.mobileclass.databinding.AClassBinding
 import com.iodaniel.mobileclass.databinding.ProgressBarDialogBinding
 import com.iodaniel.mobileclass.student_package.HelperListener
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -47,6 +52,7 @@ class AClass : FragmentActivity(), OnClickListener, HelperListener.LoadingListen
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setActionBar(binding.aClassToolbar)
+        title=""
         loadingListener = this
         binding.aClassBack.setOnClickListener(this)
         binding.copyClassCode.setOnClickListener(this)
@@ -61,16 +67,21 @@ class AClass : FragmentActivity(), OnClickListener, HelperListener.LoadingListen
 
                 val bundle = Bundle()
                 bundle.putString("classInfo", json)
-                val studentFragment = StudentFragment()
+                val studentFragment = FragmentStudent()
                 studentFragment.arguments = bundle
                 val lessonsFragment = LessonsFragment()
                 lessonsFragment.arguments = bundle
-                val assignments = FragmentAssignments()
-                assignments.arguments = bundle
+                /*val assignments = FragmentAssignments()
+                assignments.arguments = bundle*/
 
-                dataset = arrayListOf(studentFragment, lessonsFragment, assignments)
+                dataset = arrayListOf(studentFragment, lessonsFragment/*, assignments*/)
                 binding.className.text = classInfo.className
                 binding.classCode.text = classInfo.classCode
+                Glide.with(applicationContext)
+                    .load(Uri.parse(classInfo.classImage))
+                    .centerCrop()
+                    .into(binding.aClassBackgroundImage)
+
                 loadingListener.notLoadingProgressBar()
                 viewPager()
 
@@ -93,7 +104,7 @@ class AClass : FragmentActivity(), OnClickListener, HelperListener.LoadingListen
     }
 
     private fun viewPager() {
-        val data = arrayListOf("Student", "Lessons", "Assignments")
+        val data = arrayListOf("Student", "Lessons")
         viewPagerAdapter = ViewPagerAdapter(this)
         viewPagerAdapter.dataset = dataset
         binding.aClassViewpager.adapter = viewPagerAdapter
@@ -135,11 +146,17 @@ class AClass : FragmentActivity(), OnClickListener, HelperListener.LoadingListen
     }
 
     private fun copyToClipBoard() {
-        val txt = binding.classCode.text.toString()
-        val clip = ClipData.newPlainText("Copied Text", txt)
-        val clipBoardService =
-            applicationContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        clipBoardService.setPrimaryClip(clip)
+        val scope =  CoroutineScope(Dispatchers.IO)
+        scope.launch {
+            val txt = binding.classCode.text.toString()
+            val clip = ClipData.newPlainText("Copied Text", txt)
+            runOnUiThread{
+                val clipBoardService =
+                    applicationContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                clipBoardService.setPrimaryClip(clip)
+                Snackbar.make(binding.copyClassCode, "$txt Copied!!!", Snackbar.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun deleteClass() {
@@ -175,10 +192,6 @@ class AClass : FragmentActivity(), OnClickListener, HelperListener.LoadingListen
                 inflateCreateNewLessonFragment()
                 return true
             }
-            R.id.create_new_assignment -> {
-                inflateCreateNewAssignment()
-                return true
-            }
             R.id.menu_delete -> {
                 deleteClass()
                 return true
@@ -211,7 +224,6 @@ class AClass : FragmentActivity(), OnClickListener, HelperListener.LoadingListen
             }
             R.id.copy_class_code -> {
                 copyToClipBoard()
-                Snackbar.make(binding.copyClassCode, "Copied!!!", Snackbar.LENGTH_LONG).show()
             }
         }
     }

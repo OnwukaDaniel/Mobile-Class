@@ -59,7 +59,7 @@ class SignUp : AppCompatActivity(), View.OnClickListener, HelperListener.Loading
         }
     }
 
-    private fun hideKeyboard(context: Context, windowToken: IBinder){
+    private fun hideKeyboard(context: Context, windowToken: IBinder) {
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(windowToken, 0)
     }
@@ -71,16 +71,20 @@ class SignUp : AppCompatActivity(), View.OnClickListener, HelperListener.Loading
         if (email == "") return
         if (password == "") return
         if (password.length < 6) {
-            var snackbar = Snackbar.make(binding.root,
+            var snackbar = Snackbar.make(
+                binding.root,
                 "Password must be greater than 6 characters",
-                Snackbar.LENGTH_LONG).show()
+                Snackbar.LENGTH_LONG
+            ).show()
             return
         }
         if (confirmPassword == "") return
         if (password != confirmPassword) {
-            var snackbar = Snackbar.make(binding.root,
+            var snackbar = Snackbar.make(
+                binding.root,
                 "Passwords don't match",
-                Snackbar.LENGTH_LONG).show()
+                Snackbar.LENGTH_LONG
+            ).show()
             return
         }
         loadingListener.loadingProgressBar()
@@ -97,9 +101,11 @@ class SignUp : AppCompatActivity(), View.OnClickListener, HelperListener.Loading
 
                 stTypeRef.push().setValue(pair).addOnCompleteListener {
                     val teacherIntent = Intent(this, ActivityMyClasses::class.java)
-                    teacherIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                    teacherIntent.flags =
+                        Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                     val studentIntent = Intent(this, StudentInitPage::class.java)
-                    studentIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                    studentIntent.flags =
+                        Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                     when (binding.accountType.text) {
                         "Create your student account" -> {
                             startActivity(studentIntent)

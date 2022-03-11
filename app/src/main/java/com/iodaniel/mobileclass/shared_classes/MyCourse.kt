@@ -48,6 +48,7 @@ class ClassInfo(
 
 @Serializable
 class AssignmentQuestion(
+    var questionType: String = "",
     var className: String = "",
     var classCode: String = "",
     var teacherInChargeName: String = "",
@@ -55,10 +56,12 @@ class AssignmentQuestion(
     var time: String = "",
     var dateModified: String = "",
     var datetime: String = "",
+    var dueDate: String= "",
 
     var instructions: String = "",
     var question: String = "",
     var solution: String = "",
+    var arrAssignment: ArrayList<AssignmentQuestion> = arrayListOf(),
     var mediaUris: ArrayList<String> = arrayListOf(),
     var extraNote: String = "",
     var options: ArrayList<String> = arrayListOf(),

@@ -24,6 +24,7 @@ import com.iodaniel.mobileclass.student_package.ViewMaterial
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.Material
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
 import java.util.*
@@ -54,7 +55,6 @@ class LessonsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View {
         binding = LessonFragmentBinding.inflate(layoutInflater, container, false)
-
         return binding.root
     }
 
@@ -63,10 +63,7 @@ class LessonsFragment : Fragment() {
         adapter.dataSet = listOfLessons
         adapter.classInfo = classInfo
         binding.rvLessons.adapter = adapter
-        try {
-            adapter.activity = requireActivity()
-        } catch (e: Exception) {
-        }
+        adapter.activity = requireActivity()
         binding.rvLessons.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
     }
@@ -99,38 +96,6 @@ class LessonsFragment : Fragment() {
             fun readData(snapshot: DataSnapshot) {
                 try {
                     val material = snapshot.getValue(Material::class.java)!!
-                    /*val lessonSnap = (snapshot.value as HashMap<*, *>)
-                    val courseName = lessonSnap["courseName"].toString()
-                    val note = lessonSnap["note"].toString()
-                    val extraNote = lessonSnap["extraNote"].toString()
-                    val heading = lessonSnap["heading"].toString()
-
-                    val mediaUris =
-                        if (lessonSnap["mediaUris"] != null) lessonSnap["mediaUris"] as ArrayList<String> else arrayListOf()
-                    val listOfMediaNames =
-                        if (lessonSnap["listOfMediaNames"] != null) lessonSnap["listOfMediaNames"] as ArrayList<String> else arrayListOf()
-                    val test =
-                        if (lessonSnap["test"] != null) lessonSnap["test"] as ArrayList<String> else arrayListOf()
-
-                    val teacherInCharge = lessonSnap["teacherInCharge"].toString()
-                    val year = lessonSnap["year"].toString()
-                    val time = lessonSnap["time"].toString()
-                    val dateModified = lessonSnap["dateModified"].toString()
-                    val dateCreated = lessonSnap["dateCreated"].toString()
-
-                    val material = Material()
-                    material.courseName = courseName
-                    material.note = note
-                    material.extraNote = extraNote
-                    material.heading = heading
-                    material.test = test
-                    material.mediaUris = mediaUris
-                    material.listOfMediaNames = listOfMediaNames
-                    material.teacherInCharge = teacherInCharge
-                    material.year = year
-                    material.time = time
-                    material.dateModified = dateModified
-                    material.dateCreated = dateCreated*/
                     listOfLessons.add(material)
                     keyList.add(snapshot.key!!)
                     rvInit()
@@ -163,6 +128,7 @@ class LessonRvAdapter : RecyclerView.Adapter<LessonRvAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        dataSet.reverse()
         val datum = dataSet[position]
         holder.lesson_date.text = datum.time
         holder.lesson_heading.text = datum.heading
@@ -173,19 +139,17 @@ class LessonRvAdapter : RecyclerView.Adapter<LessonRvAdapter.ViewHolder>() {
 
         holder.itemView.setOnClickListener {
             val intent = Intent(context, ViewMaterial::class.java)
-
             val json = Gson().toJson(datum)
             intent.putExtra("material", json)
+            val jsonClassInfo = Json.encodeToString(classInfo)
+            intent.putExtra("classInfo", jsonClassInfo)
             intent.putExtra("classCode", classInfo.classCode)
             context.startActivity(intent)
-            try {
-                activity.overridePendingTransition(0, 0)
-            } catch (e: Exception) {
-            }
+            activity.overridePendingTransition(0, 0)
         }
     }
 
-    fun convertLongToTime(time: Long): String {
+    private fun convertLongToTime(time: Long): String {
         val date = Date(time)
         val format = SimpleDateFormat("yyyy.MM.dd HH:mm")
         return format.format(date)

@@ -91,7 +91,7 @@ class CourseWork : Fragment() {
         courseWorkAdapter.dataset = dataset
         courseWorkAdapter.context = requireContext()
         courseWorkAdapter.activity = requireActivity()
-        courseWorkAdapter.classCode = classInfo.classCode
+        courseWorkAdapter.classInfo = classInfo
     }
 }
 
@@ -100,7 +100,7 @@ class CourseWorkAdapter : RecyclerView.Adapter<CourseWorkAdapter.ViewHolder>() {
     lateinit var dataset: ArrayList<Material>
     lateinit var context: Context
     lateinit var activity: Activity
-    lateinit var classCode: String
+    lateinit var classInfo: ClassInfo
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val heading: TextView = itemView.findViewById(R.id.lesson_heading)
@@ -126,8 +126,10 @@ class CourseWorkAdapter : RecyclerView.Adapter<CourseWorkAdapter.ViewHolder>() {
             val intent = Intent(context, ViewMaterial::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             val json = Json.encodeToString(datum)
+            val jsonClassInfo = Json.encodeToString(classInfo)
             intent.putExtra("material", json)
-            intent.putExtra("classCode", classCode)
+            intent.putExtra("classInfo", jsonClassInfo)
+            intent.putExtra("classCode", classInfo.classCode)
             context.startActivity(intent)
             activity.overridePendingTransition(0, 0)
         }

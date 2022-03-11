@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/purple_100"
     android:id="@+id/drawer_my_classes_root"
     android:fitsSystemWindows="true"
     android:layout_height="match_parent">
@@ -13,7 +12,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -25,34 +24,41 @@
             android:background="@drawable/rounded_toolbar_background"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/drawer_icon_my_class"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:layout_margin="10dp"
-                android:src="@drawable/ic_baseline_menu_24"
-                app:tint="@color/black" />
-
             <androidx.appcompat.widget.Toolbar
-                android:layout_width="match_parent"
                 android:id="@+id/toolbar_my_classses"
-                android:layout_height="wrap_content">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:gravity="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
                     android:fontFamily="@font/amaranth"
-                    android:gravity="center"
                     android:text="My Classes"
+                    android:gravity="center"
                     android:textColor="@color/black"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
             </androidx.appcompat.widget.Toolbar>
 
-        </LinearLayout>
+            <ImageView
+                android:id="@+id/drawer_icon_my_class"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:padding="10dp"
+                android:foreground="@drawable/gray_ripple"
+                android:src="@drawable/ic_baseline_menu_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/black" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -74,7 +80,6 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-
 
                 <TextView
                     android:id="@+id/textView2Empty"
@@ -113,7 +118,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
-                android:backgroundTint="@color/purple_500"
+                android:backgroundTint="@color/app_primary_color"
                 android:contentDescription="Create new class"
                 android:src="@drawable/ic_add"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -131,13 +136,36 @@
         android:layout_height="match_parent"/>
 
     <com.google.android.material.navigation.NavigationView
-        android:layout_width="240dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:headerLayout="@layout/header_layout_teacher_page"
         android:id="@+id/nav_view_teacher_page"
-        android:background="#80000000"
+        android:background="@color/black"
         app:itemTextColor="@color/white"
         android:layout_gravity="start"
-        app:menu="@menu/nav_view_menu"/>
+        app:menu="@menu/nav_view_menu">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:foreground="@drawable/gray_ripple"
+            android:layout_gravity="bottom">
+
+            <TextView
+                android:id="@+id/activity_class_log_out"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FF0000"
+                android:text="Log out"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:padding="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>

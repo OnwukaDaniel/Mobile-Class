@@ -18,12 +18,12 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
-import com.iodaniel.mobileclass.R
+import com.iodaniel.mobileclass.R.*
 import com.iodaniel.mobileclass.accessing_mobile_app.InternetConnection
 import com.iodaniel.mobileclass.databinding.ClassUploadBinding
 import com.iodaniel.mobileclass.databinding.ProgressBarDialogBinding
+import com.iodaniel.mobileclass.shared_classes.BlurBuilder.blur
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.ProgressBarController
-import java.text.DateFormat
 import java.util.*
 import kotlin.math.roundToInt
 import kotlin.random.Random
@@ -42,7 +42,7 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
     private var classImage: String = ""
     private val storageRef = FirebaseStorage.getInstance().reference
     private lateinit var errorSnackBar: Snackbar
-    private val customImages = arrayListOf(R.drawable.study1, R.drawable.study2, R.drawable.study4)
+    private val customImages = arrayListOf(drawable.study1, drawable.study2, drawable.study4)
     private lateinit var cn: InternetConnection
 
     private val pickFileLauncher =
@@ -82,10 +82,11 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
         setContentView(binding.root)
         title = "Upload Class Material"
         val txt = "Upload Failed. Please Try again"
+        val originalBitmap = BitmapFactory.decodeResource(resources, drawable.teacher_icon)
+        val blurredBitmap = blur(this, originalBitmap)
+        //binding.classUploadBackground.background = BitmapDrawable(resources, blurredBitmap)
         cn = InternetConnection(applicationContext)
-        errorSnackBar = Snackbar.make(
-            binding.root, txt, Snackbar.LENGTH_LONG
-        )
+        errorSnackBar = Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG)
         initialiseAllClassInterface()
         initialiseUtils()
     }
@@ -102,16 +103,8 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
     private fun upload() {
         progressBarController.showProgressBar()
         var snackBar: Snackbar = Snackbar.make(binding.root, "", Snackbar.LENGTH_LONG)
-
-        val datetime = Calendar.getInstance().time.time
-        val dateString = DateFormat.getInstance().format(datetime)
-        val split = dateString.split(' ')
-        val date = split[0].trim()
-        val time = split[1].trim() + split[2].trim()
+        val datetime = Calendar.getInstance().time.time.toString()
         val className = binding.uploadClassName.text.toString().trim()
-
-        val splita = UUID.randomUUID().toString().split("-")
-        val classCode = splita[1] + splita[2].substring(0, 1) + splita[4].substring(6, 8)
 
         if (className == "") {
             snackBar.setText("Empty Class Name!!!"); snackBar.show()
@@ -132,14 +125,10 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
         val mime = MimeTypeMap.getSingleton()
 
         val extension = when (classImage.split(".")[0]) {
-            "android" -> {
-                "jpg"
-            }
-            else -> {
-                mime.getExtensionFromMimeType(contentResolver?.getType(Uri.parse(classImage)))!!
-            }
+            "android" -> "jpg"
+            else -> mime.getExtensionFromMimeType(contentResolver?.getType(Uri.parse(classImage)))!!
         }
-        val event = (date + time + classImage).replace("//", ".").replace("/", ".")
+        val event = (datetime + classImage).replace("//", ".").replace("/", ".")
         val finalStorageRef = storageRef.child("$event.$extension")
         val uploadTask = finalStorageRef.putFile(Uri.parse(classImage))
 
@@ -149,9 +138,8 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
         }.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 finalStorageRef.downloadUrl.addOnSuccessListener {
-                    val splitc = UUID.randomUUID().toString().split("-")
-                    val codee = splitc[1] + splitc[2].substring(0, 1) + splitc[4].substring(6, 8)
-                    val classCodeX = codee
+                    val split = UUID.randomUUID().toString().split("-")
+                    val classCodeX = split[1] + split[2].substring(0, 1) + split[4].substring(6, 8)
                     val downloadUri = it.toString()
                     val rand = Random(42).nextInt(10, 255)
                     reference = reference
@@ -160,14 +148,10 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
                         .child("classes")
                         .child(classCodeX)
 
-                    val detailsX = hashMapOf(
-                        "classCode" to classCodeX,
-                        "auth" to auth
-                    )
+                    val detailsX = hashMapOf("classCode" to classCodeX, "auth" to auth)
 
                     val classInfoX = ClassInfo()
                     classInfoX.className = className
-                    classInfoX.time = time
                     classInfoX.red = rand
                     classInfoX.green = rand
                     classInfoX.blue = rand
@@ -175,7 +159,7 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
                     classInfoX.classCode = classCodeX
                     classInfoX.classImage = downloadUri
                     classInfoX.teacherInChargeUID = auth
-                    classInfoX.datetime = datetime.toString()
+                    classInfoX.datetime = datetime
 
                     allClassesRef.setValue(detailsX).addOnCompleteListener {
                         reference.setValue(classInfoX).addOnCompleteListener {
@@ -234,10 +218,10 @@ class ClassUpload : AppCompatActivity(), View.OnClickListener, ProgressBarContro
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.upload_image -> {
+            id.upload_image -> {
                 selectImageFromStorage()
             }
-            R.id.upload_button -> {
+            id.upload_button -> {
                 if (cn != null) {
                     cn.setCustomInternetListener(object :
                         InternetConnection.CheckInternetConnection {

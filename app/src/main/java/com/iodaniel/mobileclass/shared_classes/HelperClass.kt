@@ -15,7 +15,6 @@ class HelperClass(val url: String, val classCode: String, val extension: String,
 
     fun requestDownloadPath(): String {
             val customUri = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + "/$classCode/$uniqueName.$extension")
-        println("DIR TO DOWNLOADS **************************** $customUri")
         return customUri.toString()
     }
 

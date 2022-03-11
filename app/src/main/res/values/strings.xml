@@ -9,6 +9,9 @@
     <string name="name">Name</string>
     <string name="username">Username</string>
     <string name="userBio">sharedPreferenceBio</string>
+    <string name="MULTIPLECHOICEQUESTION">multi</string>
+    <string name="DOCUMENTQUESTION">doc</string>
+    <string name="DIRECTQUESTION">direct</string>
 
     <string-array name="gender_item">
         <item>Male</item>

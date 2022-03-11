@@ -23,10 +23,7 @@ class SplashScreen : AppCompatActivity() {
         pref = getSharedPreferences("userType", Context.MODE_PRIVATE)
         val userType = pref.getString("studentTeacher", "")
         println("*************************************** $userType")
-
-        try {
-            Firebase.database.setPersistenceEnabled(true)
-        } catch (e: Exception) {}
+        try { Firebase.database.setPersistenceEnabled(true) } catch (e: Exception) {}
 
         val firebaseUser = FirebaseAuth.getInstance().currentUser
         val newUserIntent = Intent(this, SignInOrSignUp::class.java)
@@ -40,7 +37,10 @@ class SplashScreen : AppCompatActivity() {
             null -> startActivity(newUserIntent)
             else -> when (userType) {
                 "" -> startActivity(newUserIntent)
-                teacher -> startActivity(teacherUserIntent)
+                teacher -> {
+                    pref.edit()
+                    startActivity(teacherUserIntent)
+                }
                 student -> startActivity(studentUserIntent)
             }
         }

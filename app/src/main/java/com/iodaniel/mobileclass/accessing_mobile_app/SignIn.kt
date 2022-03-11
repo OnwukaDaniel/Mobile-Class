@@ -61,7 +61,6 @@ class SignIn : AppCompatActivity(), View.OnClickListener, HelperListener.Loading
                 stTypeRef.addChildEventListener(object : ChildEventListener {
                     override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                         val snap = snapshot.value as HashMap<*, *>
-                        println("ACCOUNT **************************** $snap")
                         arrayOfUserInfo.add(snap)
                         for (user in arrayOfUserInfo) {
                             if (user["UID"] == auth.currentUser!!.uid){

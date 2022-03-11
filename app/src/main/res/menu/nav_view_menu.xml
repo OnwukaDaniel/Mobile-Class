@@ -9,8 +9,4 @@
         android:id="@+id/menu_account_settings"
         android:title="My Account"/>
 
-    <item
-        android:id="@+id/menu_log_out"
-        android:title="Log Out"/>
-
 </menu>

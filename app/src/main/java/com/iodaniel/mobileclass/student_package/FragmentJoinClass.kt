@@ -10,7 +10,9 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.iodaniel.mobileclass.R
+import com.iodaniel.mobileclass.accessing_mobile_app.InternetConnection
 import com.iodaniel.mobileclass.databinding.FragmentJoinClassBinding
+import com.iodaniel.mobileclass.shared_classes.ActivityMyClasses
 import com.iodaniel.mobileclass.student_package.HelperListener.LoadingListener
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.StudentRegistrationClass
@@ -22,7 +24,7 @@ class FragmentJoinClass : Fragment(), View.OnClickListener, LoadingListener {
     private lateinit var binding: FragmentJoinClassBinding
     private lateinit var loadingListener: LoadingListener
     private lateinit var snap: Any
-    private lateinit var snapX: Any
+    private lateinit var cn: InternetConnection
 
     private val auth = FirebaseAuth.getInstance().currentUser!!.uid
 
@@ -43,7 +45,9 @@ class FragmentJoinClass : Fragment(), View.OnClickListener, LoadingListener {
         loadingListener = this
         requireActivity().setTheme(R.style.Theme_WhiteTheme)
         binding.joinClass.setOnClickListener(this)
-        readDatabase()
+        binding.joinClassBackArrow.setOnClickListener(this)
+        cn = InternetConnection(requireContext())
+        myClassData()
         readNewClass()
     }
 
@@ -55,7 +59,7 @@ class FragmentJoinClass : Fragment(), View.OnClickListener, LoadingListener {
         return binding.root
     }
 
-    private fun readDatabase() {
+    private fun myClassData() {
         myClassCodeRef.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val snap = snapshot.getValue(ClassInfo::class.java)
@@ -116,29 +120,19 @@ class FragmentJoinClass : Fragment(), View.OnClickListener, LoadingListener {
         val registrationData = StudentRegistrationClass()
         registrationData.email = FirebaseAuth.getInstance().currentUser?.email!!
         registrationData.datetimeJoined = dateString
+        val codes: ArrayList<String> = arrayListOf()
 
         if (inputClassCode == "") {
             loadingListener.notLoadingProgressBar()
             Snackbar.make(binding.root, "Empty input", Snackbar.LENGTH_LONG).show()
             return
         }
-        if (allCodesData.isEmpty()) {
-            loadingListener.notLoadingProgressBar()
-            Snackbar.make(
-                binding.root,
-                "Class doesn't exist or Poor network connection",
-                Snackbar.LENGTH_LONG
-            ).show()
-            return
-        }
         for (classInfoData in allCodesData) {
+            codes.add(classInfoData["classCode"] as String)
             if (inputClassCode in myListOfClassCodes) {
                 loadingListener.notLoadingProgressBar()
                 Snackbar.make(binding.root, "Class already exist", Snackbar.LENGTH_LONG).show()
-                val intent = Intent(
-                    requireContext(),
-                    com.iodaniel.mobileclass.shared_classes.ActivityMyClasses::class.java
-                )
+                val intent = Intent(requireContext(), ActivityMyClasses::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 startActivity(intent)
                 requireActivity().overridePendingTransition(0, 0)
@@ -158,7 +152,6 @@ class FragmentJoinClass : Fragment(), View.OnClickListener, LoadingListener {
                         .child("registered_students")
                         .child(classInfoData["classCode"] as String)
                         .child(FirebaseAuth.getInstance().currentUser!!.uid)
-                    //.child(auth)
 
                     teacherRef.addValueEventListener(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
@@ -169,7 +162,7 @@ class FragmentJoinClass : Fragment(), View.OnClickListener, LoadingListener {
                                     Snackbar.make(binding.root, "Joined !", Snackbar.LENGTH_LONG)
                                         .show()
                                     val intent =
-                                        Intent(requireContext(), com.iodaniel.mobileclass.shared_classes.ActivityMyClasses::class.java)
+                                        Intent(requireContext(), ActivityMyClasses::class.java)
                                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                                     startActivity(intent)
                                     requireActivity().overridePendingTransition(0, 0)
@@ -177,19 +170,19 @@ class FragmentJoinClass : Fragment(), View.OnClickListener, LoadingListener {
                             }
                         }
 
-                        override fun onCancelled(error: DatabaseError) {
-                            val txt = "Database Error!!! Please try again"
-                            //Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG).show()
-                        }
+                        override fun onCancelled(error: DatabaseError) {}
                     })
 
                 } catch (e: Exception) {
                     println(" **************************** ${e.printStackTrace()}")
                 }
             }
-            if (inputClassCode !in myListOfClassCodes && allCodesData.indexOf(classInfoData) == myListOfClassCodes.size) {
-                //Snackbar.make(binding.root, "Class doesn't exist", Snackbar.LENGTH_LONG).show()
-            }
+        }
+        if (inputClassCode !in codes) {
+            loadingListener.notLoadingProgressBar()
+            val txt = "Class doesn't exist"
+            Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG).show()
+            return
         }
     }
 
@@ -206,7 +199,24 @@ class FragmentJoinClass : Fragment(), View.OnClickListener, LoadingListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.join_class -> {
-                joinClass()
+                if (cn != null) {
+                    cn.setCustomInternetListener(object :
+                        InternetConnection.CheckInternetConnection {
+                        override fun isConnected() {
+                            joinClass()
+                        }
+
+                        override fun notConnected() {
+                            val txt = "No active internet!!! Retry"
+                            Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG).show()
+                        }
+                    })
+                } else {
+                    Snackbar.make(binding.root, "Retry", Snackbar.LENGTH_LONG).show()
+                }
+            }
+            R.id.join_class_back_arrow -> {
+                requireActivity().onBackPressed()
             }
         }
     }

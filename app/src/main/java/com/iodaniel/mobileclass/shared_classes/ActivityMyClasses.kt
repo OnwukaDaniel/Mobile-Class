@@ -41,9 +41,7 @@ class ActivityMyClasses : AppCompatActivity(), OnClickListener,
     LoadingListener, TeacherStudentListener, OnNavigationItemSelectedListener, DrawerStateListener {
 
     private lateinit var pref: SharedPreferences
-    private val binding by lazy {
-        ActivityMyClassBinding.inflate(layoutInflater)
-    }
+    private val binding by lazy { ActivityMyClassBinding.inflate(layoutInflater) }
     private lateinit var loadingListener: LoadingListener
     private var reference = FirebaseDatabase.getInstance().reference
 
@@ -68,6 +66,7 @@ class ActivityMyClasses : AppCompatActivity(), OnClickListener,
         textH.text = FirebaseAuth.getInstance().currentUser?.email
 
         binding.drawerIconMyClass.setOnClickListener(this)
+        binding.activityClassLogOut.setOnClickListener(this)
         binding.fabMyClassAddClasses.setOnClickListener(this)
         binding.drawerMyClassesRoot.setBackgroundColor(Color.parseColor("#EEE0FF"))
         loadingListener = this
@@ -224,6 +223,13 @@ class ActivityMyClasses : AppCompatActivity(), OnClickListener,
                 binding.drawerMyClassesRoot.openDrawer(GravityCompat.START)
                 drawerStateListener.drawerOpened()
             }
+            R.id.activity_class_log_out -> {
+                FirebaseAuth.getInstance().signOut()
+                val intent = Intent(applicationContext, SignInOrSignUp::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+                overridePendingTransition(0, 0)
+            }
         }
     }
 
@@ -258,14 +264,6 @@ class ActivityMyClasses : AppCompatActivity(), OnClickListener,
                         }
                     }
                 }
-                return true
-            }
-            R.id.menu_log_out -> {
-                FirebaseAuth.getInstance().signOut()
-                val intent = Intent(applicationContext, SignInOrSignUp::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                startActivity(intent)
-                overridePendingTransition(0, 0)
                 return true
             }
         }
@@ -314,6 +312,8 @@ class MyClassesAdapter : RecyclerView.Adapter<MyClassesAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        dataSet.reverse()
+        myCoursesKeyList.reverse()
         val datum = dataSet[position]
         val datumKey = myCoursesKeyList[position]
         val imageUri = Uri.parse(datum.classImage)
@@ -322,7 +322,7 @@ class MyClassesAdapter : RecyclerView.Adapter<MyClassesAdapter.ViewHolder>() {
         val blue = datum.blue
 
         Glide.with(context).load(imageUri).centerCrop().into(holder.image)
-        holder.image.setColorFilter(Color.argb(80, red, green, blue))
+        holder.image.setColorFilter(Color.argb(90, red, green, blue))
         holder.className.text = datum.className
         holder.itemView.setOnClickListener {
             val json = Json.encodeToString(datum)

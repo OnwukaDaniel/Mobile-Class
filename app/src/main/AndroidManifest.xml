@@ -26,7 +26,12 @@
             tools:ignore="Instantiatable" />
         <activity
             android:name=".student_package.AClass"
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|uiMode|screenLayout"
             android:exported="false"
+            android:theme="@style/Theme.StudentClass" />
+        <activity
+            android:name=".teacher_package.singleclass.AClass"
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|uiMode|screenLayout"
             android:theme="@style/Theme.AClass" />
         <activity android:name=".accessing_mobile_app.SignInOrSignUp" />
         <activity
@@ -36,10 +41,10 @@
         <activity
             android:name=".accessing_mobile_app.SignIn"
             android:theme="@style/Theme.TeacherPage" />
-        <activity android:name=".MainActivity" />
         <activity
             android:name=".SplashScreen"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,17 +52,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:theme="@style/Theme.TeacherPage"
             android:name=".teacher_package.classes.ClassUpload"
+            android:theme="@style/Theme.TeacherPage"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity
-            android:name=".teacher_package.singleclass.AClass"
-            android:theme="@style/Theme.TeacherPage" />
 
-        <activity android:name=".student_package.ViewMaterial"
-            android:theme="@style/Theme.StudentClass"  />
-        <activity android:name=".shared_classes.ActivityMyClasses"
-            android:theme="@style/Theme.TeacherPage"/>
+        <activity
+            android:name=".student_package.ViewMaterial"
+            android:theme="@style/Theme.StudentClass" />
+        <activity
+            android:name=".shared_classes.ActivityMyClasses"
+            android:theme="@style/Theme.TeacherPage" />
 
         <meta-data
             android:name="preloaded_fonts"
