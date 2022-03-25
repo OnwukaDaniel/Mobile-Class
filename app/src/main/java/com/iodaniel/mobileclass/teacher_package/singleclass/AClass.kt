@@ -52,7 +52,7 @@ class AClass : FragmentActivity(), OnClickListener, HelperListener.LoadingListen
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setActionBar(binding.aClassToolbar)
-        title=""
+        title = ""
         loadingListener = this
         binding.aClassBack.setOnClickListener(this)
         binding.copyClassCode.setOnClickListener(this)
@@ -146,11 +146,11 @@ class AClass : FragmentActivity(), OnClickListener, HelperListener.LoadingListen
     }
 
     private fun copyToClipBoard() {
-        val scope =  CoroutineScope(Dispatchers.IO)
+        val scope = CoroutineScope(Dispatchers.IO)
         scope.launch {
             val txt = binding.classCode.text.toString()
             val clip = ClipData.newPlainText("Copied Text", txt)
-            runOnUiThread{
+            runOnUiThread {
                 val clipBoardService =
                     applicationContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                 clipBoardService.setPrimaryClip(clip)

@@ -31,7 +31,6 @@ import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInter
 import com.iodaniel.mobileclass.teacher_package.classes.Material
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import java.text.DateFormat
 import java.util.*
 
 class FragmentCreateNewLesson : Fragment(), OnClickListener,
@@ -201,11 +200,7 @@ class FragmentCreateNewLesson : Fragment(), OnClickListener,
         val note = binding.createClassNote.text.toString()
         val extraNote = binding.createClassExtraNote.text.toString()
 
-        val datetime = Calendar.getInstance().time.time
-        val dateString = DateFormat.getInstance().format(datetime)
-        val split = dateString.split(' ')
-        val date = split[0].trim()
-        val time = split[1].trim() + split[2].trim()
+        val datetime = Calendar.getInstance().time.time.toString()
 
         if (heading == "") return
         if (note == "") return
@@ -215,7 +210,7 @@ class FragmentCreateNewLesson : Fragment(), OnClickListener,
         if (listOfMedia.isEmpty()) {
             val material = Material(
                 courseName = className, note = note, extraNote = extraNote,
-                heading = heading, time = time, dateCreated = classInfo.datetime
+                heading = heading, dateCreated = classInfo.datetime
             )
 
             stTypeRef.setValue(material).addOnCompleteListener {
@@ -241,7 +236,7 @@ class FragmentCreateNewLesson : Fragment(), OnClickListener,
             val contentResolver = requireContext().contentResolver
             val mime = MimeTypeMap.getSingleton()
             val extension = mime.getExtensionFromMimeType(contentResolver?.getType(fileUri))!!
-            val event = (date + time + file).replace("//", ".").replace("/", ".")
+            val event = (datetime + file).replace("//", ".").replace("/", ".")
             val finalStorageRef = storageRef.child("$event.$extension")
             val uploadTask = finalStorageRef.putFile(fileUri)
 
@@ -259,10 +254,9 @@ class FragmentCreateNewLesson : Fragment(), OnClickListener,
                             material.note = note
                             material.extraNote = extraNote
                             material.heading = heading
-                            material.time = time
                             material.listOfMediaNames = listOfMediaNames
                             material.mediaUris = arrayDownloadUris
-                            material.dateCreated = datetime.toString()
+                            material.dateCreated = datetime
 
                             stTypeRef.setValue(material).addOnCompleteListener {
                                 requireActivity().onBackPressed()
