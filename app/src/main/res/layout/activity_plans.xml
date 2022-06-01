@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="?colorPrimary"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    tools:context=".plans.ActivityPlans">
+
+    <LinearLayout
+        android:id="@+id/activity_plan_back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_back_arrow"
+            android:padding="16dp"
+            app:tint="?colorOnPrimary"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_marginEnd="56dp"
+            android:ellipsize="end"
+            android:textColor="?android:attr/textColorSecondary"
+            android:text="Subscription Plans"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/activity_plans_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

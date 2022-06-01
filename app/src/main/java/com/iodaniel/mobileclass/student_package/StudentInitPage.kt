@@ -6,7 +6,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.StudentPageBinding
-import com.iodaniel.mobileclass.shared_classes.ActivityMyClasses
+import com.iodaniel.mobileclass.home.ActivityLandingPage
 
 class StudentInitPage : AppCompatActivity(), View.OnClickListener {
 
@@ -28,7 +28,7 @@ class StudentInitPage : AppCompatActivity(), View.OnClickListener {
                     .replace(R.id.student_page_root, FragmentJoinClass()).commit()
             }
             R.id.student_my_courses -> {
-                val intent = Intent(this, ActivityMyClasses::class.java)
+                val intent = Intent(this, ActivityLandingPage::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                 startActivity(intent)
                 overridePendingTransition(0,0)

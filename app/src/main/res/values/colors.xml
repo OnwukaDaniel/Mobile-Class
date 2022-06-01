@@ -4,22 +4,60 @@
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
+    <color name="five_black">#EBEBEB</color>
     <color name="black">#FF000000</color>
-    <color name="five_black">#0D000000</color>
+    <color name="teal_100">#E8FFFD</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#009F90</color>
     <color name="ten_black">#1A000000</color>
     <color name="twenty_black">#33000000</color>
     <color name="thirty_black">#4D000000</color>
     <color name="forty_black">#66000000</color>
     <color name="fifty_black">#80000000</color>
     <color name="sixty_black">#99000000</color>
-    <color name="seventy_black">#B3000000</color>
+    <color name="seventy_eight_black">#78000000</color>
     <color name="eighty_black">#CC000000</color>
     <color name="ninety_black">#E6000000</color>
-    <color name="app_primary_color">#8F8100</color>
-    <color name="app_primary_color_light">#DDD377</color>
+    <color name="app_primary_color">#BD6D11</color>
+    <color name="app_primary_color_cream">#DDB877</color>
+    <color name="app_primary_color_light">#79EFE47C</color>
     <color name="app_primary_cream">#FFFDE9</color>
-    <color name="app_dark_color">#5E5500</color>
+    <color name="app_dark_color">#293503</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="check_color">#6898F7</color>
+    <color name="grass_green">#43A047</color>
+    <color name="dark_grass_green">#1F6E22</color>
+
+    <!--Custom colors BLUE-->
+    <color name="blue">#001CFF</color>
+    <color name="blue10">#E6E9FF</color>
+    <color name="blue50">#DADFFF</color>
+    <color name="blue100">#C0C7FF</color>
+    <color name="blue200">#9DA7FF</color>
+    <color name="blue300">#8B96FF</color>
+    <color name="blue400">#7A87FF</color>
+    <color name="blue500">#6877FF</color>
+    <color name="blue600">#5163FF</color>
+    <color name="blue700">#3B50FF</color>
+    <color name="blue800">#1F37FF</color>
+    <color name="blue900">#132DFF</color>
+
+    <!--Custom colors APP COLOR-->
+    <color name="app">#BD6D11</color>
+    <color name="app10">#FFE9D0</color>
+    <color name="app20">#FFE3C3</color>
+    <color name="app30">#FFDCB5</color>
+    <color name="app40">#FFDAB0</color>
+    <color name="app50">#FFD19C</color>
+    <color name="app70">#FFB35C</color>
+    <color name="app100">#FFA742</color>
+    <color name="app200">#FF9C2A</color>
+    <color name="app300">#FF951A</color>
+    <color name="app400">#E68719</color>
+    <color name="app500">#D17A16</color>
+    <color name="app600">#BC6E13</color>
+    <color name="app700">#A15E10</color>
+    <color name="app800">#834C0C</color>
+    <color name="app900">#683D0B</color>
+
 </resources>

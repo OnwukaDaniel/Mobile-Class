@@ -12,7 +12,7 @@ import com.google.firebase.database.*
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.accessing_mobile_app.InternetConnection
 import com.iodaniel.mobileclass.databinding.FragmentJoinClassBinding
-import com.iodaniel.mobileclass.shared_classes.ActivityMyClasses
+import com.iodaniel.mobileclass.home.ActivityLandingPage
 import com.iodaniel.mobileclass.student_package.HelperListener.LoadingListener
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.StudentRegistrationClass
@@ -43,7 +43,6 @@ class FragmentJoinClass : Fragment(), View.OnClickListener, LoadingListener {
     override fun onStart() {
         super.onStart()
         loadingListener = this
-        requireActivity().setTheme(R.style.Theme_WhiteTheme)
         binding.joinClass.setOnClickListener(this)
         binding.joinClassBackArrow.setOnClickListener(this)
         cn = InternetConnection(requireContext())
@@ -132,7 +131,7 @@ class FragmentJoinClass : Fragment(), View.OnClickListener, LoadingListener {
             if (inputClassCode in myListOfClassCodes) {
                 loadingListener.notLoadingProgressBar()
                 Snackbar.make(binding.root, "Class already exist", Snackbar.LENGTH_LONG).show()
-                val intent = Intent(requireContext(), ActivityMyClasses::class.java)
+                val intent = Intent(requireContext(), ActivityLandingPage::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 startActivity(intent)
                 requireActivity().overridePendingTransition(0, 0)
@@ -162,7 +161,7 @@ class FragmentJoinClass : Fragment(), View.OnClickListener, LoadingListener {
                                     Snackbar.make(binding.root, "Joined !", Snackbar.LENGTH_LONG)
                                         .show()
                                     val intent =
-                                        Intent(requireContext(), ActivityMyClasses::class.java)
+                                        Intent(requireContext(), ActivityLandingPage::class.java)
                                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                                     startActivity(intent)
                                     requireActivity().overridePendingTransition(0, 0)

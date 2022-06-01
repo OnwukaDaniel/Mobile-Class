@@ -58,13 +58,10 @@ class FragmentViewAssignment : Fragment(), OnClickListener, ScrollClickHelpers,
     private val permissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             val txt = "Afri-Learn requires permission to show media"
-            if (isGranted) {
-                showViews()
-            } else {
-                Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG)
-                    .setAction("Grant Permission") {
-                        requestPermission()
-                    }
+            if (isGranted) showViews() else {
+                Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG).setAction("Grant Permission") {
+                    requestPermission()
+                }
             }
         }
 
@@ -79,11 +76,7 @@ class FragmentViewAssignment : Fragment(), OnClickListener, ScrollClickHelpers,
             override fun handleOnBackPressed() {
             }
         })
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                writeExternalPermission
-            ) == permissionGranted
-        ) showViews()
+        if (ContextCompat.checkSelfPermission(requireContext(), writeExternalPermission) == permissionGranted) showViews()
         else requestPermission()
     }
 
@@ -91,10 +84,7 @@ class FragmentViewAssignment : Fragment(), OnClickListener, ScrollClickHelpers,
         permissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
 
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?, ): View {
         binding = FragmentViewAssignmentStudentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -132,8 +122,7 @@ class FragmentViewAssignment : Fragment(), OnClickListener, ScrollClickHelpers,
             PagerSnapHelper().attachToRecyclerView(binding.rvMultipleChoiceStudent)
             adapter.scrollClickHelpers = scrollClickHelpers
 
-            binding.rvMultipleChoiceStudent.addOnItemTouchListener(object :
-                RecyclerView.SimpleOnItemTouchListener() {
+            binding.rvMultipleChoiceStudent.addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
                 override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
                     return rv.scrollState == RecyclerView.SCROLL_STATE_DRAGGING
                 }

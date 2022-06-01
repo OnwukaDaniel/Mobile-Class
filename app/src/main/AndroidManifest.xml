@@ -21,26 +21,34 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.MobileClass">
         <activity
+            android:name=".teacher_package.course.ActivityEditCourse"
+            android:windowSoftInputMode="stateHidden"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".teacher_package.course.ActivityManageUpload"
+            android:exported="false" />
+        <activity
+            android:name=".teacher_package.profile.ActivityTeacherProfile"
+            android:exported="false" />
+        <activity
+            android:name=".plans.ActivityPlans"
+            android:exported="false"
+            android:resizeableActivity="false"
+            tools:ignore="NonResizeableActivity" />
+        <activity
             android:name=".shared_classes.FragmentAccountSettings"
             android:exported="false"
             tools:ignore="Instantiatable" />
         <activity
             android:name=".student_package.AClass"
             android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|uiMode|screenLayout"
-            android:exported="false"
-            android:theme="@style/Theme.StudentClass" />
+            android:exported="false" />
         <activity
             android:name=".teacher_package.singleclass.AClass"
-            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|uiMode|screenLayout"
-            android:theme="@style/Theme.AClass" />
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|uiMode|screenLayout" />
         <activity android:name=".accessing_mobile_app.SignInOrSignUp" />
-        <activity
-            android:name=".student_package.StudentInitPage"
-            android:theme="@style/Theme.StudentClass" />
-        <activity android:name=".accessing_mobile_app.SignUp" />
-        <activity
-            android:name=".accessing_mobile_app.SignIn"
-            android:theme="@style/Theme.TeacherPage" />
+        <activity android:name=".student_package.StudentInitPage" />
         <activity
             android:name=".SplashScreen"
             android:exported="true"
@@ -52,20 +60,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".teacher_package.classes.ClassUpload"
-            android:theme="@style/Theme.TeacherPage"
+            android:name=".teacher_package.course.CourseUpload"
             android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity android:name=".student_package.ViewMaterial" />
+        <activity android:name=".home.ActivityLandingPage"
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|uiMode|screenLayout" >
 
-        <activity
-            android:name=".student_package.ViewMaterial"
-            android:theme="@style/Theme.StudentClass" />
-        <activity
-            android:name=".shared_classes.ActivityMyClasses"
-            android:theme="@style/Theme.TeacherPage" />
+        </activity>
+        <activity android:name=".teacher_package.profile.ActivityEditProfile" />
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

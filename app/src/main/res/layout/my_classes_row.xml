@@ -18,7 +18,7 @@
             android:id="@+id/student_class_image"
             android:layout_width="match_parent"
             android:layout_height="140dp"
-            android:background="@color/seventy_black"
+            android:background="@color/seventy_eight_black"
             android:contentDescription="Course Image"
             android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -30,18 +30,18 @@
             android:id="@+id/student_class_name"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingVertical="10dp"
-            android:paddingHorizontal="20dp"
             android:lines="1"
             android:minLines="1"
+            android:paddingHorizontal="50dp"
+            android:paddingVertical="10dp"
             android:text="CLASS NAME"
-            android:textStyle="bold"
-            android:background="#1A000000"
             android:textColor="@color/white"
             android:textSize="20sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/student_class_image" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

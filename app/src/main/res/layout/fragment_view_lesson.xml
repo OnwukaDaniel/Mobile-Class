@@ -79,6 +79,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColor="?attr/textColor"
                     android:layout_marginVertical="10dp"
                     android:text="Upload File" />
 
@@ -99,6 +100,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:backgroundTint="@color/app_primary_color"
                         android:text="File" />
 
                 </LinearLayout>
@@ -106,21 +109,23 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
+                    android:gravity="end"
                     android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:textSize="18sp"
+                        android:textColor="?attr/textColor"
+                        android:text="Mark lesson complete" />
 
                     <CheckBox
                         android:id="@+id/view_lesson_mark_complete"
                         android:layout_width="wrap_content"
+                        android:checked="true"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="10dp"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:textSize="18sp"
-                        android:text="Mark lesson complete" />
 
                 </LinearLayout>
 

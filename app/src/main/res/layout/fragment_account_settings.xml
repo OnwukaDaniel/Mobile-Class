@@ -16,27 +16,27 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:background="@color/black"
             android:layout_height="@android:dimen/app_icon_size"
+            android:background="@color/black"
             android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/account_setting_cancel"
                 android:layout_width="30dp"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_cancel"
-                app:tint="@color/white"
                 android:layout_margin="10dp"
+                android:src="@drawable/ic_cancel"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/white" />
 
             <ImageView
                 android:id="@+id/account_setting_save"
                 android:layout_width="30dp"
                 android:layout_height="match_parent"
-                android:gravity="end"
                 android:layout_margin="10dp"
+                android:gravity="end"
                 android:src="@drawable/ic_check"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -48,10 +48,10 @@
             android:id="@+id/container_mesh"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginHorizontal="30dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/account_setting_avatar">
 
@@ -59,29 +59,29 @@
                 android:id="@+id/account_setting_avatar"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:layout_marginTop="50dp"
                 android:layout_gravity="center"
+                android:layout_marginTop="50dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/_02_user" />
+                app:srcCompat="@drawable/user" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:paddingVertical="10dp"
-                android:paddingHorizontal="30dp"
                 android:layout_marginVertical="20dp"
+                android:paddingHorizontal="30dp"
+                android:paddingVertical="10dp"
+                android:text="Change Photo"
                 android:textColor="#FF0000"
-                android:textStyle="bold"
-                android:text="Change Photo"/>
+                android:textStyle="bold" />
 
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Name"/>
+                android:text="Name" />
 
             <EditText
                 android:id="@+id/account_setting_fullname"
@@ -95,7 +95,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/username"/>
+                android:text="@string/username" />
 
             <EditText
                 android:id="@+id/account_setting_username"
@@ -112,13 +112,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="Personal Information"
-                android:textColor="#050505"
+                android:textColor="@color/black"
                 android:textSize="20sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="E-mail address"/>
+                android:text="E-mail address" />
 
             <EditText
                 android:id="@+id/account_setting_email_address"
@@ -126,12 +126,12 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="E-mail"
-                android:inputType="textEmailAddress"/>
+                android:inputType="textEmailAddress" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Phone Number"/>
+                android:text="Phone Number" />
 
             <EditText
                 android:id="@+id/account_setting_phone_bio"
@@ -145,8 +145,8 @@
             <TextView
                 android:id="@+id/textView8"
                 android:layout_width="match_parent"
-                android:layout_marginTop="10dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:text="Gender" />
 
             <Spinner

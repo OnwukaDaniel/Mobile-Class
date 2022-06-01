@@ -4,7 +4,10 @@ import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.webkit.MimeTypeMap
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,10 +22,10 @@ import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.accessing_mobile_app.InternetConnection
 import com.iodaniel.mobileclass.databinding.FragmentCreateMultiChoiceBinding
 import com.iodaniel.mobileclass.databinding.ProgressBarDialogBinding
-import com.iodaniel.mobileclass.shared_classes.ActivityMyClasses
+import com.iodaniel.mobileclass.home.ActivityLandingPage
 import com.iodaniel.mobileclass.teacher_package.classes.AssignmentQuestion
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
-import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.*
+import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.ProgressBarController
 import com.iodaniel.mobileclass.teacher_package.classes.Material
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -195,7 +198,7 @@ class CreateMultiChoice : Fragment(), View.OnClickListener,
             println("arrayOfQuestions.toList() ********************* ${arrayOfQuestions.toList()}")
             multiChoiceRef.setValue(uploadQuestion).addOnCompleteListener {
                 Snackbar.make(binding.root, "Uploaded successfully", Snackbar.LENGTH_LONG).show()
-                val intent = Intent(requireContext(), ActivityMyClasses::class.java)
+                val intent = Intent(requireContext(), ActivityLandingPage::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                 requireActivity().onBackPressed()
                 progressBarController.hideProgressBar()
@@ -247,7 +250,7 @@ class CreateMultiChoice : Fragment(), View.OnClickListener,
                             multiChoiceRef.setValue(uploadQuestion)
                                 .addOnCompleteListener {
                                     val intent =
-                                        Intent(requireContext(), ActivityMyClasses::class.java)
+                                        Intent(requireContext(), ActivityLandingPage::class.java)
                                     intent.flags =
                                         Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                                     requireActivity().onBackPressed()

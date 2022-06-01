@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="@color/app_primary_color"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/plans_cancle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:foreground="@drawable/gray_ripple"
+        android:padding="10dp"
+        android:src="@drawable/ic_cancel"
+        app:tint="?colorOnPrimary" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/getting_started"
+        android:textColor="?android:attr/textColorSecondary"
+        android:textSize="18dp" />
+
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center"
+        android:layout_margin="16dp"
+        android:src="@drawable/books" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:text="Welcome\nChoose a plan to get started. You can always change plans later as well"
+        android:textColor="?android:attr/textColorSecondary"
+        android:textSize="16sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="26dp"
+        android:orientation="horizontal"
+        android:layout_marginHorizontal="5dp"
+        android:weightSum="30">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/plans_free"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_margin="10dp"
+            android:layout_weight="10"
+            app:cardElevation="10dp"
+            android:foreground="@drawable/gray_ripple"
+            app:cardBackgroundColor="@color/app_primary_color"
+            app:cardCornerRadius="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Free"
+                android:textColor="?android:attr/textColorSecondary" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/plans_basic"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_margin="10dp"
+            android:layout_weight="10"
+            app:cardElevation="10dp"
+            android:foreground="@drawable/gray_ripple"
+            app:cardBackgroundColor="@color/app_primary_color"
+            app:cardCornerRadius="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Basic"
+                android:textColor="?android:attr/textColorSecondary" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/plans_premium"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_margin="10dp"
+            android:layout_weight="10"
+            app:cardElevation="10dp"
+            android:foreground="@drawable/gray_ripple"
+            app:cardBackgroundColor="@color/app_primary_color"
+            app:cardCornerRadius="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Premium"
+                android:textColor="?android:attr/textColorSecondary" />
+
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/plans_go_to_plans"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:foreground="@drawable/gray_ripple"
+        android:paddingHorizontal="6dp"
+        app:cardBackgroundColor="@color/app_dark_color"
+        app:cardCornerRadius="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="5dp"
+            android:text="Go To Plans"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="18sp" />
+
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

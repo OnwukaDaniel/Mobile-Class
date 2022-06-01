@@ -61,9 +61,12 @@ class FragmentAssignments : Fragment(), ViewAssignmentHelper{
             .child("direct_question")
             .child(classInfo.teacherInChargeUID)
             .child(classInfo.classCode)
-
-        readData()
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        readData()
     }
 
     private fun readData() {

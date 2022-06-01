@@ -22,7 +22,6 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.io.File
-import java.util.*
 
 class FragmentViewLesson : Fragment() {
     private lateinit var binding: FragmentViewLessonBinding
@@ -42,7 +41,7 @@ class FragmentViewLesson : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentViewLessonBinding.inflate(layoutInflater, container, false)
         return binding.root
@@ -54,7 +53,8 @@ class FragmentViewLesson : Fragment() {
         adapter.activity = requireActivity()
         adapter.classCode = classInfo.classCode
 
-        requireActivity().runOnUiThread {        if (datum.mediaUris.size < 1) binding.materialRoot.visibility = View.GONE
+        requireActivity().runOnUiThread {
+            if (datum.mediaUris.size < 1) binding.materialRoot.visibility = View.GONE
             binding.rvViewLesson.adapter = adapter
             binding.rvViewLesson.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -99,10 +99,7 @@ class ViewMaterialAdapter : RecyclerView.Adapter<ViewMaterialAdapter.ViewHolder>
 
         val helperClass = HelperClass(datum, classCode, extension, context)
         val fullyQualifiedName = "/$classCode/${helperClass.uniqueName}.$extension"
-        val proposedDir = File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                .toString() + fullyQualifiedName
-        )
+        val proposedDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + fullyQualifiedName)
         listOfDownload.add(proposedDir.toString())
         holder.itemView.setOnClickListener {
             val downloadHelper = DownloadHelper(context, activity)

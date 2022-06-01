@@ -11,7 +11,7 @@ class MyCourse(
     var time: String = "",
     var materials: ArrayList<Material> = arrayListOf(),
     var dateCreated: String = "",
-) {}
+)
 
 @Serializable
 class Material(
@@ -44,7 +44,7 @@ class ClassInfo(
     var red: Int = 0,
     var green: Int = 0,
     var blue: Int = 0,
-) {}
+)
 
 @Serializable
 class AssignmentQuestion(

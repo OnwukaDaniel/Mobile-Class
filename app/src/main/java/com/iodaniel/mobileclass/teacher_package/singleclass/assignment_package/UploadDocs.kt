@@ -24,6 +24,7 @@ import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.accessing_mobile_app.InternetConnection
 import com.iodaniel.mobileclass.databinding.FragmentUploadDocsBinding
 import com.iodaniel.mobileclass.databinding.ProgressBarDialogBinding
+import com.iodaniel.mobileclass.shared_classes.Util
 import com.iodaniel.mobileclass.teacher_package.classes.AssignmentQuestion
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.MediaSupport
@@ -202,8 +203,7 @@ class UploadDocs : Fragment(), ProgressBarController,
         val extraNote = binding.uploadQuestionExtraNote.text.toString().trim()
         if (question == "") return
         if (fileName == "") {
-            val txt = "Select a file\nOr use Direct question option"
-            Snackbar.make(binding.root, txt, Snackbar.LENGTH_LONG).show()
+            Snackbar.make(binding.root, "Select a file\nOr use Direct question option", Snackbar.LENGTH_LONG).show()
             return
         }
         progressBarController.showProgressBar()
@@ -213,10 +213,7 @@ class UploadDocs : Fragment(), ProgressBarController,
 
         for (file in listOfMedia) {
             val fileUri = Uri.parse(file)
-            val contentResolver = requireContext().contentResolver
-            val mime = MimeTypeMap.getSingleton()
-            val extension =
-                mime.getExtensionFromMimeType(contentResolver?.getType(fileUri))!!
+            val extension = Util.getExtension(fileUri, requireContext())
             val event = (dateTime).replace("//", ".").replace("/", ".")
             val finalStorageRef = storageRef.child("$event.$extension")
             val uploadTask = finalStorageRef.putFile(fileUri)

@@ -47,11 +47,11 @@
                 android:paddingHorizontal="40dp"
                 android:paddingVertical="10dp"
                 android:gravity="center"
-                android:textColor="@color/black"
+                android:textColor="?attr/textColor"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="40dp"
-                android:background="@drawable/rounded_background"/>
+                android:background="@drawable/rounded_background_gray"/>
 
             <EditText
                 android:id="@+id/class_code_et"
@@ -59,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginBottom="25sp"
-                android:background="@drawable/rounded_background"
+                android:background="@drawable/rounded_background_gray"
                 android:gravity="start|top"
                 android:hint="Enter class code here"
                 android:lines="2"
@@ -87,7 +87,7 @@
                     android:fontFamily="@font/amaranth"
                     android:gravity="center"
                     android:text="JOIN CLASS"
-                    android:textColor="@color/white"
+                    android:textColor="?android:attr/textColorSecondary"
                     android:textSize="17sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
