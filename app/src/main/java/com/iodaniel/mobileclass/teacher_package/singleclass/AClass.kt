@@ -134,15 +134,15 @@ class AClass : FragmentActivity(), OnClickListener, HelperListener.LoadingListen
     }
 
     private fun inflateCreateNewAssignment() {
-        val createNewAssignmentFragment = CreateNewAssignment()
-        val bundle = Bundle()
-        val json = Json.encodeToString(classInfo)
-        bundle.putString("classInfo", json)
-        createNewAssignmentFragment.arguments = bundle
-
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.a_class_frame, createNewAssignmentFragment)
-            .addToBackStack("newAssi").commit()
+        //val createNewAssignmentFragment = CreateNewAssignment()
+        //val bundle = Bundle()
+        //val json = Json.encodeToString(classInfo)
+        //bundle.putString("classInfo", json)
+        //createNewAssignmentFragment.arguments = bundle
+//
+        //supportFragmentManager.beginTransaction()
+        //    .replace(R.id.a_class_frame, createNewAssignmentFragment)
+        //    .addToBackStack("newAssi").commit()
     }
 
     private fun copyToClipBoard() {

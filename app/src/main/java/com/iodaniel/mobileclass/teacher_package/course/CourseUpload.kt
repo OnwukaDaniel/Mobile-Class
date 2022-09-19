@@ -1,32 +1,40 @@
 package com.iodaniel.mobileclass.teacher_package.course
 
+import android.graphics.Color
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.LinearLayout
+import android.view.ViewGroup
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.R.id
 import com.iodaniel.mobileclass.accessing_mobile_app.InternetConnection
 import com.iodaniel.mobileclass.databinding.CourseUploadBinding
+import com.iodaniel.mobileclass.databinding.EducationLevelBinding
 import com.iodaniel.mobileclass.repository.CourseUploadRepo
+import com.iodaniel.mobileclass.util.Keyboard.hideKeyboard
+import com.iodaniel.mobileclass.viewModel.CourseUploadProgressViewModel
+import com.iodaniel.mobileclass.viewModel.CourseUploadState
 import com.iodaniel.mobileclass.viewModel.CourseUploadViewModel
+import com.iodaniel.mobileclass.viewModel.EducationViewModel
 
 class CourseUpload : AppCompatActivity(), View.OnClickListener{
 
     private val binding by lazy { CourseUploadBinding.inflate(layoutInflater) }
-    private val auth = FirebaseAuth.getInstance().currentUser!!.uid
     private lateinit var errorSnackBar: Snackbar
     private lateinit var cn: InternetConnection
+    private val educationViewModel: EducationViewModel by viewModels()
+    private val courseUploadProgressViewModel: CourseUploadProgressViewModel by viewModels()
     private lateinit var courseUploadRepo: CourseUploadRepo
     private val courseUploadViewModel = CourseUploadViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        setSupportActionBar(binding.includeTeacherCreateCourseToolbar)
-        title = "Create Course"
         val txt = "Upload Failed. Please Try again"
         binding.classUploadEducationLevel.setOnClickListener(this)
         binding.classUploadProceedButton.setOnClickListener(this)
@@ -36,44 +44,39 @@ class CourseUpload : AppCompatActivity(), View.OnClickListener{
         courseUploadViewModel.level.observe(this) {
             binding.classUploadEducationLevelText.text = it!!
         }
+        progress()
+        educationViewModel.education.observe(this){
+            binding.classUploadEducationLevelText.text = it
+        }
+    }
+
+    private fun progress(){
+        courseUploadProgressViewModel.setState(CourseUploadState.STEP_ONE)
+        courseUploadProgressViewModel.state.observe(this){state->
+            when(state){
+                CourseUploadState.STEP_ONE->{
+                    binding.courseUploadCardOne.setCardBackgroundColor(Color.parseColor("#8BE600"))
+                    binding.courseUploadTextOne.setTextColor(Color.WHITE)
+                    binding.courseUploadCardTwo.setCardBackgroundColor(Color.WHITE)
+                    binding.courseUploadTextTwo.setTextColor(Color.BLACK)
+                    binding.courseUploadProgress.setBackgroundColor(Color.parseColor("#EBEBEB"))
+                }
+                CourseUploadState.STEP_TWO->{
+                    binding.courseUploadCardTwo.setCardBackgroundColor(Color.parseColor("#8BE600"))
+                    binding.courseUploadTextTwo.setTextColor(Color.WHITE)
+                    binding.courseUploadProgress.setBackgroundColor(Color.parseColor("#8BE600"))
+                }
+            }
+        }
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
             id.class_upload_education_level -> {
-                val pair = courseUploadRepo.pickLevel()
-                val view = pair.first
-                val alertDialog = pair.second
-                val basic: LinearLayout = view.findViewById(R.id.dialog_education_basic)
-                val secondary: LinearLayout = view.findViewById(R.id.dialog_education_secondary)
-                val tertiary: LinearLayout = view.findViewById(R.id.dialog_education_tertiary)
-                val beginner: LinearLayout = view.findViewById(R.id.dialog_education_beginner)
-                val intermediate: LinearLayout = view.findViewById(R.id.dialog_education_intermediate)
-                val advance: LinearLayout = view.findViewById(R.id.dialog_education_advance)
-                basic.setOnClickListener {
-                    courseUploadViewModel.setLevel(getString(R.string.education_basic_primary))
-                    alertDialog.dismiss()
-                }
-                secondary.setOnClickListener {
-                    courseUploadViewModel.setLevel(getString(R.string.education_secondary_high))
-                    alertDialog.dismiss()
-                }
-                tertiary.setOnClickListener {
-                    courseUploadViewModel.setLevel(getString(R.string.education_tertiary_college))
-                    alertDialog.dismiss()
-                }
-                beginner.setOnClickListener {
-                    courseUploadViewModel.setLevel(getString(R.string.education_beginner))
-                    alertDialog.dismiss()
-                }
-                intermediate.setOnClickListener {
-                    courseUploadViewModel.setLevel(getString(R.string.education_intermediate))
-                    alertDialog.dismiss()
-                }
-                advance.setOnClickListener {
-                    courseUploadViewModel.setLevel(getString(R.string.education_advance))
-                    alertDialog.dismiss()
-                }
+                hideKeyboard()
+                supportFragmentManager.beginTransaction()
+                    .addToBackStack("education dialog")
+                    .replace(R.id.course_upload_root_root, EducationLevelFragment()).commit()
             }
             id.class_upload_proceed_button -> {
                 val courseName = binding.classUploadCourseName.text.trim().toString()
@@ -85,13 +88,24 @@ class CourseUpload : AppCompatActivity(), View.OnClickListener{
                     Snackbar.make(binding.root, "Empty Class Name!!!", Snackbar.LENGTH_LONG).show()
                     return
                 }
-                if (courseName == "" || shortDescription == "" || level == "" || detailedDescription == "") return
-
+                if (detailedDescription == "") {
+                    Snackbar.make(binding.root, "Detailed description can't be empty", Snackbar.LENGTH_LONG).show()
+                    return
+                }
+                if (shortDescription == "") {
+                    Snackbar.make(binding.root, "Short Description can't be empty", Snackbar.LENGTH_LONG).show()
+                    return
+                }
+                if (level == "") {
+                    Snackbar.make(binding.root, "Select a difficult level this course will target", Snackbar.LENGTH_LONG).show()
+                    return
+                }
                 if (shortDescription == detailedDescription) {
                     Snackbar.make(binding.root, "Don't use the same description", Snackbar.LENGTH_LONG).show()
                     return
                 }
 
+                hideKeyboard()
                 val next = FragmentCompleteCreateCourse()
                 val bundle = Bundle()
                 bundle.putString("Course name", courseName)
@@ -102,10 +116,44 @@ class CourseUpload : AppCompatActivity(), View.OnClickListener{
                 next.arguments = bundle
                 supportFragmentManager.beginTransaction()
                     .addToBackStack("complete course")
-                    .setCustomAnimations(R.anim.slide_in, R.anim.slide_in)
+                    .setCustomAnimations(R.anim.enter_right_to_left, R.anim.exit_right_to_left, R.anim.enter_left_to_right, R.anim.exit_left_to_right)
                     .replace(id.course_upload_root, next)
                     .commit()
+                courseUploadProgressViewModel.setState(CourseUploadState.STEP_TWO)
             }
         }
+    }
+}
+
+class EducationLevelFragment: Fragment(){
+    private lateinit var binding: EducationLevelBinding
+    private val educationViewModel: EducationViewModel by activityViewModels()
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = EducationLevelBinding.inflate(inflater, container, false)
+        binding.dialogEducationBasic.setOnClickListener {
+            educationViewModel.setEducation(getString(R.string.education_basic_primary))
+            requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
+        }
+        binding.dialogEducationSecondary.setOnClickListener {
+            educationViewModel.setEducation(getString(R.string.education_secondary_high))
+            requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
+        }
+        binding.dialogEducationTertiary.setOnClickListener {
+            educationViewModel.setEducation(getString(R.string.education_tertiary_college))
+            requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
+        }
+        binding.dialogEducationBeginner.setOnClickListener {
+            educationViewModel.setEducation(getString(R.string.education_beginner))
+            requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
+        }
+        binding.dialogEducationIntermediate.setOnClickListener {
+            educationViewModel.setEducation(getString(R.string.education_intermediate))
+            requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
+        }
+        binding.dialogEducationAdvance.setOnClickListener {
+            educationViewModel.setEducation(getString(R.string.education_advance))
+            requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
+        }
+        return binding.root
     }
 }

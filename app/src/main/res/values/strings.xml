@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Mobile Class</string>
+    <string name="app_name">Afri Learn</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="course_title">Course Title</string>
@@ -61,6 +61,15 @@
     <string name="course_plans">course_plans</string>
     <string name="pme_ref">plans_module_exercise</string>
     <string name="network_value">network_value</string>
+    <string name="ver_id_text1">Complete your ID verification process below to start creating courses and schemes. You need to upload a copy of your ID (either of: National ID, Drivers Permit or Passport) to complete this step.</string>
+    <string name="ver_id_step1_text">Please select a copy of your ID here. Accepted format are: .pdf, .docx, .docx, .jpeg and .png.</string>
+    <string name="ver_certificate_text">Upload a certificate that relates to the the kind of courses you will instruct</string>
+    <string name="ver_certificate_step2_text">Please select a copy of your teaching certificate here. Accepted format are: .pdf, .docx, .docx, .jpeg and .png.</string>
+    <string name="SHOW_CREATE_COURSE_GUIDELINES">SHOW_CREATE_COURSE_GUIDELINES</string>
+    <string name="Guidelines">Guidelines to create a course.\n1. Create a plan with the plan tool.\n2. Create modules in each plan.\n3. Add exercise where
+        necessary\n4. Submit to create course.</string>
+    <string name="SHOW_LONG_PRESS_INFO">SHOW_LONG_PRESS_INFO</string>
+    <string name="plans_module_exercise">plans_module_exercise</string>
 
     <string-array name="gender_item">
         <item>Male</item>

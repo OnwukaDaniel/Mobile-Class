@@ -1,25 +1,27 @@
 package com.iodaniel.mobileclass.teacher_package.course
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.*
 import android.webkit.MimeTypeMap
 import android.widget.ImageView
 import android.widget.MediaController
+import android.widget.TextView
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.iodaniel.mobileclass.R
@@ -27,28 +29,45 @@ import com.iodaniel.mobileclass.data_class.CourseCardData
 import com.iodaniel.mobileclass.data_class.PlanModulesExercise
 import com.iodaniel.mobileclass.databinding.FragmentEditModulesBinding
 import com.iodaniel.mobileclass.repository.EditPlanRepo
-import com.iodaniel.mobileclass.shared_classes.Util
 import com.iodaniel.mobileclass.util.DirectoryManagement
+import com.iodaniel.mobileclass.util.dialog_fragment.InputFragment
+import com.iodaniel.mobileclass.util.dialog_fragment.OneActionFragment
+import com.iodaniel.mobileclass.viewModel.EditModuleViewModel
 import com.iodaniel.mobileclass.viewModel.FabStateForEditModule.CLOSED
 import com.iodaniel.mobileclass.viewModel.FabStateForEditModule.OPEN
 import com.iodaniel.mobileclass.viewModel.FabStateForEditModuleViewModel
+import com.iodaniel.mobileclass.viewModel.MessageFragmentViewModel
 
 class FragmentEditModules : Fragment(), View.OnClickListener {
     private lateinit var binding: FragmentEditModulesBinding
     private val moduleMaterialAdapter = ModuleMaterialAdapter()
     private lateinit var mediaController: MediaController
+
+    private val oneActionFragment = OneActionFragment()
+    private lateinit var preference: SharedPreferences
     private val fabStateViewModel = FabStateForEditModuleViewModel()
+    private val mfV: MessageFragmentViewModel by activityViewModels()
+
+    private var bold = false
+    private var italic = false
+    private var underline = false
+    private var leftAlign = false
+    private var centerAlign = false
+    private var rightAlign = false
+    private var fontRoot = false
+    private var startTextChange = 0
+    private var endTextChange = 0
 
     //private var medialPairList: ArrayList<Pair<String, String>> = arrayListOf()
     private var courseCardData: CourseCardData? = null
     private var fabState = 1
     private var courseCardDataJson = ""
+    private val editModuleViewModel = EditModuleViewModel()
     private var modulePosition = 0
     private lateinit var editPlanRepo: EditPlanRepo
     private var plansAndModulesList: ArrayList<PlanModulesExercise> = arrayListOf()
-    private var pDialog: Dialog? = null
     private val acceptedVideoTypes: ArrayList<String> = arrayListOf("mp4", "3gp")
-    private val condition: ArrayList<String> = arrayListOf("mp4", "3gp", "mp3", "aac", "wav", "pdf", "jpg", "png", "jpeg", "doc", "docx")
+    private val acceptedTypes: ArrayList<String> = arrayListOf("mp4", "3gp", "mp3", "aac", "wav", "pdf", "jpg", "png", "jpeg", "doc", "docx")
     private val directoryManagement = DirectoryManagement()
     private val pickFileLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult(), ActivityResultCallback {
         try {
@@ -59,7 +78,6 @@ class FragmentEditModules : Fragment(), View.OnClickListener {
                 val contentResolver = requireActivity().contentResolver
                 val mime = MimeTypeMap.getSingleton()
                 val ext = mime.getExtensionFromMimeType(contentResolver?.getType(dataUri!!))!!
-                if (ext in condition) moduleMaterialAdapter.notifyItemInserted(plansAndModulesList[modulePosition].modules.uris.size)
 
                 //val directory = directoryManagement.createDirectory(path, dataUri.toString().replace("/", "_"), requireContext())
                 //val inputStream = requireContext().contentResolver.openInputStream(dataUri!!)
@@ -68,30 +86,23 @@ class FragmentEditModules : Fragment(), View.OnClickListener {
                 //inputStream!!.close()
                 //outputStream.close()
 
-                for(type in plansAndModulesList[modulePosition].modules.uris){
-                    if (type["filetype"] in acceptedVideoTypes && ext in acceptedVideoTypes){
+                for (type in plansAndModulesList[modulePosition].modules.uris) {
+                    if (type["filetype"] in acceptedVideoTypes && ext in acceptedVideoTypes) {
                         Snackbar.make(binding.root, "You can only add one video.", Snackbar.LENGTH_LONG).show()
                         return@ActivityResultCallback
                     }
                 }
-
                 if (ext in acceptedVideoTypes) showVideo(dataUri!!)
 
                 val uriString = dataUri.toString()
                 val lastPathSegment = dataUri!!.lastPathSegment!!
                 val name = lastPathSegment.substring(lastPathSegment.lastIndexOf("/") + 1)
-                when (ext) {
-                    "mp4" -> plansAndModulesList[modulePosition].modules.uris.add(mutableMapOf("data" to uriString, "filetype" to "mp4", "filename" to name))
-                    "3gp" -> plansAndModulesList[modulePosition].modules.uris.add(mutableMapOf("data" to uriString, "filetype" to "3gp", "filename" to name))
-                    "mp3" -> plansAndModulesList[modulePosition].modules.uris.add(mutableMapOf("data" to uriString, "filetype" to "mp3", "filename" to name))
-                    "aac" -> plansAndModulesList[modulePosition].modules.uris.add(mutableMapOf("data" to uriString, "filetype" to "aac", "filename" to name))
-                    "wav" -> plansAndModulesList[modulePosition].modules.uris.add(mutableMapOf("data" to uriString, "filetype" to "wav", "filename" to name))
-                    "pdf" -> plansAndModulesList[modulePosition].modules.uris.add(mutableMapOf("data" to uriString, "filetype" to "pdf", "filename" to name))
-                    "jpg" -> plansAndModulesList[modulePosition].modules.uris.add(mutableMapOf("data" to uriString, "filetype" to "jpg", "filename" to name))
-                    "png" -> plansAndModulesList[modulePosition].modules.uris.add(mutableMapOf("data" to uriString, "filetype" to "png", "filename" to name))
-                    "jpeg" -> plansAndModulesList[modulePosition].modules.uris.add(mutableMapOf("data" to uriString, "filetype" to "jpeg", "filename" to name))
-                    "doc" -> plansAndModulesList[modulePosition].modules.uris.add(mutableMapOf("data" to uriString, "filetype" to "doc", "filename" to name))
-                    "docx" -> plansAndModulesList[modulePosition].modules.uris.add(mutableMapOf("data" to uriString, "filetype" to "docx", "filename" to name))
+                if (ext in acceptedTypes) {
+                    plansAndModulesList[modulePosition].modules.uris.add(mutableMapOf("data" to uriString, "filetype" to ext, "filename" to name))
+                }
+                if (ext in acceptedTypes) {
+                    editModuleViewModel.setMediaPresence(true)
+                    moduleMaterialAdapter.notifyItemInserted(plansAndModulesList[modulePosition].modules.uris.size)
                 }
             }
         } catch (e: Exception) {
@@ -103,9 +114,8 @@ class FragmentEditModules : Fragment(), View.OnClickListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentEditModulesBinding.inflate(inflater, container, false)
         requireActivity().setActionBar(binding.editModuleToolbar)
-        pDialog = Util.progressDialog("Please wait...", requireContext(), requireActivity())
-        pDialog?.show()
-
+        preference = requireActivity().getSharedPreferences(getString(R.string.ALL_SHARED_PREFERENCES), Context.MODE_PRIVATE)
+        onClickListeners()
         courseCardDataJson = requireArguments().getString(getString(R.string.manage_course_data_intent))!!
         courseCardData = Gson().fromJson(courseCardDataJson, CourseCardData::class.java)
         modulePosition = requireArguments().getInt("module_position")
@@ -116,20 +126,86 @@ class FragmentEditModules : Fragment(), View.OnClickListener {
             val pmeResult: PlanModulesExercise = Gson().fromJson(json, PlanModulesExercise::class.java)
             plansAndModulesList.add(pmeResult)
         }
-        editPlanRepo = EditPlanRepo(requireActivity(), requireContext(), binding.root, viewLifecycleOwner)
+        if (plansAndModulesList[modulePosition].modules.uris.isNotEmpty())
+            editModuleViewModel.setMediaPresence(true) else editModuleViewModel.setMediaPresence(false)
         val modules = plansAndModulesList[modulePosition]
         requireActivity().title = modules.plan
+        editPlanRepo = EditPlanRepo(requireActivity(), requireContext(), binding.root, viewLifecycleOwner)
         binding.editModuleContent.setText(modules.modules.content)
-        binding.editModuleExtraNote.setText(modules.modules.extraNote)
+        binding.editModuleHeader.setText(modules.modules.extraNote)
+        viewModels()
+        moduleMaterialAdapter.activity = requireActivity()
+        binding.editModuleRv.adapter = moduleMaterialAdapter
+        binding.editModuleRv.layoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.HORIZONTAL)
+        return binding.root
+    }
 
-        binding.editModuleAddExtraNote.setOnClickListener(this)
+    private fun spanTesting() {
+        class InputWatcher : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                println("Before Text changed *************** TEXT = $s, START = $start, AFTER = $after, COUNT = $count")
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                startTextChange = start
+                endTextChange = startTextChange + count
+                println("After Text changed *************** TEXT = $s, START = $start, BEFORE = $before, COUNT = $count")
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+            }
+        }
+        binding.editModuleContent.addTextChangedListener(InputWatcher())
+    }
+
+    private fun onClickListeners() {
         binding.editModuleFab.setOnClickListener(this)
         binding.editModuleSave.setOnClickListener(this)
         binding.editModuleAdd.setOnClickListener(this)
-        moduleMaterialAdapter.activity = requireActivity()
-        binding.editModuleRv.adapter = moduleMaterialAdapter
-        binding.editModuleRv.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.editModuleNoMediaRoot.setOnClickListener(this)
 
+        binding.editModuleFab.setOnClickListener(this)
+        binding.emBold.setOnClickListener(this)
+        binding.emItalic.setOnClickListener(this)
+        binding.emUnderline.setOnClickListener(this)
+        binding.emRightAlign.setOnClickListener(this)
+        binding.emLeftAlign.setOnClickListener(this)
+        binding.emCenterAlign.setOnClickListener(this)
+        binding.emFontRoot.setOnClickListener(this)
+    }
+
+    override fun onClick(v: View?) {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.type = "*/*"
+        when (v?.id) {
+            R.id.edit_module_fab -> if (fabState == OPEN) fabStateViewModel.setState(CLOSED) else fabStateViewModel.setState(OPEN)
+            R.id.edit_module_add -> pickFileLauncher.launch(intent)
+            R.id.edit_module_save -> {
+                val content = binding.editModuleContent.text.trim().toString()
+                val headerText = binding.editModuleHeader.text.trim().toString()
+                editPlanRepo.uploadModule(content = content, headerText = headerText, courseCode = courseCardData!!.courseCode, position = modulePosition,
+                    urisInputList = plansAndModulesList[modulePosition].modules.uris, view = binding.root)
+            }
+            R.id.em_bold -> {
+            }
+            R.id.em_italic -> {
+            }
+            R.id.em_underline -> {
+            }
+            R.id.em_left_align -> {
+            }
+            R.id.em_center_align -> {
+            }
+            R.id.em_right_align -> {
+            }
+            R.id.em_font_root -> {
+            }
+            R.id.edit_module_no_media_root -> pickFileLauncher.launch(intent)
+        }
+    }
+
+    private fun viewModels() {
         fabStateViewModel.state.observe(viewLifecycleOwner) {
             fabState = it
             when (fabState) {
@@ -145,29 +221,32 @@ class FragmentEditModules : Fragment(), View.OnClickListener {
                 }
             }
         }
-        pDialog?.dismiss()
-        return binding.root
-    }
-
-    override fun onClick(v: View?) {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "*/*"
-        when (v?.id) {
-            R.id.edit_module_add_extra_note -> if (binding.editModuleExtraNote.visibility == View.VISIBLE) binding.editModuleExtraNote.visibility = View.GONE
-            else binding.editModuleExtraNote.visibility = View.VISIBLE
-            R.id.edit_module_fab -> if (fabState == OPEN) fabStateViewModel.setState(CLOSED) else fabStateViewModel.setState(OPEN)
-            R.id.edit_module_add -> pickFileLauncher.launch(intent)
-            R.id.edit_module_save -> {
-                val content = binding.editModuleContent.text.trim().toString()
-                val extraNote = binding.editModuleExtraNote.text.trim().toString()
-                editPlanRepo.uploadModule(content = content, extraNote = extraNote, courseCode = courseCardData!!.courseCode, position = modulePosition,
-                    urisInputList = plansAndModulesList[modulePosition].modules.uris, view = binding.root)
+        editModuleViewModel.mediaPresenceListener.observe(viewLifecycleOwner) {
+            if (it) {
+                binding.editModuleNoMediaRoot.visibility = View.GONE
+                binding.editModuleRv.visibility = View.VISIBLE
+                if (preference.getBoolean(getString(R.string.SHOW_LONG_PRESS_INFO), true)) showLongPressMessage()
+            } else {
+                binding.editModuleNoMediaRoot.visibility = View.VISIBLE
+                binding.editModuleRv.visibility = View.GONE
             }
         }
     }
 
-    private fun showVideo(uri: Uri){
+    private fun showLongPressMessage(){
+        requireActivity().supportFragmentManager.beginTransaction()
+            .addToBackStack("dialog")
+            .replace(R.id.edit_module_root, oneActionFragment)
+            .commit()
+        mfV.setDisplayText("Long press on a file to rename it")
+        mfV.setOkFunction((Fragment() to 0) to false)
+        mfV.showAgain.observe(viewLifecycleOwner){
+            val checked = !it
+            preference.edit().putBoolean(getString(R.string.SHOW_LONG_PRESS_INFO), checked).apply()
+        }
+    }
+
+    private fun showVideo(uri: Uri) {
         mediaController = MediaController(requireContext())
         mediaController.setAnchorView(binding.editModuleVideoView)
         binding.editModuleVideoView.setMediaController(mediaController)
@@ -176,41 +255,39 @@ class FragmentEditModules : Fragment(), View.OnClickListener {
         binding.editModuleVideoCard.visibility = View.VISIBLE
     }
 
-    private fun hideVideo(){
+    private fun hideVideo() {
         binding.editModuleVideoCard.visibility = View.GONE
     }
 
-    inner class ModuleMaterialAdapter : RecyclerView.Adapter<ModuleMaterialAdapter.ViewHolder>() {
+    inner class ModuleMaterialAdapter : RecyclerView.Adapter<ModuleMaterialAdapter.ViewHolder>(), GestureDetector.OnGestureListener {
         private lateinit var context: Context
         lateinit var activity: Activity
+        private val mfV: MessageFragmentViewModel by activityViewModels()
+        private val inputFragment = InputFragment()
+        private lateinit var gestureDetector: GestureDetector
         var dataset: ArrayList<Pair<String, String>> = arrayListOf()
-        private val imagesExtList: ArrayList<String> = arrayListOf("jpg", "png", "jpeg")
+        private var editPosition = 0
+
+        init {
+            setHasStableIds(true)
+        }
 
         inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val image: ImageView = itemView.findViewById(R.id.row_module_material_image)
-            val option: ImageView = itemView.findViewById(R.id.row_module_material_option)
+            val text: TextView = itemView.findViewById(R.id.row_pref_landing_chip_text)
+            val option: ImageView = itemView.findViewById(R.id.row_pref_landing_chip_cancel)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             context = parent.context
-            val view = LayoutInflater.from(context).inflate(R.layout.row_module_material, parent, false)
+            gestureDetector = GestureDetector(context, this)
+            val view = LayoutInflater.from(context).inflate(R.layout.row_pref_landing, parent, false)
             return ViewHolder(view)
         }
 
+        @SuppressLint("ClickableViewAccessibility")
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val datum = plansAndModulesList[modulePosition].modules.uris[position]
-            if (datum["filetype"] in imagesExtList) Glide.with(context).load(datum["data"]).centerCrop().into(holder.image)
-            when (datum["filetype"]) {
-                "mp4" -> Glide.with(context).load(datum["data"]).centerCrop().into(holder.image)
-                "3gp" -> Glide.with(context).load(datum["data"]).centerCrop().into(holder.image)
-                "pdf" -> holder.image.setImageResource(R.drawable.pdf_icon)
-                "mp3" -> holder.image.setImageResource(R.drawable.music_icon)
-                "aac" -> holder.image.setImageResource(R.drawable.music_icon)
-                "wav" -> holder.image.setImageResource(R.drawable.music_icon)
-                "doc" -> holder.image.setImageResource(R.drawable.doc_icon)
-                "docx" -> holder.image.setImageResource(R.drawable.doc_icon)
-                else -> holder.image.setImageResource(R.drawable.file)
-            }
+            holder.text.text = datum["filename"]
 
             holder.itemView.setOnClickListener {
                 val local = !datum["data"]!!.startsWith("https")
@@ -246,9 +323,60 @@ class FragmentEditModules : Fragment(), View.OnClickListener {
                 val data = plansAndModulesList[modulePosition].modules.uris[pos]["filetype"]
                 if (data in acceptedVideoTypes) hideVideo()
                 plansAndModulesList[modulePosition].modules.uris.removeAt(pos)
+                if (plansAndModulesList[modulePosition].modules.uris.isNotEmpty())
+                    editModuleViewModel.setMediaPresence(true) else editModuleViewModel.setMediaPresence(false)
+            }
+            holder.text.setOnTouchListener { v, event ->
+                editPosition = holder.bindingAdapterPosition
+                if (v?.id == R.id.row_pref_landing_chip_text) gestureDetector.onTouchEvent(event)
+                return@setOnTouchListener true
             }
         }
 
+        override fun getItemId(position: Int) = position.toLong()
+
         override fun getItemCount() = plansAndModulesList[modulePosition].modules.uris.size
+
+        override fun onLongPress(e: MotionEvent?) {
+            val ft = requireActivity().supportFragmentManager.beginTransaction()
+            val pRunnable = Runnable { fun run() {} }
+            val nRunnable = Runnable { fun run() {} }
+
+            val dialog = requireActivity().supportFragmentManager.findFragmentByTag("dialog")
+            val posMap = plansAndModulesList[modulePosition].modules.uris[editPosition]
+            val oldFileName = posMap["filename"]
+            if (dialog != null) ft.remove(dialog)
+            mfV.setDisplayText("Rename\n$oldFileName\nto")
+            mfV.setCancelFunction(nRunnable.run() to true)
+            mfV.setOkFunction((Fragment() to 0) to false)
+            inputFragment.show(ft, "dialog")
+
+            mfV.editTextInput.observe(viewLifecycleOwner) { newFileName->
+                if (newFileName != oldFileName) {
+                    plansAndModulesList[modulePosition].modules.uris[editPosition]["filename"] = newFileName
+                    notifyItemChanged(editPosition)
+                    Snackbar.make(binding.root, "RENAMED TO: $newFileName", Snackbar.LENGTH_LONG).show()
+                }
+            }
+        }
+
+        override fun onDown(e: MotionEvent?): Boolean {
+            return false
+        }
+
+        override fun onShowPress(e: MotionEvent?) {
+        }
+
+        override fun onSingleTapUp(e: MotionEvent?): Boolean {
+            return false
+        }
+
+        override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
+            return false
+        }
+
+        override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
+            return false
+        }
     }
 }

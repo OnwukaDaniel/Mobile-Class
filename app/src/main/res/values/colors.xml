@@ -20,7 +20,7 @@
     <color name="ninety_black">#E6000000</color>
     <color name="app_primary_color">#BD6D11</color>
     <color name="app_primary_color_cream">#DDB877</color>
-    <color name="app_primary_color_light">#79EFE47C</color>
+    <color name="app_primary_color_light">#79CCC269</color>
     <color name="app_primary_cream">#FFFDE9</color>
     <color name="app_dark_color">#293503</color>
     <color name="white">#FFFFFFFF</color>
@@ -59,5 +59,26 @@
     <color name="app700">#A15E10</color>
     <color name="app800">#834C0C</color>
     <color name="app900">#683D0B</color>
+
+    <!--Custom colors APP COLOR-->
+    <color name="green">#9DFF00</color>
+    <color name="green10">#EEFFD4</color>
+    <color name="green20">#E8FFC6</color>
+    <color name="green30">#E3FFB8</color>
+    <color name="green40">#DBFFA5</color>
+    <color name="green50">#D6FF97</color>
+    <color name="green70">#C7FF72</color>
+    <color name="green100">#B8FF4D</color>
+    <color name="green200">#AFFF36</color>
+    <color name="green300">#8BE600</color>
+    <color name="green400">#7CCD00</color>
+    <color name="green500">#72BC00</color>
+    <color name="green600">#65A600</color>
+    <color name="green700">#16D500</color>
+    <color name="green800">#13B500</color>
+    <color name="green900">#0E8300</color>
+
+    <color name="gray1">#3C3C3C</color>
+    <color name="shimmer_color">#FFA742</color>
 
 </resources>

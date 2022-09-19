@@ -68,6 +68,11 @@ class ActivityPlans : AppCompatActivity(), View.OnClickListener {
             R.id.activity_plan_back -> onBackPressed()
         }
     }
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
+    }
 }
 
 class HorizontalMarginDecoration : RecyclerView.ItemDecoration() {

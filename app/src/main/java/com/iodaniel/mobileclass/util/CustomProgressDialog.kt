@@ -12,10 +12,6 @@ class CustomProgressDialog {
 
     lateinit var dialog: CustomDialog
 
-    fun show(context: Context, activity: Activity): Dialog {
-        return show(context, activity)
-    }
-
     fun show(context: Context, activity: Activity, title: String = ""): Dialog {
         val inflater = activity.layoutInflater
         val view = inflater.inflate(R.layout.progress_dialog, null)
@@ -33,7 +29,7 @@ class CustomProgressDialog {
         return dialog
     }
 
-    class CustomDialog(activity: Activity) : Dialog(activity, R.style.CustomDialogTheme) {
+    class CustomDialog(activity: Activity) : Dialog(activity) {
         init {
             // Set Semi-Transparent Color for Dialog Background
             window?.decorView?.rootView?.setBackgroundResource(R.color.app)

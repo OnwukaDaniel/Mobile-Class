@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.Gson
 import com.iodaniel.mobileclass.R
@@ -21,7 +22,6 @@ import com.iodaniel.mobileclass.home.ActivityLandingPage
 import com.iodaniel.mobileclass.liveDataClasses.InstructorProfileLiveData
 import com.iodaniel.mobileclass.liveDataClasses.StudentProfileLiveData
 import com.iodaniel.mobileclass.liveDataClasses.UserProfileLiveData
-import com.iodaniel.mobileclass.student_package.StudentInitPage
 import com.iodaniel.mobileclass.util.Keyboard.hideKeyboard
 import java.util.*
 
@@ -33,16 +33,13 @@ class RegistrationRepo(
 ) {
     private val auth = FirebaseAuth.getInstance()
     private lateinit var pref: SharedPreferences
-    private lateinit var teacherIntent: Intent
-    private lateinit var studentIntent: Intent
+    private lateinit var userIntent: Intent
 
     fun signIn(email: String, password: String) {
         if (email == "") return
         if (password == "") return
-        teacherIntent = Intent(context, ActivityLandingPage::class.java)
-        studentIntent = Intent(context, StudentInitPage::class.java)
-        studentIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-        teacherIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+        userIntent = Intent(context, ActivityLandingPage::class.java)
+        userIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
 
         loadingListener.loadingProgressBar()
         activity.hideKeyboard()
@@ -57,11 +54,11 @@ class RegistrationRepo(
                 when (accountType.lowercase(Locale.getDefault())) {
                     context.getString(R.string.student) -> {
                         editStudentDetails(email = email, age = "", fullName = "", username = "", uid = authResult.user!!.uid)
-                        activity.startActivity(studentIntent)
+                        activity.startActivity(userIntent)
                     }
                     context.getString(R.string.teacher) -> {
                         editInstructorDetailsOnSignIn(authResult.user!!.uid)
-                        activity.startActivity(teacherIntent)
+                        activity.startActivity(userIntent)
                     }
                 }
                 activity.overridePendingTransition(0, 0)
@@ -101,30 +98,34 @@ class RegistrationRepo(
         loadingListener.loadingProgressBar()
         (activity as AppCompatActivity).hideKeyboard()
         auth.createUserWithEmailAndPassword(email, password).addOnSuccessListener {
-            val typeRef = FirebaseDatabase.getInstance().reference.child(context.getString(R.string.userInfo)).child(it.user!!.uid)
             pref = activity.getSharedPreferences(context.getString(R.string.ALL_SHARED_PREFERENCES), Context.MODE_PRIVATE)
+            val typeRef = FirebaseDatabase.getInstance().reference.child(context.getString(R.string.userInfo)).child(it.user!!.uid)
+            val instructorDetailsRef = FirebaseDatabase.getInstance().reference.child(context.getString(R.string.instructor_details)).child(auth.uid!!)
+            val studentDetailsRef = FirebaseDatabase.getInstance().reference.child(context.getString(R.string.student_details)).child(auth.uid!!)
+            val instructorDetails = InstructorDetails(
+                instructorName = fullName,
+                email = email,
+                age = age,
+                uid = auth.currentUser!!.uid,
+                dateJoined = Calendar.getInstance().timeInMillis.toString(),
+                username = username
+            )
+            val studentDetails = StudentDetails(
+                fullName = fullName,
+                email = email,
+                age = age,
+                uid = auth.currentUser!!.uid,
+                accountType = accountType,
+                dateJoined = Calendar.getInstance().timeInMillis.toString(),
+                username = username
+            )
+            val ref: DatabaseReference = if (accountType == context.getString(R.string.teacher)) instructorDetailsRef else studentDetailsRef
+
             when (accountType) {
                 context.getString(R.string.teacher) -> {
-                    val instructorDetailsRef = FirebaseDatabase.getInstance().reference
-                        .child(context.getString(R.string.instructor_details))
-                        .child(auth.uid!!)
-                    val instructorDetails = InstructorDetails(
-                        instructorName = fullName,
-                        email = email,
-                        age = age,
-                        uid = auth.currentUser!!.uid,
-                        dateJoined = Calendar.getInstance().timeInMillis.toString(),
-                        username = username
-                    )
-                    typeRef.setValue(context.getString(R.string.teacher)).addOnSuccessListener {
-                        instructorDetailsRef.setValue(instructorDetails).addOnSuccessListener {
-                            pref.edit().putString(context.getString(R.string.studentTeacherPreference), accountType).apply()
-                            val teacherIntent = Intent(context, ActivityLandingPage::class.java)
-                            teacherIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                            editInstructorDetails(email = email, age = age, fullName = fullName, username = username, uid = auth.uid!!)
-                            activity.startActivity(teacherIntent)
-                            activity.overridePendingTransition(0, 0)
-                            loadingListener.notLoadingProgressBar()
+                    typeRef.setValue(accountType).addOnSuccessListener {
+                        ref.setValue(instructorDetails).addOnSuccessListener {
+                            transition(email, age, fullName, username, auth.uid!!)
                         }.addOnFailureListener { exp ->
                             loadingListener.notLoadingProgressBar()
                             Snackbar.make(view, exp.localizedMessage!!, Snackbar.LENGTH_LONG).show()
@@ -132,28 +133,9 @@ class RegistrationRepo(
                     }
                 }
                 context.getString(R.string.student) -> {
-                    val sTypeRef = FirebaseDatabase.getInstance().reference.child(context.getString(R.string.userInfo)).child(it.user!!.uid)
-                    val studentDetailsRef = FirebaseDatabase.getInstance().reference
-                        .child(context.getString(R.string.student_details))
-                        .child(auth.uid!!)
-                    val studentDetails = StudentDetails(
-                        fullName = fullName,
-                        email = email,
-                        age = age,
-                        uid = auth.currentUser!!.uid,
-                        accountType = accountType,
-                        dateJoined = Calendar.getInstance().timeInMillis.toString(),
-                        username = username
-                    )
-                    sTypeRef.setValue(context.getString(R.string.student)).addOnSuccessListener {
-                        studentDetailsRef.setValue(studentDetails).addOnSuccessListener {
-                            pref.edit().putString(context.getString(R.string.studentTeacherPreference), accountType).apply()
-                            val studentIntent = Intent(context, StudentInitPage::class.java)
-                            studentIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                            editStudentDetails(email = email, age = age, fullName = fullName, username = username, uid = auth.uid!!)
-                            activity.startActivity(studentIntent)
-                            activity.overridePendingTransition(0, 0)
-                            loadingListener.notLoadingProgressBar()
+                    typeRef.setValue(accountType).addOnSuccessListener {
+                        ref.setValue(studentDetails).addOnSuccessListener {
+                            transition(email, age, fullName, username, auth.uid!!)
                         }.addOnFailureListener { exp ->
                             loadingListener.notLoadingProgressBar()
                             Snackbar.make(view, exp.localizedMessage!!, Snackbar.LENGTH_LONG).show()
@@ -165,6 +147,20 @@ class RegistrationRepo(
             loadingListener.notLoadingProgressBar()
             Snackbar.make(view, it.localizedMessage!!, Snackbar.LENGTH_LONG).show()
         }
+    }
+
+    private fun transition(email: String, age: String, fullName: String, username: String, uid: String){
+        pref.edit().putString(context.getString(R.string.studentTeacherPreference), accountType).apply()
+        val userIntent = Intent(context, ActivityLandingPage::class.java)
+        userIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+        if (accountType == context.getString(R.string.teacher)) {
+            editInstructorDetails(email = email, age = age, fullName = fullName, username = username, uid = uid)
+        } else {
+            editStudentDetails(email = email, age = age, fullName = fullName, username = username, uid = uid)
+        }
+        activity.startActivity(userIntent)
+        activity.overridePendingTransition(0, 0)
+        loadingListener.notLoadingProgressBar()
     }
 
     private fun editInstructorDetailsOnSignIn(uid: String) {
@@ -230,7 +226,6 @@ class RegistrationRepo(
 
     fun completeProfile(fullName: String, username: String, age: String) {
         val email = auth.currentUser!!.email!!
-
         pref = activity.getSharedPreferences(context.getString(R.string.ALL_SHARED_PREFERENCES), Context.MODE_PRIVATE)
         pref.edit().putString(context.getString(R.string.studentTeacherPreference), accountType).apply()
 
@@ -273,7 +268,7 @@ class RegistrationRepo(
                     username = username
                 )
                 studentDetailsRef.setValue(studentDetails).addOnSuccessListener {
-                    val studentIntent = Intent(context, StudentInitPage::class.java)
+                    val studentIntent = Intent(context, ActivityLandingPage::class.java)
                     studentIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                     editStudentDetails(email = email, age = age, fullName = fullName, username = username, uid = auth.uid!!)
                     activity.startActivity(studentIntent)

@@ -17,7 +17,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.AssignmentBinding
-import com.iodaniel.mobileclass.student_package.FragmentViewAssignment
+import com.iodaniel.mobileclass.shared_classes.FragmentStudentViewAssignment
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.singleclass.AssignmentsAdapter.ViewHolder
 import kotlinx.serialization.decodeFromString
@@ -203,7 +203,7 @@ class AssignmentsAdapter : RecyclerView.Adapter<ViewHolder>() {
             bundle.putString("datum", datum)
             bundle.putString("questionType", questionType)
             bundle.putString("classCode", classInfo.classCode)
-            val viewAssignmentStudentFragment = FragmentViewAssignment()
+            val viewAssignmentStudentFragment = FragmentStudentViewAssignment()
             viewAssignmentStudentFragment.arguments = bundle
             if (viewAssignmentHelper != null) viewAssignmentHelper.inflateFragment(
                 viewAssignmentStudentFragment

@@ -16,4 +16,9 @@
         android:icon="@drawable/_02_user"
         android:title="My Profile"/>
 
+    <item
+        android:id="@+id/menu_my_settings"
+        android:icon="@drawable/ic_settings"
+        android:title="Settings"/>
+
 </menu>

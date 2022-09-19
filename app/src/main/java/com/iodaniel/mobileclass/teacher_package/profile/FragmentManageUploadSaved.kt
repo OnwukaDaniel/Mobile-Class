@@ -1,7 +1,6 @@
 package com.iodaniel.mobileclass.teacher_package.profile
 
 import android.app.Activity
-import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -11,74 +10,58 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.data_class.CourseCardData
 import com.iodaniel.mobileclass.databinding.FragmentManageUploadSavedBinding
-import com.iodaniel.mobileclass.liveDataClasses.OtherCourseLiveData
+import com.iodaniel.mobileclass.liveDataClasses.CourseCardLiveData
 import com.iodaniel.mobileclass.repository.ManageCoursesRepo
-import com.iodaniel.mobileclass.shared_classes.Util
 import com.iodaniel.mobileclass.teacher_package.course.ActivityEditCourse
 import com.iodaniel.mobileclass.util.BackgroundHelper
 import com.iodaniel.mobileclass.util.ChildEventTemplate
+import com.iodaniel.mobileclass.util.Dialogs
+import com.iodaniel.mobileclass.viewModel.MessageFragmentViewModel
+import com.iodaniel.mobileclass.viewModel.UIStateViewModel
+import com.iodaniel.mobileclass.viewModel.UiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class FragmentManageUploadSaved : Fragment(), BackgroundHelper {
     private lateinit var binding: FragmentManageUploadSavedBinding
     private lateinit var manageCoursesRepo: ManageCoursesRepo
-    private val connectionListener = ConnectionListener()
-    private var pDialog: Dialog? = null
+    private var uIStateViewModel = UIStateViewModel()
+    private var dialogs = Dialogs()
     private val savedCoursesAdapter = SavedCoursesAdapter()
-    private var connectionRef = FirebaseDatabase.getInstance().reference
     private var fetchedData = false
     private var networkButEmpty = false
+    private val mfV: MessageFragmentViewModel by activityViewModels()
     private val scope = CoroutineScope(Dispatchers.IO)
-
-    inner class ConnectionListener : ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-            if (!fetchedData) this@FragmentManageUploadSaved.empty() else this@FragmentManageUploadSaved.notEmpty()
-            networkButEmpty = true
-        }
-
-        override fun onCancelled(error: DatabaseError) = Unit
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentManageUploadSavedBinding.inflate(inflater, container, false)
-        requireActivity().setActionBar(binding.manageUploadSavedToolbar)
-        requireActivity().title = "Saved courses"
-        connectionRef = connectionRef.child(getString(R.string.network_value))
         manageCoursesRepo = ManageCoursesRepo(requireActivity(), requireContext(), binding.root, viewLifecycleOwner)
-        pDialog = Util.progressDialog("Please wait...", requireContext(), requireActivity())
-        pDialog?.show()
-        scope.launch {
-            delay(12_000)
-            if (activity != null) requireActivity().runOnUiThread {
-                if (networkButEmpty && !fetchedData) this@FragmentManageUploadSaved.empty()
-                if (fetchedData) this@FragmentManageUploadSaved.notEmpty()
-            }
-        }
+        getSavedCourses()
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        getSavedCourses()
-        connectionRef.addValueEventListener(connectionListener)
+    private fun startShimmer(){
+        binding.uploadsShimmer.visibility = View.VISIBLE
+        binding.uploadsShimmer.startShimmer()
+    }
+
+    private fun stopShimmer(){
+        binding.uploadsShimmer.visibility = View.GONE
+        binding.uploadsShimmer.stopShimmer()
     }
 
     private fun getSavedCourses() {
+        startShimmer()
         val auth = FirebaseAuth.getInstance().currentUser!!.uid
         val ref = FirebaseDatabase.getInstance().reference.child(requireContext().getString(R.string.course_path))
         val dataset: ArrayList<CourseCardData> = arrayListOf()
@@ -87,25 +70,29 @@ class FragmentManageUploadSaved : Fragment(), BackgroundHelper {
         savedCoursesAdapter.dataset = dataset
         savedCoursesAdapter.activity = requireActivity()
         binding.manageUploadSavedRv.adapter = savedCoursesAdapter
-        binding.manageUploadSavedRv.layoutManager = GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
-        val otherCourseLiveData = OtherCourseLiveData(ref)
+        binding.manageUploadSavedRv.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        ref.get().addOnSuccessListener { dataSnapShot ->
+            networkButEmpty = true
+            if (dataSnapShot != null) uIStateViewModel.setUIState(UiState.stateData) else uIStateViewModel.setUIState(UiState.stateNoData)
+        }
+        val otherCourseLiveData = CourseCardLiveData(ref)
         otherCourseLiveData.observe(viewLifecycleOwner) {
             when (it.second.second) {
                 ChildEventTemplate.onChildAdded -> {
                     val key = it.second.first
                     if (key !in datasetKey) {
+                        stopShimmer()
                         val courseCardData = it.first
-                        val satisfied = !courseCardData.courseUploadCompletedCompleted
-                                && courseCardData.manageProfileCourseType == ManageProfileCourseType.SAVED
+                        val satisfied = courseCardData.manageProfileCourseType == ManageProfileCourseType.SAVED
                                 && courseCardData.instructorInChargeUID == auth
                         if (satisfied) {
+                            uIStateViewModel.setUIState(UiState.stateData)
+                            fetchedData = true
                             dataset.add(courseCardData)
                             datasetKey.add(key)
                             savedCoursesAdapter.notifyItemInserted(dataset.size)
                         }
                     }
-                    fetchedData = true
-                    this@FragmentManageUploadSaved.notEmpty()
                 }
                 ChildEventTemplate.onChildRemoved -> {
                     val key = it.second.first
@@ -115,6 +102,7 @@ class FragmentManageUploadSaved : Fragment(), BackgroundHelper {
                         dataset.removeAt(index)
                         savedCoursesAdapter.notifyItemRemoved(index)
                     }
+                    if (activity != null && isAdded) if (dataset.isEmpty()) startShimmer()
                 }
                 ChildEventTemplate.onChildChanged -> {
                     val index = datasetKey.indexOf(it.second.first)
@@ -126,31 +114,22 @@ class FragmentManageUploadSaved : Fragment(), BackgroundHelper {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        connectionRef.removeEventListener(connectionListener)
-        pDialog?.dismiss()
-    }
-
     override fun empty() {
         binding.manageUploadSavedPlansEmptyRoot.visibility = View.VISIBLE
         binding.manageModulesUploadSavedNoNetworkRoot.visibility = View.GONE
         binding.manageModulesUploadSavedDataRoot.visibility = View.GONE
-        pDialog?.dismiss()
     }
 
     override fun notEmpty() {
         binding.manageModulesUploadSavedDataRoot.visibility = View.VISIBLE
         binding.manageModulesUploadSavedNoNetworkRoot.visibility = View.GONE
         binding.manageUploadSavedPlansEmptyRoot.visibility = View.GONE
-        pDialog?.dismiss()
     }
 
     override fun noInternet() {
         binding.manageModulesUploadSavedNoNetworkRoot.visibility = View.VISIBLE
         binding.manageModulesUploadSavedDataRoot.visibility = View.GONE
         binding.manageUploadSavedPlansEmptyRoot.visibility = View.GONE
-        pDialog?.dismiss()
     }
 }
 
@@ -178,10 +157,9 @@ class SavedCoursesAdapter : RecyclerView.Adapter<SavedCoursesAdapter.ViewHolder>
         Glide.with(context).load(datum.courseImage).centerCrop().into(holder.image)
         holder.title.text = datum.courseName
         holder.level.text = datum.level
+        holder.studentsEnrolled.visibility = View.GONE
         val price = "$ ${datum.price}"
         holder.price.text = price
-        val se = "(${datum.studentEnrolled})"
-        holder.studentsEnrolled.text = se
         holder.itemView.setOnClickListener {
             val intent = Intent(context, ActivityEditCourse::class.java)
             val json = Gson().toJson(datum)

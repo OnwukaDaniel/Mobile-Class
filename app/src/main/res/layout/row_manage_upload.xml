@@ -2,36 +2,34 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
     android:layout_margin="4dp"
-    android:foreground="@drawable/gray_ripple"
+    app:cardCornerRadius="4dp"
+    android:foreground="@drawable/app50_ripple"
     android:orientation="vertical">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="220dp"
-        android:layout_height="180dp">
+    <ImageView
+        android:id="@+id/row_manage_courses_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/row_manage_courses_image"
-            android:layout_width="220dp"
-            android:layout_height="180dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:paddingHorizontal="4dp"
+        android:background="@color/fifty_black"
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:id="@+id/linearLayout5"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/fifty_black"
-            android:paddingVertical="16dp"
-            android:paddingHorizontal="4dp"
-            android:gravity="center"
-            android:orientation="vertical"
-            tools:layout_editor_absoluteX="4dp"
-            tools:layout_editor_absoluteY="4dp">
+            android:gravity="bottom"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/row_manage_courses_title"
@@ -41,7 +39,7 @@
                 android:maxLines="1"
                 android:text="Loren Ipsum"
                 android:textColor="@color/white"
-                android:textSize="17sp"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -56,7 +54,7 @@
                     android:textColor="@color/white"
                     android:lines="1"
                     android:text="Level: "
-                    android:textSize="15sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/row_manage_courses_level"
@@ -65,7 +63,7 @@
                     android:layout_marginBottom="2dp"
                     android:textColor="@color/white"
                     android:lines="1"
-                    android:textSize="15sp" />
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
@@ -76,7 +74,7 @@
                 android:text="(0)"
                 android:layout_gravity="start"
                 android:textColor="@color/white"
-                android:textSize="15sp"
+                android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -85,6 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:gravity="center"
+                android:layout_marginVertical="8dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -92,7 +91,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="4dp"
-                    android:textSize="15sp"
+                    android:textSize="14sp"
                     android:textColor="@color/white"
                     android:text="Price set"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -106,7 +105,7 @@
                     android:layout_marginHorizontal="4dp"
                     android:text="000"
                     android:textColor="@color/white"
-                    android:textSize="15sp"
+                    android:textSize="14sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/textView"
                     app:layout_constraintTop_toTopOf="parent" />

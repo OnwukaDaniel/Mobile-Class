@@ -10,22 +10,23 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.DatePicker
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.Gson
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.accessing_mobile_app.InternetConnection
+import com.iodaniel.mobileclass.data_class.CourseCardData
+import com.iodaniel.mobileclass.data_class.ExerciseType
+import com.iodaniel.mobileclass.data_class.Question
 import com.iodaniel.mobileclass.databinding.FragmentCreateDirectQuestionBinding
 import com.iodaniel.mobileclass.databinding.ProgressBarDialogBinding
 import com.iodaniel.mobileclass.shared_classes.Util
-import com.iodaniel.mobileclass.teacher_package.classes.AssignmentQuestion
-import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.ProgressBarController
 import com.iodaniel.mobileclass.teacher_package.classes.Material
+import com.iodaniel.mobileclass.teacher_package.singleclass.DataAndPositionViewModel
 import kotlinx.coroutines.*
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import java.util.*
 
 class CreateDirectQuestion : Fragment(), ProgressBarController, OnClickListener,
@@ -35,45 +36,32 @@ class CreateDirectQuestion : Fragment(), ProgressBarController, OnClickListener,
     private lateinit var dialog: Dialog
     private lateinit var progressBarController: ProgressBarController
     private var directQuestionRef = FirebaseDatabase.getInstance().reference
-    private lateinit var cn: InternetConnection
+    private var cn: InternetConnection? = null
     private val calender: Calendar = Calendar.getInstance()
     private var dueDate: String = "No due date..."
     private lateinit var material: Material
+    private var exercisePosition = 0
+    private var courseCardDataJson = ""
+    private var courseCardData: CourseCardData? = null
+    private var pmeRef = FirebaseDatabase.getInstance().reference
+    private val dataAndPositionViewModel by activityViewModels<DataAndPositionViewModel>()
     private val months = arrayListOf(
         "January", "February", "March", "April", "May", "June", "July",
         "August", "September", "October", "November", "December"
     )
 
-    override fun onStart() {
-        super.onStart()
-        cn = InternetConnection(requireContext())
-        val bundle = arguments
-        val json = bundle!!.getString("classInfo")
-        val classInfo: ClassInfo = Json.decodeFromString(json!!)
-
-        val materialJson = bundle.getString("materialJson")
-        material = Gson().fromJson(materialJson, Material::class.java)
-
-        directQuestionRef = directQuestionRef
-            .child("direct_question")
-            .child(FirebaseAuth.getInstance().currentUser!!.uid)
-            .child(classInfo.classCode)
-            .child(material.dateCreated)
-            .push()
-    }
-
-    private fun uploadTask(hash: AssignmentQuestion) {
+    private fun uploadTask(questions: ArrayList<Question>) {
         val snackBar = Snackbar.make(binding.root, "", Snackbar.LENGTH_LONG)
-        directQuestionRef.setValue(hash).addOnCompleteListener {
-            requireActivity().runOnUiThread {
+        pmeRef.setValue(questions).addOnSuccessListener {
+            if (activity != null && isAdded) requireActivity().runOnUiThread {
+                snackBar.setText("Uploaded successfully").show()
                 requireActivity().onBackPressed()
                 progressBarController.hideProgressBar()
-                snackBar.setText("Uploaded successfully").show()
             }
         }.addOnFailureListener {
-            requireActivity().runOnUiThread {
-                progressBarController.hideProgressBar()
+            if (activity != null && isAdded) requireActivity().runOnUiThread {
                 snackBar.setText("Error occurred!!!").show()
+                progressBarController.hideProgressBar()
             }
         }
     }
@@ -83,10 +71,21 @@ class CreateDirectQuestion : Fragment(), ProgressBarController, OnClickListener,
     ): View {
         binding = FragmentCreateDirectQuestionBinding.inflate(inflater, container, false)
         dialog = Dialog(requireContext())
-        progressBarController = this
-        binding.directQuestionSetDeadline.setOnClickListener(this)
-        binding.directQuestionUpload.setOnClickListener(this)
-        binding.directQuestionDateCancel.setOnClickListener(this)
+        cn = InternetConnection(requireContext())
+        dataAndPositionViewModel.dataAndPosition.observe(viewLifecycleOwner) {
+            exercisePosition = it.second
+            courseCardData = it.first
+            pmeRef = pmeRef.child(getString(R.string.pme_ref))
+                .child(FirebaseAuth.getInstance().currentUser!!.uid)
+                .child(courseCardData!!.courseCode)
+                .child(exercisePosition.toString())
+                .child("exercise")
+                .child("questions")
+            progressBarController = this
+            binding.directQuestionSetDeadline.setOnClickListener(this)
+            binding.directQuestionUpload.setOnClickListener(this)
+            binding.directQuestionDateCancel.setOnClickListener(this)
+        }
         return binding.root
     }
 
@@ -107,7 +106,7 @@ class CreateDirectQuestion : Fragment(), ProgressBarController, OnClickListener,
         val uploadTask = scope.async { networkFunction }
         val counterTask = scope.async { delay(delay) }
         if (counterTask.isCompleted && !uploadTask.isCompleted) {
-            requireActivity().runOnUiThread {
+            if (activity != null && isAdded) requireActivity().runOnUiThread {
                 progressBarController.hideProgressBar()
                 uploadTask.cancel("Error Timeout!!! Retry")
             }
@@ -118,25 +117,41 @@ class CreateDirectQuestion : Fragment(), ProgressBarController, OnClickListener,
         val snackBar = Snackbar.make(binding.root, "", Snackbar.LENGTH_LONG)
         val question = binding.directQuestionQuestion.text.toString().trim()
         val extraNote = binding.directQuestionExtraNote.text.toString().trim()
-        val datetime = Calendar.getInstance().time.time.toString()
-        val hash = AssignmentQuestion()
-        hash.question = question
-        hash.extraNote = extraNote
-        hash.dueDate = dueDate
-        hash.datetime = datetime
-        hash.questionType = getString(R.string.DIRECTQUESTION)
+        val datetime = Calendar.getInstance().timeInMillis.toString()
+        val singleQuestion = Question(
+            singleQuestion = question,
+            extraNote = extraNote,
+            exerciseType = ExerciseType.NORMAL_QUESTION,
+            timeCreated = datetime,
+        )
 
         if (question == "") return
         progressBarController.showProgressBar()
-        val uploaded = Util.functionTimeout(30_000, uploadTask(hash))
-        if (uploaded) snackBar.setText("Uploaded!")
-            .show() else snackBar.setText("Error Timeout!!! Retry").show()
-        progressBarController.hideProgressBar()
+        pmeRef.get().addOnSuccessListener {
+            if (it.exists()){
+                val d = Gson().fromJson(Gson().toJson(it.value), ArrayList::class.java)
+                val questionList: ArrayList<Question> = arrayListOf()
+                for (i in d) {
+                    val que = Gson().fromJson(Gson().toJson(i), Question::class.java)
+                    questionList.add(que)
+                }
+                questionList.add(singleQuestion)
+                val uploaded = Util.functionTimeout(30_000, uploadTask(questionList))
+                if (uploaded) snackBar.setText("Uploaded!")
+                    .show() else snackBar.setText("Error Timeout!!! Retry").show()
+                progressBarController.hideProgressBar()
+            } else {
+                val uploaded = Util.functionTimeout(30_000, uploadTask(arrayListOf(singleQuestion)))
+                if (uploaded) snackBar.setText("Uploaded!")
+                    .show() else snackBar.setText("Error Timeout!!! Retry").show()
+                progressBarController.hideProgressBar()
+            }
+        }
     }
 
     private fun checkNetwork() {
         if (cn != null) {
-            cn.setCustomInternetListener(object : InternetConnection.CheckInternetConnection {
+            cn!!.setCustomInternetListener(object : InternetConnection.CheckInternetConnection {
                 override fun isConnected() {
                     upload()
                 }

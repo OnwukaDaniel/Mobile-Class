@@ -9,7 +9,7 @@ import com.google.gson.Gson
 import com.iodaniel.mobileclass.data_class.PlanModulesExercise
 import com.iodaniel.mobileclass.util.ChildEventTemplate
 
-class PMELiveData(val ref: DatabaseReference) : LiveData<Pair<ArrayList<PlanModulesExercise>, Pair<String, Int>>>() {
+class PMELiveData(val ref: DatabaseReference) : LiveData<Pair<ArrayList<PlanModulesExercise>, Int>>() {
     private val listener = Listener()
 
     override fun onActive() {
@@ -23,23 +23,20 @@ class PMELiveData(val ref: DatabaseReference) : LiveData<Pair<ArrayList<PlanModu
     }
 
     inner class Listener : ValueEventListener {
-        val list: ArrayList<PlanModulesExercise> = arrayListOf()
         override fun onDataChange(snapshot: DataSnapshot) {
-            if (snapshot.exists()){
-                val key = snapshot.key!!
-                val json = Gson().toJson(snapshot.value!!)
-                val snap: ArrayList<*> = Gson().fromJson(json, ArrayList::class.java)
-                for ((index, i) in snap.withIndex()) {
-                    val gson = Gson().toJson(i)
-                    val data: PlanModulesExercise = Gson().fromJson(gson, PlanModulesExercise::class.java)
-                    list.add(data)
+            if (snapshot.exists()) {
+                val pmeList: ArrayList<PlanModulesExercise> = arrayListOf()
+                for ((index, i) in snapshot.children.withIndex()) {
+                    val value = Gson().toJson(i.value)
+                    val data: PlanModulesExercise = Gson().fromJson(value, PlanModulesExercise::class.java)
+                    pmeList.add(data)
                 }
-                value = list to (key to ChildEventTemplate.onDataChange)
+                value = pmeList to ChildEventTemplate.onDataChange
             }
         }
 
         override fun onCancelled(error: DatabaseError) {
-            value = arrayListOf<PlanModulesExercise>() to ("" to ChildEventTemplate.onCancelled)
+            value = arrayListOf<PlanModulesExercise>() to ChildEventTemplate.onCancelled
         }
     }
 }

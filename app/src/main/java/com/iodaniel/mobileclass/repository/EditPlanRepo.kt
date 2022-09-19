@@ -19,35 +19,46 @@ import com.google.firebase.storage.FirebaseStorage
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.data_class.ModuleData
 import com.iodaniel.mobileclass.data_class.PlanModulesExercise
-import com.iodaniel.mobileclass.shared_classes.Util
 import com.iodaniel.mobileclass.teacher_package.course.FragmentModulesAndPlans
+import com.iodaniel.mobileclass.util.Dialogs
+import com.iodaniel.mobileclass.util.dialog_fragment.MessageFragment
+import com.iodaniel.mobileclass.viewModel.MessageFragmentViewModel
 import kotlinx.coroutines.*
 
 class EditPlanRepo(val activity: Activity, val context: Context, val view: View, val lifecycleOwner: LifecycleOwner) {
 
-    fun uploadPlan(ref: DatabaseReference, planModulesExercise: ArrayList<PlanModulesExercise>, view: View, courseCardDataJson: String) {
-        val pDialog = Util.progressDialog("Please wait...", context, activity)
-        pDialog?.show()
+    fun uploadPlan(
+        ref: DatabaseReference,
+        planModulesExercise: ArrayList<PlanModulesExercise>,
+        view: View,
+        courseCardDataJson: String,
+        mfV: MessageFragmentViewModel,
+        fragmentEditPlansRoot: Int,
+    ) {
+        val d = Dialogs().circularProgressDialog(text = "Please wait...", activity = activity)
         val scope = CoroutineScope(Dispatchers.IO)
         var saved = false
+        var showDialogFragment = true
+
         ref.setValue(planModulesExercise).addOnSuccessListener {
-            val snackBar = Snackbar.make(view, "Saved. Start adding content to plans submitted", Snackbar.LENGTH_LONG)
-            snackBar.setAction("Add content") {
+            saved = true
+            d.dismiss()
+            if (showDialogFragment) {
+                val mf = MessageFragment()
+                (activity as AppCompatActivity).supportFragmentManager.beginTransaction()
+                    .addToBackStack("dialog")
+                    .replace(fragmentEditPlansRoot, mf)
+                    .commit()
                 val fragment = FragmentModulesAndPlans()
                 val bundle = Bundle()
                 bundle.putString(context.getString(R.string.manage_course_data_intent), courseCardDataJson)
                 fragment.arguments = bundle
-                (activity as AppCompatActivity).supportFragmentManager
-                    .beginTransaction()
-                    .addToBackStack("module")
-                    .replace(R.id.fragment_edit_plans_root, fragment)
-                    .commit()
+                mfV.showAgain.observe(lifecycleOwner) { showDialogFragment = it }
+                mfV.setDisplayText("Saved. Start adding content to plans submitted\n\nAdd content?")
+                mfV.setOkFunction((fragment to fragmentEditPlansRoot) to true)
             }
-            snackBar.show()
-            saved = true
-            pDialog?.dismiss()
         }.addOnFailureListener {
-            pDialog?.dismiss()
+            d.dismiss()
             Toast.makeText(context, "Unable to save! Retry", Toast.LENGTH_LONG).show()
         }
         runBlocking {
@@ -55,15 +66,19 @@ class EditPlanRepo(val activity: Activity, val context: Context, val view: View,
                 delay(15_000)
                 if (!saved) {
                     activity.runOnUiThread { Snackbar.make(view, "Network error. Retry", Snackbar.LENGTH_LONG).show() }
-                    pDialog?.dismiss()
+                    d.dismiss()
                 }
             }
         }
     }
 
-    fun uploadModule(extraNote: String, content: String, courseCode: String, position: Int, urisInputList: ArrayList<MutableMap<String, String>>, view: View) {
+    fun uploadModule(headerText: String, content: String, courseCode: String, position: Int, urisInputList: ArrayList<MutableMap<String, String>>, view: View) {
         if (content == "") {
             Snackbar.make(view, "Content cannot be empty", Snackbar.LENGTH_LONG).show()
+            return
+        }
+        if (headerText == "") {
+            Snackbar.make(view, "Header cannot be empty", Snackbar.LENGTH_LONG).show()
             return
         }
         val ref = FirebaseDatabase.getInstance().reference
@@ -81,7 +96,10 @@ class EditPlanRepo(val activity: Activity, val context: Context, val view: View,
         val progressIndicator = pair.second
         progressDialog?.show()
         for (i in urisInputList) if (i["data"]!!.startsWith("https")) confirmHttps.add(i["data"]!!)
-        if (confirmHttps.size == urisInputList.size) uploadOnlyContent(extraNote, content, ref, urisInputList, view, progressDialog!!)
+        if (confirmHttps.size == urisInputList.size)  {
+            uploadOnlyContent(headerText, content, ref, urisInputList, view, progressDialog!!)
+            return
+        }
 
         if (urisInputList.isNotEmpty())
             for ((index, i) in urisInputList.withIndex()) {
@@ -112,10 +130,8 @@ class EditPlanRepo(val activity: Activity, val context: Context, val view: View,
                             val uriMap = i.toMutableMap()
                             uriMap["data"] = downloadUri.toString()
                             uriList.add(uriMap)
-                            println("Entered here *************************************************** ${((index + 1) / progressMax) * 100}")
-                            progressIndicator.progress = ((index + 1) / progressMax) * 100
-                            if (index == urisInputList.size - 1) {
-                                val module = ModuleData(content = content, uris = uriList, extraNote = extraNote)
+                            if (index == uriList.size - 1) {
+                                val module = ModuleData(content = content, uris = uriList, extraNote = headerText)
 
                                 ref.setValue(module).addOnSuccessListener {
                                     if (index == progressMax - 1) {
@@ -134,13 +150,17 @@ class EditPlanRepo(val activity: Activity, val context: Context, val view: View,
                         }
                     }
                 }.addOnFailureListener {
-                    println("Entered here *************************************************** 8")
                     val snackBar = Snackbar.make(view, "Network error", Snackbar.LENGTH_LONG)
                     snackBar.setAction("Retry") {
 
                     }
                     snackBar.show()
                     progressDialog?.dismiss()
+                }
+                uploadTask.addOnProgressListener { it->
+                    val progress = (100.0 * it.bytesTransferred) / it.totalByteCount
+                    progressIndicator.progress = progress.toInt()
+                }.addOnPausedListener {
                 }
             }
     }

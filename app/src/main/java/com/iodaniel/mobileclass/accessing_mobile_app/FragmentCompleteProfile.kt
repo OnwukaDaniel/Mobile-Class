@@ -32,6 +32,16 @@ class FragmentCompleteProfile : Fragment(), View.OnClickListener, HelperListener
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        requireActivity().window.statusBarColor = resources.getColor(android.R.color.background_light)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        requireActivity().window.statusBarColor = resources.getColor(R.color.app_primary_color)
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.complete_card -> registrationRepo.completeProfile(

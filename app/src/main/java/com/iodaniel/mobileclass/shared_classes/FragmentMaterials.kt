@@ -24,7 +24,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.Gson
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.FragmentViewMaterialsBinding
-import com.iodaniel.mobileclass.student_package.FragmentViewAssignment
 import com.iodaniel.mobileclass.teacher_package.classes.AssignmentQuestion
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.Material
@@ -34,7 +33,6 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.util.*
 
 class FragmentMaterials : Fragment(), ClickHelper {
     private lateinit var binding: FragmentViewMaterialsBinding
@@ -292,7 +290,7 @@ class ExerciseAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     val bundle = Bundle()
                     val json = Json.encodeToString(datum)
                     bundle.putString("questionData", json)
-                    val fragmentViewAssignmentStudent = FragmentViewAssignment()
+                    val fragmentViewAssignmentStudent = FragmentStudentViewAssignment()
                     fragmentViewAssignmentStudent.arguments = bundle
                     clickHelper.onClickItem(fragmentViewAssignmentStudent)
                 }
@@ -310,7 +308,7 @@ class ExerciseAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     val bundle = Bundle()
                     val json = Gson().toJson(datum)
                     bundle.putString("questionData", json)
-                    val fragmentViewAssignmentStudent = FragmentViewAssignment()
+                    val fragmentViewAssignmentStudent = FragmentStudentViewAssignment()
                     fragmentViewAssignmentStudent.arguments = bundle
                     clickHelper.onClickItem(fragmentViewAssignmentStudent)
                 }

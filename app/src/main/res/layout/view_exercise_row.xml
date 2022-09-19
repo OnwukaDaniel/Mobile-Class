@@ -48,7 +48,7 @@
             android:background="@drawable/rounded_background_radio_group"
             android:orientation="horizontal"
             android:padding="5dp"
-            android:foreground="@drawable/gray_ripple"
+            android:foreground="@drawable/app50_ripple"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 

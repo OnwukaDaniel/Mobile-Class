@@ -55,6 +55,7 @@
                 <com.google.android.material.chip.Chip
                     android:id="@+id/multichoice_media"
                     android:layout_width="0dp"
+                    android:text="No media selected"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
                     android:layout_weight="10" />
@@ -67,7 +68,7 @@
                 android:layout_marginVertical="10dp"
                 android:gravity="top"
                 android:hint="Question here"
-                android:minLines="4" />
+                android:minLines="3" />
 
             <EditText
                 android:id="@+id/multi_choice_extra_note"
@@ -205,10 +206,9 @@
 
                 <Button
                     android:id="@+id/add_new_option_button"
-                    android:layout_width="50dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="10dp"
-                    android:backgroundTint="@color/white"
+                    android:layout_marginEnd="10dp"
                     android:text="+"
                     android:textColor="@color/black" />
 
@@ -252,6 +252,7 @@
                     android:inputType="textCapCharacters"
                     android:paddingHorizontal="30dp"
                     android:maxLength="1"
+                    android:maxLines="1"
                     android:paddingVertical="8dp" />
 
             </LinearLayout>

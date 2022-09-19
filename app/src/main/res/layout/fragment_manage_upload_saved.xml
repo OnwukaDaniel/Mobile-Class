@@ -19,7 +19,17 @@
             <Toolbar
                 android:id="@+id/manage_upload_saved_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:text="Saved"
+                    android:textColor="@color/white"
+                    android:textSize="25sp" />
+
+            </Toolbar>
 
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -27,18 +37,41 @@
             android:id="@+id/manage_modules_upload_saved_data_root"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
             android:orientation="vertical">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
                 android:padding="4dp"
-                android:text="These courses have been created but not published yet"
-                android:layout_marginBottom="16dp"
+                android:text="These courses have been created but not published yet."
+                android:layout_margin="16dp"
                 android:textSize="15sp" />
+
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/uploads_shimmer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <include
+                        layout="@layout/row_manage_upload_shim"/>
+
+                    <include
+                        layout="@layout/row_manage_upload_shim"/>
+
+                    <include
+                        layout="@layout/row_manage_upload_shim"/>
+
+                    <include
+                        layout="@layout/row_manage_upload_shim"/>
+
+                </LinearLayout>
+
+            </com.facebook.shimmer.ShimmerFrameLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/manage_upload_saved_rv"

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="?background"
     android:clickable="true"
     android:focusable="true">
 
@@ -16,275 +17,341 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <androidx.cardview.widget.CardView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:cardCornerRadius="15dp"
-                app:cardElevation="4dp">
+                android:orientation="vertical">
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16sp"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent"
+                    android:background="@color/black"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="8dp">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="18sp"
-                        android:text="Instructor-Bio"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/instructor_edit_profile_image"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_gravity="start"
+                        android:scaleType="centerCrop"
+                        android:background="@color/white"
+                        android:layout_marginVertical="8dp"
+                        android:src="@drawable/_02_user"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:shapeAppearance="@style/CircleImage" />
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <androidx.cardview.widget.CardView
                         android:layout_width="wrap_content"
-                        android:layout_height="150dp"
-                        android:layout_gravity="center">
-
-
-                        <com.google.android.material.imageview.ShapeableImageView
-                            android:id="@+id/instructor_edit_profile_image"
-                            android:layout_width="150dp"
-                            android:layout_height="150dp"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/profile_display2"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:shapeAppearance="@style/CircleImage" />
+                        android:layout_height="wrap_content"
+                        android:layout_margin="-16dp"
+                        app:cardBackgroundColor="#68131313"
+                        app:cardCornerRadius="8dp"
+                        app:cardElevation="8dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/instructor_edit_profile_image"
+                        app:layout_constraintEnd_toEndOf="@+id/instructor_edit_profile_image">
 
                         <ImageView
                             android:id="@+id/instructor_edit_profile_image_edit"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="#68FFFFFF"
-                            android:foreground="@drawable/gray_ripple"
-                            android:padding="10dp"
+                            android:foreground="@drawable/app50_ripple"
+                            android:padding="6dp"
                             android:src="@drawable/ic_edit"
-                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:tint="@color/white" />
+
+                    </androidx.cardview.widget.CardView>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginVertical="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:layout_marginVertical="4dp"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:tint="@color/black" />
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:orientation="horizontal">
 
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingHorizontal="4dp"
+                                android:text="Verification"
+                                android:textColor="@color/white"
+                                android:layout_gravity="center"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="match_parent"
+                            <ImageView
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:src="@drawable/ic_close"
+                                app:tint="?iconTint"/>
+
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingVertical="8dp"
+                                android:text="ID: "
+                                android:textColor="@color/white"
+                                android:textStyle="bold"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/edit_profile_id_verify_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingVertical="8dp"
+                                android:textSize="12sp"
+                                android:text="Not-Verified"
+                                android:textColor="@color/app10"
+                                android:textStyle="bold"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingVertical="8dp"
+                                android:textSize="12sp"
+                                android:text="Certificate: "
+                                android:textColor="@color/white"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/edit_profile_certificate_verify_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingVertical="8dp"
+                                android:text="Not-Verified"
+                                android:textColor="@color/app10"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="180dp"
                         android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        android:hint="Instructor name" />
+                        android:layout_marginHorizontal="4dp"
+                        android:maxWidth="180dp"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/instructor_edit_profile_image">
 
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="1dp"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="3dp">
-
-                        <EditText
-                            android:id="@+id/instructor_edit_profile_full_name"
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="8dp"
-                            android:hint="Instructor name"
-                            android:textSize="15sp" />
+                            android:layout_marginVertical="4dp"
+                            android:orientation="vertical">
 
-                    </androidx.cardview.widget.CardView>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Email:"
+                                android:textColor="@color/white"
+                                android:textSize="13sp" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        android:hint="Email" />
+                            <TextView
+                                android:id="@+id/instructor_edit_profile_email"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="2dp"
+                                android:ellipsize="end"
+                                android:textColor="@color/white"
+                                android:textSize="13sp" />
 
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="1dp"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="3dp">
+                        </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/instructor_edit_profile_email"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="8dp"
-                            android:hint="Email"
-                            android:paddingVertical="12dp"
-                            android:textSize="15sp" />
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
 
-                    </androidx.cardview.widget.CardView>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:text="Joined: "
+                                android:textColor="@color/white"
+                                android:textSize="13sp" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        android:hint="Username" />
+                            <TextView
+                                android:id="@+id/instructor_edit_profile_date_joined"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="1dp"
+                                android:layout_marginHorizontal="2dp"
+                                android:ellipsize="end"
+                                android:gravity="center"
+                                android:paddingHorizontal="8dp"
+                                android:textColor="@color/white"
+                                android:textSize="13sp" />
 
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="1dp"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="3dp">
+                        </LinearLayout>
 
-                        <EditText
-                            android:id="@+id/instructor_edit_profile_username"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="8dp"
-                            android:hint="Instructor username"
-                            android:textSize="15sp" />
+                    </LinearLayout>
 
-                    </androidx.cardview.widget.CardView>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        android:hint="Date Joined" />
+            </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/instructor_edit_profile_date_joined"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="1dp"
-                        android:layout_marginHorizontal="8dp"
-                        android:hint="date"
-                        android:paddingHorizontal="8dp"
-                        android:textSize="15sp" />
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="1dp"
-                app:cardCornerRadius="15dp"
-                app:cardElevation="4dp">
+                android:layout_margin="16sp"
+                android:orientation="vertical">
 
-                <LinearLayout
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16sp"
-                    android:orientation="vertical">
+                    android:layout_margin="4dp"
+                    android:layout_marginVertical="8dp"
+                    android:hint="Name" />
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    app:cardElevation="3dp">
+
+                    <EditText
+                        android:id="@+id/instructor_edit_profile_full_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="8dp"
+                        android:text="Instructor name"
+                        android:textColor="?android:textColorSecondary"
+                        android:textSize="15sp" />
+
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:hint="Username" />
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    app:cardElevation="3dp">
+
+                    <EditText
+                        android:id="@+id/instructor_edit_profile_username"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="8dp"
+                        android:hint="Instructor username"
+                        android:inputType="phone"
+                        android:layout_gravity=""
+                        android:textColor="?android:textColorSecondary"
+                        android:textSize="15sp" />
+
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:text="Display description" />
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1dp"
+                    app:cardElevation="3dp">
+
+                    <EditText
+                        android:id="@+id/instructor_edit_profile_about"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="top"
+                        android:hint="About"
+                        android:lines="5"
+                        android:maxLines="8"
+                        android:textColor="?android:textColorSecondary"
+                        android:textSize="14sp" />
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/instructor_edit_profile_save"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="4dp"
+                    android:layout_marginTop="16dp"
+                    android:foreground="@drawable/app50_ripple"
+                    app:cardBackgroundColor="@color/app_primary_color"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="4sp">
 
                     <TextView
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="18sp"
-                        android:text="About, Certification and Identification"
-                        android:textSize="18sp"
+                        android:layout_height="45dp"
+                        android:gravity="center"
+                        android:text="Save profile"
+                        android:textColor="@color/white"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        android:hint="Description" />
+                </androidx.cardview.widget.CardView>
 
-                    <androidx.cardview.widget.CardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="1dp"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="3dp">
-
-                        <EditText
-                            android:id="@+id/instructor_edit_profile_about"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="top"
-                            android:hint="About"
-                            android:lines="5"
-                            android:maxLines="8"
-                            android:textSize="15sp" />
-
-                    </androidx.cardview.widget.CardView>
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/instructor_edit_profile_verification"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="4dp"
+                    android:layout_marginTop="16dp"
+                    android:foreground="@drawable/app50_ripple"
+                    app:cardBackgroundColor="@color/eighty_black"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="4sp">
 
                     <TextView
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        android:hint="Upload teaching certificate" />
+                        android:layout_height="45dp"
+                        android:gravity="center"
+                        android:text="Verification"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
 
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/instructor_edit_profile_certificate_button"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="1dp"
-                        android:foreground="@drawable/gray_ripple"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="3dp">
+                </androidx.cardview.widget.CardView>
 
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="50dp"
-                            android:gravity="center"
-                            android:text="Upload Certificate" />
-
-                        <ImageView
-                            android:id="@+id/instructor_edit_profile_certificate"
-                            android:layout_width="match_parent"
-                            android:layout_height="180dp"
-                            android:scaleType="centerCrop" />
-
-                    </androidx.cardview.widget.CardView>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        android:text="Identity:\nNational Id\nDriver's Licence\nVoter's Card " />
-
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/instructor_edit_profile_identification_button"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        android:foreground="@drawable/gray_ripple"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="3dp">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="50dp"
-                            android:gravity="center"
-                            android:text="Upload ID" />
-
-                        <ImageView
-                            android:id="@+id/instructor_edit_profile_identification"
-                            android:layout_width="match_parent"
-                            android:layout_height="180dp"
-                            android:scaleType="centerCrop" />
-
-                    </androidx.cardview.widget.CardView>
-
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/instructor_edit_profile_save"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        android:foreground="@drawable/gray_ripple"
-                        app:cardBackgroundColor="@color/app_primary_color"
-                        app:cardCornerRadius="10dp"
-                        app:cardElevation="6sp">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="50dp"
-                            android:gravity="center"
-                            android:maxHeight="120dp"
-                            android:text="Save profile" />
-
-                    </androidx.cardview.widget.CardView>
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
+            </LinearLayout>
 
         </LinearLayout>
 

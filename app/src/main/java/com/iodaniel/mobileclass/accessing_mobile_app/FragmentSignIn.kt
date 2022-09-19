@@ -24,10 +24,20 @@ class FragmentSignIn : Fragment(), View.OnClickListener, HelperListener.LoadingL
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.sign_in -> registrationRepo.signIn(
-                email = binding.signupEmail.text.trim().toString(),
+                email = binding.signupEmail.text!!.trim().toString(),
                 password = binding.signupPassword.text.trim().toString()
             )
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        requireActivity().window.statusBarColor = resources.getColor(android.R.color.background_light)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        requireActivity().window.statusBarColor = resources.getColor(R.color.app_primary_color)
     }
 
     override fun loadingProgressBar() {

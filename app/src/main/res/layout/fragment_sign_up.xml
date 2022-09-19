@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:clickable="true"
     android:focusable="true"
     android:background="?android:windowBackground"
@@ -20,24 +21,17 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="40dp"
+            android:layout_marginVertical="5dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="start"
-                android:scaleType="centerCrop"
-                android:src="@drawable/app_icon" />
-
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:text="@string/afri_learn"
+                android:text="Sign Up"
                 android:textStyle="bold"
-                android:textSize="26sp" />
+                android:layout_margin="10dp"
+                android:textSize="38sp" />
 
         </LinearLayout>
 
@@ -66,16 +60,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
+                app:cardBackgroundColor="?attr/colorSecondaryVariant"
                 android:elevation="16dp">
 
-                <EditText
-                    android:id="@+id/signup_email"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:background="?attr/colorSecondaryVariant"
-                    android:hint="Email"
-                    android:inputType="textEmailAddress"
-                    android:padding="10dp" />
+                    app:boxBackgroundMode="outline" >
+
+                    <EditText
+                        android:id="@+id/signup_email"
+                        android:layout_width="match_parent"
+                        android:background="@android:color/transparent"
+                        android:layout_height="match_parent"
+                        android:hint="Email"
+                        android:textColor="@color/black"
+                        android:inputType="textEmailAddress"
+                        android:padding="10dp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
             </androidx.cardview.widget.CardView>
 
@@ -89,16 +93,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
+                app:cardBackgroundColor="?attr/colorSecondaryVariant"
                 android:elevation="16dp">
 
-                <EditText
-                    android:id="@+id/signup_password"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:background="?attr/colorSecondaryVariant"
-                    android:hint="Password"
-                    android:inputType="textPassword"
-                    android:padding="10dp" />
+                    app:boxBackgroundMode="outline"
+                    app:passwordToggleDrawable="@drawable/show_hide_password"
+                    app:passwordToggleEnabled="true">
+
+                    <EditText
+                        android:id="@+id/signup_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:hint="Password"
+                        android:textColor="@color/black"
+                        android:background="@android:color/transparent"
+                        android:inputType="textPassword"
+                        android:padding="10dp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
             </androidx.cardview.widget.CardView>
 
@@ -112,16 +128,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
+                app:cardBackgroundColor="?attr/colorSecondaryVariant"
                 android:elevation="16dp">
 
-                <EditText
-                    android:id="@+id/confirm_password"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:background="?attr/colorSecondaryVariant"
-                    android:hint="Confirm Password"
-                    android:inputType="textPassword"
-                    android:padding="10dp" />
+                    app:boxBackgroundMode="outline"
+                    app:passwordToggleDrawable="@drawable/show_hide_password"
+                    app:passwordToggleEnabled="true">
+
+                    <EditText
+                        android:id="@+id/confirm_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:hint="Confirm Password"
+                        android:inputType="textPassword"
+                        android:background="@android:color/transparent"
+                        android:textColor="@color/black"
+                        android:padding="10dp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
             </androidx.cardview.widget.CardView>
 
@@ -150,15 +178,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
+                app:cardBackgroundColor="?attr/colorSecondaryVariant"
                 android:elevation="16dp">
 
                 <EditText
                     android:id="@+id/signup_full_name"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="?attr/colorSecondaryVariant"
                     android:hint="Full Name"
+                    android:textColor="@color/black"
                     android:inputType="textCapWords"
+                    android:maxLines="1"
                     android:padding="10dp" />
 
             </androidx.cardview.widget.CardView>
@@ -173,14 +203,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
+                app:cardBackgroundColor="?attr/colorSecondaryVariant"
                 android:elevation="16dp">
 
                 <EditText
                     android:id="@+id/signup_username"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="?attr/colorSecondaryVariant"
                     android:hint="Username"
+                    android:inputType="textCapSentences"
+                    android:textColor="@color/black"
                     android:padding="10dp" />
 
             </androidx.cardview.widget.CardView>
@@ -195,6 +227,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
+                app:cardBackgroundColor="?attr/colorSecondaryVariant"
                 android:elevation="16dp">
 
                 <TextView
@@ -202,7 +235,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:textSize="18sp"
-                    android:background="?attr/colorSecondaryVariant"
+                    android:textColor="@color/black"
                     android:hint="Age"
                     android:padding="10dp" />
 
@@ -217,24 +250,31 @@
                 android:backgroundTint="@color/app_dark_color"
                 android:inputType="textCapWords"
                 android:maxLines="1"
+                app:cardCornerRadius="16sp"
                 android:requiresFadingEdge="horizontal">
 
-                <ProgressBar
+                <TextView
                     android:id="@+id/sign_up_progressbar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:visibility="invisible" />
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginVertical="16dp"
+                    android:text="Signing you up ...."
+                    android:textColor="#616161"
+                    android:visibility="invisible"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/sign_up_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginHorizontal="30dp"
+                    android:layout_marginHorizontal="20dp"
                     android:layout_marginVertical="10dp"
                     android:text="Sign Up"
-                    android:textColor="?android:attr/textColorSecondary"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
                     android:textStyle="bold" />
 
             </androidx.cardview.widget.CardView>

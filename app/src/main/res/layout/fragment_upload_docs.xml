@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white"
+    android:background="?background"
     android:orientation="vertical"
     android:clickable="true"
     android:focusable="true"
@@ -13,8 +13,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:background="@drawable/rounded_toolbar_background"
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.Toolbar
@@ -22,6 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:gravity="center"
+            android:background="@color/app_primary_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -34,7 +33,7 @@
                 android:gravity="center"
                 android:text="Question"
                 android:layout_gravity="center"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="20sp" />
 
         </androidx.appcompat.widget.Toolbar>
@@ -44,12 +43,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:layout_margin="15dp"
+            android:padding="15dp"
             android:src="@drawable/ic_back_arrow"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/black" />
+            android:foreground="@drawable/circular_ripple"
+            app:tint="?iconTint" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -84,6 +84,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="20"
+            android:visibility="gone"
             android:background="#26DDD377"
             android:orientation="horizontal">
 
@@ -93,7 +94,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="18"
                 android:layout_gravity="center"
-                android:foreground="@drawable/gray_ripple"
+                android:foreground="@drawable/app50_ripple"
                 android:orientation="horizontal"
                 android:padding="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -121,7 +122,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="2"
                 android:layout_gravity="center"
-                android:foreground="@drawable/gray_ripple"
+                android:foreground="@drawable/app50_ripple"
                 android:padding="5dp"
                 android:src="@drawable/ic_cancel"
                 android:textColor="@color/black" />
@@ -142,8 +143,8 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
             android:padding="5dp"
-            android:visibility="gone"
             android:orientation="horizontal"
+            android:visibility="gone"
             android:layout_marginVertical="5dp"
             android:background="@drawable/rounded_background_radio_group" >
 
@@ -153,7 +154,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="5dp"
-                android:textColor="?attr/textColor"/>
+                android:textColor="?android:textColorPrimary"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -161,7 +162,7 @@
                 android:text=" Attachment(s)"
                 android:layout_gravity="center"
                 android:layout_marginEnd="5dp"
-                android:textColor="?attr/textColor"/>
+                android:textColor="?android:textColorPrimary"/>
 
             <ImageView
                 android:id="@+id/upload_question_cancel"
@@ -177,7 +178,7 @@
             android:id="@+id/upload_question_upload"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/app_primary_color_light"
+            android:backgroundTint="@color/app_primary_color"
             android:text="Upload"
             android:textColor="@color/white" />
 

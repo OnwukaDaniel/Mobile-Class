@@ -1,6 +1,5 @@
 package com.iodaniel.mobileclass.teacher_package.course
 
-import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -12,89 +11,51 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.data_class.CourseCardData
 import com.iodaniel.mobileclass.data_class.PlanModulesExercise
 import com.iodaniel.mobileclass.databinding.FragmentEditPlansBinding
+import com.iodaniel.mobileclass.liveDataClasses.ValueEventLiveData
 import com.iodaniel.mobileclass.repository.EditPlanRepo
-import com.iodaniel.mobileclass.shared_classes.Util
 import com.iodaniel.mobileclass.util.BackgroundHelper
+import com.iodaniel.mobileclass.util.ChildEventTemplate
 import com.iodaniel.mobileclass.util.CustomLinearLayoutManager
+import com.iodaniel.mobileclass.viewModel.MessageFragmentViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class FragmentEditPlans : Fragment(), View.OnClickListener, BackgroundHelper {
     private lateinit var binding: FragmentEditPlansBinding
     private var planModulesExercise: ArrayList<PlanModulesExercise> = arrayListOf()
     private var pmeRef = FirebaseDatabase.getInstance().reference
-    private var connectionRef = FirebaseDatabase.getInstance().reference
-    private val listener = Listener()
-    private val connectionListener = ConnectionListener()
     private lateinit var editPlanRepo: EditPlanRepo
+    private val mfV: MessageFragmentViewModel by activityViewModels()
     private var editTextList: ArrayList<EditText> = arrayListOf()
     private val planAdapter = PlanAdapter()
     private var courseCardData: CourseCardData? = null
+    private lateinit var valueEventLiveData: ValueEventLiveData
     private var courseCardDataJson = ""
-    private var fetchedData = false
-    private var networkButEmpty = false
-    private var pDialog: Dialog? = null
+    private var courseFetched = false
     private val scope = CoroutineScope(Dispatchers.IO)
-
-    inner class Listener : ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-            if (snapshot.exists()) {
-                val json = Gson().toJson(snapshot.value!!)
-                val snap: ArrayList<*> = Gson().fromJson(json, ArrayList::class.java)
-                planAdapter.notifyItemRangeRemoved(0, planModulesExercise.size)
-                planModulesExercise.clear()
-                for ((index, i) in snap.withIndex()) {
-                    val gson = Gson().toJson(i)
-                    val data: PlanModulesExercise = Gson().fromJson(gson, PlanModulesExercise::class.java)
-                    planModulesExercise.add(data)
-                    planAdapter.notifyItemInserted(index)
-                }
-                planAdapter.planModulesExercise = planModulesExercise
-                fetchedData = true
-                this@FragmentEditPlans.notEmpty()
-            }
-        }
-
-        override fun onCancelled(error: DatabaseError) = Unit
-    }
-
-    inner class ConnectionListener : ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-            if (!fetchedData) this@FragmentEditPlans.empty() else this@FragmentEditPlans.notEmpty()
-            networkButEmpty = true
-        }
-
-        override fun onCancelled(error: DatabaseError) = Unit
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentEditPlansBinding.inflate(inflater, container, false)
         requireActivity().setActionBar(binding.editPlanToolbar)
         requireActivity().actionBar!!.title = "Plans"
         requireActivity().actionBar!!.subtitle = "Create many topics as necessary"
-        pDialog = Util.progressDialog("Please wait...", requireContext(), requireActivity())
-        pDialog?.show()
-        scope.launch {
-            delay(12_000)
-            if (activity != null) requireActivity().runOnUiThread {
-                pDialog?.dismiss()
-            }
-        }
+        delayWait(60)
         editPlanRepo = EditPlanRepo(requireActivity(), requireContext(), binding.root, viewLifecycleOwner)
 
         binding.rowEditTopicCourseAdd1.setOnClickListener(this)
@@ -102,7 +63,6 @@ class FragmentEditPlans : Fragment(), View.OnClickListener, BackgroundHelper {
         binding.modulesAndPlansCreatePlanChip.setOnClickListener(this)
         courseCardDataJson = requireArguments().getString(getString(R.string.manage_course_data_intent))!!
         courseCardData = Gson().fromJson(courseCardDataJson, CourseCardData::class.java)
-        connectionRef = connectionRef.child(getString(R.string.network_value))
         pmeRef = pmeRef.child(getString(R.string.pme_ref)).child(FirebaseAuth.getInstance().currentUser!!.uid).child(courseCardData!!.courseCode)
 
         planAdapter.planModulesExercise = planModulesExercise
@@ -111,13 +71,49 @@ class FragmentEditPlans : Fragment(), View.OnClickListener, BackgroundHelper {
         planAdapter.rv = binding.editCoursePlanRoot
         binding.editCoursePlanRoot.layoutManager = CustomLinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.editCoursePlanRoot.adapter = planAdapter
+        valueEventLiveData = ValueEventLiveData(pmeRef)
+        valueEventLiveData.observe(viewLifecycleOwner) {
+            when (it.second) {
+                ChildEventTemplate.onDataChange -> {
+                    val json = Gson().toJson(it.first.value!!)
+                    val snap: ArrayList<*> = Gson().fromJson(json, ArrayList::class.java)
+                    planAdapter.notifyItemRangeRemoved(0, planModulesExercise.size)
+                    planModulesExercise.clear()
+                    for ((index, i) in snap.withIndex()) {
+                        val gson = Gson().toJson(i)
+                        val data: PlanModulesExercise = Gson().fromJson(gson, PlanModulesExercise::class.java)
+                        planModulesExercise.add(data)
+                        planAdapter.notifyItemInserted(index)
+                    }
+                    planAdapter.planModulesExercise = planModulesExercise
+                }
+            }
+        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        pmeRef.addValueEventListener(listener)
-        connectionRef.addValueEventListener(connectionListener)
+        FirebaseDatabase.getInstance().reference.get().addOnSuccessListener {
+            courseFetched = true
+            if (planModulesExercise.isEmpty()) empty() else notEmpty()
+        }
+    }
+
+    private fun delayWait(input: Int) {
+        CoroutineScope(Dispatchers.Main).launch {
+            val range = (0..input).toList().reversed()
+            val flow = range.asSequence().asFlow().onEach { delay(1_000) }
+            flow.collect {
+                if (it + 1 == input) {
+                    if (activity != null && isAdded) requireActivity().runOnUiThread {
+                        if (!courseFetched) {
+                            //Snackbar.make(binding.root, "Network time out", Snackbar.LENGTH_LONG).show()
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override fun onClick(v: View?) {
@@ -135,37 +131,27 @@ class FragmentEditPlans : Fragment(), View.OnClickListener, BackgroundHelper {
                         return
                     }
                 }
-                editPlanRepo.uploadPlan(pmeRef, planModulesExercise, binding.root, courseCardDataJson)
+                editPlanRepo.uploadPlan(pmeRef, planModulesExercise, binding.root, courseCardDataJson, mfV, R.id.fragment_edit_plans_root)
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        pmeRef.removeEventListener(listener)
-        connectionRef.removeEventListener(connectionListener)
-        pDialog?.dismiss()
     }
 
     override fun empty() {
         binding.editPlansEmptyRoot.visibility = View.VISIBLE
         binding.editPlansDataRoot.visibility = View.GONE
         binding.editPlansNoNetworkRoot.visibility = View.GONE
-        pDialog?.dismiss()
     }
 
     override fun notEmpty() {
         binding.editPlansDataRoot.visibility = View.VISIBLE
         binding.editPlansEmptyRoot.visibility = View.GONE
         binding.editPlansNoNetworkRoot.visibility = View.GONE
-        pDialog?.dismiss()
     }
 
     override fun noInternet() {
         binding.editPlansNoNetworkRoot.visibility = View.VISIBLE
         binding.editPlansEmptyRoot.visibility = View.GONE
         binding.editPlansDataRoot.visibility = View.GONE
-        pDialog?.dismiss()
     }
 }
 

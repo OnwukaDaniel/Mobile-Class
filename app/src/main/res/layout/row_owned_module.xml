@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:foreground="@drawable/app50_ripple"
+    android:layout_marginHorizontal="4dp">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#CFCFCF"/>
+
+    <TextView
+        android:id="@+id/module_name"
+        android:layout_width="match_parent"
+        android:text="Filename"
+        android:textStyle="bold"
+        android:maxLines="1"
+        android:padding="16dp"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>

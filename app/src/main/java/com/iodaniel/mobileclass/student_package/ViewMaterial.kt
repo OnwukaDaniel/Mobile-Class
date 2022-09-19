@@ -19,7 +19,6 @@ import com.iodaniel.mobileclass.shared_classes.FragmentMaterials
 import com.iodaniel.mobileclass.shared_classes.FragmentViewLesson
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import com.iodaniel.mobileclass.teacher_package.classes.Material
-import com.iodaniel.mobileclass.teacher_package.singleclass.CreateNewAssignment
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -58,17 +57,17 @@ class ViewMaterial : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun inflateCreateNewAssignment() {
-        val createNewAssignmentFragment = CreateNewAssignment()
-        val bundle = Bundle()
-        val materialJson = Gson().toJson(material)
-        val json = Json.encodeToString(classInfo)
-        bundle.putString("classInfo", json)
-        bundle.putString("materialJson", materialJson)
-        createNewAssignmentFragment.arguments = bundle
-
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.view_material_nested_root, createNewAssignmentFragment)
-            .addToBackStack("newAssi").commit()
+        //val createNewAssignmentFragment = CreateNewAssignment()
+        //val bundle = Bundle()
+        //val materialJson = Gson().toJson(material)
+        //val json = Json.encodeToString(classInfo)
+        //bundle.putString("classInfo", json)
+        //bundle.putString("materialJson", materialJson)
+        //createNewAssignmentFragment.arguments = bundle
+//
+        //supportFragmentManager.beginTransaction()
+        //    .replace(R.id.view_material_nested_root, createNewAssignmentFragment)
+        //    .addToBackStack("newAssi").commit()
     }
 
     private fun viewPager() {

@@ -13,6 +13,7 @@ import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.iodaniel.mobileclass.databinding.FragmentCompleteCreateClassBinding
@@ -20,6 +21,8 @@ import com.iodaniel.mobileclass.databinding.ProgressBarDialogBinding
 import com.iodaniel.mobileclass.repository.CourseUploadRepo
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface
 import com.iodaniel.mobileclass.util.ImageCompressor.compressImage
+import com.iodaniel.mobileclass.viewModel.CourseUploadProgressViewModel
+import com.iodaniel.mobileclass.viewModel.CourseUploadState
 import java.io.ByteArrayInputStream
 
 class FragmentCompleteCreateCourse : Fragment(), ClassMaterialUploadInterface.ProgressBarController {
@@ -29,6 +32,7 @@ class FragmentCompleteCreateCourse : Fragment(), ClassMaterialUploadInterface.Pr
     private var imageByteInputString: ByteArrayInputStream? = null
     private val minimumPrice = 1.2
     private val maximumPrice = 12
+    private val courseUploadProgressViewModel: CourseUploadProgressViewModel by activityViewModels()
     private val acceptedImageFormat = arrayListOf("jpg", "png", "jpeg")
     private val dialog by lazy { Dialog(requireContext()) }
     private lateinit var progressBarController: ClassMaterialUploadInterface.ProgressBarController
@@ -40,12 +44,12 @@ class FragmentCompleteCreateCourse : Fragment(), ClassMaterialUploadInterface.Pr
             }
             if (it.resultCode == AppCompatActivity.RESULT_OK) {
                 val dataUri = it.data!!.data
-                val pair = compressImage(dataUri!!, requireContext())
+                val pair = compressImage(dataUri!!, requireContext(), null)
                 imageByteInputString = pair.first
                 imageByteArray = pair.second
                 val contentResolver = requireContext().contentResolver
                 val mime = MimeTypeMap.getSingleton()
-                if (mime.getExtensionFromMimeType(contentResolver?.getType(dataUri))!! in acceptedImageFormat){
+                if (mime.getExtensionFromMimeType(contentResolver?.getType(dataUri))!! in acceptedImageFormat) {
                     Glide.with(requireContext())
                         .load(imageByteArray)
                         .centerCrop()
@@ -59,10 +63,13 @@ class FragmentCompleteCreateCourse : Fragment(), ClassMaterialUploadInterface.Pr
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentCompleteCreateClassBinding.inflate(inflater, container, false)
         courseUploadRepo = CourseUploadRepo(requireActivity(), requireContext(), binding.root, viewLifecycleOwner)
-        requireActivity().setActionBar(binding.completeCreateCourseToolbar)
-        requireActivity().actionBar!!.title = "Save course"
         progressBarController = this
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        courseUploadProgressViewModel.setState(CourseUploadState.STEP_TWO)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -85,12 +92,12 @@ class FragmentCompleteCreateCourse : Fragment(), ClassMaterialUploadInterface.Pr
             val price = binding.completeCreateCoursePrice.text.trim().toString()
             if (price == "") return@setOnClickListener
 
-            if (price.toInt() < minimumPrice) {
+            if (price.toFloat() < minimumPrice) {
                 Snackbar.make(binding.root, "Read the pricing instruction", Snackbar.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
-            if (price.toInt() > maximumPrice) {
+            if (price.toFloat() > maximumPrice) {
                 Snackbar.make(binding.root, "Read the pricing instruction", Snackbar.LENGTH_LONG).show()
                 return@setOnClickListener
             }
@@ -119,5 +126,10 @@ class FragmentCompleteCreateCourse : Fragment(), ClassMaterialUploadInterface.Pr
 
     override fun hideProgressBar() {
         dialog.dismiss()
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        courseUploadProgressViewModel.setState(CourseUploadState.STEP_ONE)
     }
 }

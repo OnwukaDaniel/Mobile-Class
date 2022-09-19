@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.FragmentSignUpBinding
 import com.iodaniel.mobileclass.repository.RegistrationRepo
+import com.iodaniel.mobileclass.util.Keyboard.hideKeyboard
 import com.iodaniel.mobileclass.viewModel.SignUpViewModel
 
 class FragmentSignUp : Fragment(), View.OnClickListener, HelperListener.LoadingListener {
@@ -24,11 +25,21 @@ class FragmentSignUp : Fragment(), View.OnClickListener, HelperListener.LoadingL
         accountType = requireArguments().getString("student_teacher")!!
         binding.signUp.setOnClickListener(this)
         binding.signUpAge.setOnClickListener(this)
-        registrationRepo = RegistrationRepo(requireContext(), requireActivity(), binding.root, accountType,this, viewLifecycleOwner)
+        registrationRepo = RegistrationRepo(requireContext(), requireActivity(), binding.root, accountType, this, viewLifecycleOwner)
         signUpViewModel.age.observe(viewLifecycleOwner) {
             binding.signUpAge.text = it
         }
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        requireActivity().window.statusBarColor = resources.getColor(android.R.color.background_light)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        requireActivity().window.statusBarColor = resources.getColor(R.color.app_primary_color)
     }
 
     override fun onClick(v: View?) {
@@ -36,12 +47,13 @@ class FragmentSignUp : Fragment(), View.OnClickListener, HelperListener.LoadingL
             R.id.sign_up -> registrationRepo.signUp(
                 fullName = binding.signupFullName.text.trim().toString(),
                 username = binding.signupUsername.text.trim().toString(),
-                age = binding.signUpAge.text.trim().toString(),
+                age = binding.signUpAge.text.trim().toString().replace("<", "_").replace("-", "_").replace(">", "_"),
                 email = binding.signupEmail.text.trim().toString(),
                 password = binding.signupPassword.text.trim().toString(),
                 confirmPassword = binding.confirmPassword.text.trim().toString(),
             )
             R.id.sign_up_age -> {
+                hideKeyboard()
                 val pair = registrationRepo.agePicker()
                 val view = pair.first
                 val alertDialog = pair.second

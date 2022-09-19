@@ -7,7 +7,7 @@
             android:thicknessRatio="16"
             android:thickness="33dp"
             android:useLevel="false">
-            <solid android:color="#AFC7FF" />
+            <solid android:color="@color/app200" />
         </shape>
     </item>
 
@@ -20,8 +20,10 @@
                 android:thicknessRatio="16"
                 android:thickness="23dp"
                 android:useLevel="true">
+                <corners
+                    android:radius="60dp"/>
                 <gradient
-                    android:centerColor="@color/purple_700"
+                    android:centerColor="@color/app600"
                     android:type="sweep" />
             </shape>
         </rotate>
@@ -33,7 +35,7 @@
             android:thicknessRatio="16"
             android:thickness="10dp"
             android:useLevel="false">
-            <solid android:color="#AFC7FF" />
+            <solid android:color="@color/app200" />
         </shape>
     </item>
 

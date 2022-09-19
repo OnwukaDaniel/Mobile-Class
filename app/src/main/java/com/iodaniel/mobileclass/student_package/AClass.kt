@@ -153,9 +153,10 @@ class AClass : AppCompatActivity(), OnClickListener, HelperListener.LoadingListe
         dialog.dismiss()
     }
 }
-interface AssignmentViewTypeListener{
+
+interface AssignmentViewTypeListener {
     fun multiChoiceView()
-    fun questionsOnlyView()
+    fun questionsOnlyView(question: String)
     fun fileQuestionsView()
     fun resultMultiChoiceView()
 }

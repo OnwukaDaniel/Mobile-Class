@@ -12,7 +12,7 @@
         android:id="@+id/plans_cancle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:foreground="@drawable/gray_ripple"
+        android:foreground="@drawable/app50_ripple"
         android:padding="10dp"
         android:src="@drawable/ic_cancel"
         app:tint="?colorOnPrimary" />
@@ -57,7 +57,7 @@
             android:layout_margin="10dp"
             android:layout_weight="10"
             app:cardElevation="10dp"
-            android:foreground="@drawable/gray_ripple"
+            android:foreground="@drawable/app50_ripple"
             app:cardBackgroundColor="@color/app_primary_color"
             app:cardCornerRadius="5dp">
 
@@ -77,7 +77,7 @@
             android:layout_margin="10dp"
             android:layout_weight="10"
             app:cardElevation="10dp"
-            android:foreground="@drawable/gray_ripple"
+            android:foreground="@drawable/app50_ripple"
             app:cardBackgroundColor="@color/app_primary_color"
             app:cardCornerRadius="5dp">
 
@@ -97,7 +97,7 @@
             android:layout_margin="10dp"
             android:layout_weight="10"
             app:cardElevation="10dp"
-            android:foreground="@drawable/gray_ripple"
+            android:foreground="@drawable/app50_ripple"
             app:cardBackgroundColor="@color/app_primary_color"
             app:cardCornerRadius="5dp">
 
@@ -117,7 +117,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:foreground="@drawable/gray_ripple"
+        android:foreground="@drawable/app50_ripple"
         android:paddingHorizontal="6dp"
         app:cardBackgroundColor="@color/app_dark_color"
         app:cardCornerRadius="12dp">

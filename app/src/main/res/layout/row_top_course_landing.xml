@@ -96,6 +96,28 @@
             android:layout_gravity="center_vertical"
             android:background="@color/dark_grass_green" />
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/similar_course_owned"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            app:cardBackgroundColor="#9BFF00"
+            app:cardCornerRadius="3dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8sp"
+                android:gravity="center"
+                android:padding="1dp"
+                android:text="Owned"
+                android:textColor="@color/black"   />
+
+        </androidx.cardview.widget.CardView>
+
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

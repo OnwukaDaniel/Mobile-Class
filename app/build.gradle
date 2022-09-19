@@ -41,10 +41,34 @@ android {
 }
 
 dependencies {
+    def lifecycle_version = "2.4.1"
+
+    implementation "androidx.tonyodev.fetch2:xfetch2:3.1.6"
+
+    //shimmer
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+
+    //chipslayoutmanager
+    implementation 'com.beloo.widget:ChipsLayoutManager:0.3.7@aar'
+
+    //exoplayer
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.18.1'
+    implementation 'com.google.android.exoplayer:exoplayer-dash:2.18.1'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.18.1'
+    implementation 'com.google.android.exoplayer:exoplayer:2.18.1'
+    //spinkit
+    implementation 'com.github.ybq:Android-SpinKit:1.4.0'
+
+    implementation 'androidx.paging:paging-runtime-ktx:3.1.1'
 
     implementation 'androidx.activity:activity-ktx:1.4.0'
+    implementation 'androidx.fragment:fragment-ktx:1.4.1'
     implementation 'android.arch.lifecycle:common:1.1.1'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version"
 
     implementation platform('com.google.firebase:firebase-bom:29.0.1')
     implementation 'com.google.firebase:firebase-database-ktx'

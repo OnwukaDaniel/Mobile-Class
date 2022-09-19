@@ -1,11 +1,9 @@
 package com.iodaniel.mobileclass.repository
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
@@ -18,6 +16,7 @@ import com.iodaniel.mobileclass.data_class.CourseCardData
 import com.iodaniel.mobileclass.liveDataClasses.InstructorProfileLiveData
 import com.iodaniel.mobileclass.teacher_package.classes.ClassMaterialUploadInterface.ProgressBarController
 import com.iodaniel.mobileclass.teacher_package.course.CourseUpload
+import com.iodaniel.mobileclass.teacher_package.profile.ManageProfileCourseType
 import com.iodaniel.mobileclass.util.ChildEventTemplate
 import com.iodaniel.mobileclass.util.ImageCompressor.compressImage
 import kotlinx.coroutines.*
@@ -30,15 +29,6 @@ class CourseUploadRepo(val activity: Activity, val context: Context, val view: V
     private val firebaseUser = FirebaseAuth.getInstance().currentUser
     val scope = CoroutineScope(Dispatchers.IO)
     private var auth = ""
-
-    fun pickLevel(): Pair<View, AlertDialog> {
-        val view = LayoutInflater.from(context).inflate(R.layout.dialog_education_level, null, false)
-        val alertDialog = AlertDialog.Builder(activity)
-            .setView(view)
-            .create()
-        alertDialog.show()
-        return view to alertDialog
-    }
 
     fun upload(
         courseName: String,
@@ -105,7 +95,7 @@ class CourseUploadRepo(val activity: Activity, val context: Context, val view: V
                                 shortDescription = shortDescription,
                                 price = price,
                                 level = level,
-                                studentEnrolled = "0",
+                                studentsEnrolled = "0",
                                 description = detailedDescription,
                                 dateCreated = datetime,
                                 courseCode = courseCode,
@@ -115,9 +105,6 @@ class CourseUploadRepo(val activity: Activity, val context: Context, val view: V
                                 instructorName = instructorDetails.instructorName,
                                 instructorInChargeUID = instructorDetails.uid,
                             )
-                            instructorProfileLiveData.removeObservers(lifecycleOwner)
-                            val numCourses = if (instructorDetails.coursesCreated != "") instructorDetails.coursesCreated.toInt() + 1 else 0 + 1
-                            instructorDetails.coursesCreated = numCourses.toString()
                             allCourseCodesRef.setValue(detailsX).addOnSuccessListener {
                                 courseReference.setValue(courseCardData).addOnSuccessListener {
                                     instructorRef.setValue(instructorDetails).addOnSuccessListener {
@@ -126,7 +113,7 @@ class CourseUploadRepo(val activity: Activity, val context: Context, val view: V
                                         Toast.makeText(context, "Course Saved.", Toast.LENGTH_LONG).show()
                                         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                                         activity.startActivity(intent)
-                                        activity.overridePendingTransition(0, 0)
+                                        activity.overridePendingTransition(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
                                     }
                                 }.addOnFailureListener {
                                     showErrorOrTimeOut("Could not create course. Please retry", progressBarController)
@@ -161,8 +148,8 @@ class CourseUploadRepo(val activity: Activity, val context: Context, val view: V
             .reference
             .child(context.getString(R.string.course_path))
             .child(courseCode)
-            .child("courseUploadCompletedCompleted")
-        courseReference.setValue(true).addOnSuccessListener {
+            .child("manageProfileCourseType")
+        courseReference.setValue(ManageProfileCourseType.COMPLETE).addOnSuccessListener {
             scope.launch {
                 delay(2_000)
                 activity.runOnUiThread { showErrorOrTimeOut("Course Uploaded", progressBarController) }

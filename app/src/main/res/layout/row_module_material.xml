@@ -18,7 +18,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:foreground="@drawable/gray_ripple"
+        android:foreground="@drawable/app50_ripple"
         android:orientation="vertical"
         android:padding="2dp">
 
@@ -27,7 +27,7 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:elevation="300dp"
-            android:foreground="@drawable/gray_ripple"
+            android:foreground="@drawable/app50_ripple"
             android:padding="8dp"
             android:src="@drawable/ic_close"
             app:layout_constraintEnd_toEndOf="parent"

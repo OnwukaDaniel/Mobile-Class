@@ -17,13 +17,12 @@ data class InstructorDetails(
     var username: String = "",
     var uid: String = "",
     var dateJoined: String = "",
-    var studentsEnrolled: String = "",
-    var coursesCreated: String = "",
-    var schemesCreated: String = "",
     var instructorImage: String = "",
     var instructorPersonalDescription: String = "",
-    var instructorIdentification: String = "",
-    var instructorCertificationLink: String = "",
+    var instructorIdentificationHash: HashMap<String, String> = hashMapOf(),
+    var instructorCertificationHash: HashMap<String, String> = hashMapOf(),
+    var instructorIdentificationVerified: Boolean = false,
+    var instructorCertificationVerified: Boolean = false,
 )
 
 data class StudentDetails(
@@ -33,5 +32,7 @@ data class StudentDetails(
     var username: String = "",
     var uid: String = "",
     var accountType: String = "",
+    var organisation: String = "",
     var dateJoined: String = "",
+    var image: String = "",
 )

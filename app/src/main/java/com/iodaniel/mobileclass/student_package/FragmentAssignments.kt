@@ -18,6 +18,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.Gson
 import com.iodaniel.mobileclass.R
 import com.iodaniel.mobileclass.databinding.AssignmentBinding
+import com.iodaniel.mobileclass.shared_classes.FragmentStudentViewAssignment
 import com.iodaniel.mobileclass.teacher_package.classes.AssignmentQuestion
 import com.iodaniel.mobileclass.teacher_package.classes.ClassInfo
 import kotlinx.serialization.decodeFromString
@@ -209,7 +210,7 @@ class AssignmentsAdapter : RecyclerView.Adapter<AssignmentsAdapter.ViewHolder>()
             bundle.putString("classCode", classInfo.classCode)
             bundle.putString("classInfo", classInfoJson)
 
-            val viewAssignmentStudentFragment = FragmentViewAssignment()
+            val viewAssignmentStudentFragment = FragmentStudentViewAssignment()
             viewAssignmentStudentFragment.arguments = bundle
             if (viewAssignmentHelper!=null) viewAssignmentHelper.inflateFragment(viewAssignmentStudentFragment)
         }

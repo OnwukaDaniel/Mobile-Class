@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:id="@+id/view_assignment_root"
+    android:background="?background"
     android:clickable="true"
     android:focusable="true">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -18,14 +20,13 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:background="@drawable/rounded_toolbar_background"
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/view_assignment_toobar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/app_primary_color"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -36,10 +37,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:fontFamily="@font/amaranth"
-                    android:gravity="center"
+                    android:fontFamily="@font/open_sans"
                     android:text="Assessment"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="22sp" />
 
             </androidx.appcompat.widget.Toolbar>
@@ -48,12 +48,13 @@
                 android:id="@+id/view_assignment_back_arrow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
+                android:foreground="@drawable/circular_ripple"
+                android:padding="15dp"
                 android:src="@drawable/ic_back_arrow"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/black" />
+                app:tint="?iconTint" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -69,6 +70,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
+                <!--SINGLE QUESTION-->
                 <LinearLayout
                     android:id="@+id/view_assignment_single_question_section"
                     android:layout_width="match_parent"
@@ -94,21 +96,45 @@
                         android:gravity="start|top"
                         android:maxLines="1"
                         android:text="Assessment question"
-                        android:textColor="@color/black"
                         android:textSize="16sp" />
 
-                    <TextView
-                        android:id="@+id/view_question_question"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="start|top"
-                        android:hint="Share question here"
-                        android:maxLines="8"
-                        android:minLines="3"
-                        android:textSize="16sp" />
+                        android:layout_marginBottom="12dp"
+                        android:gravity="center"
+                        android:weightSum="14">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="start|top"
+                            android:layout_weight="1"
+                            android:hint=" '' "
+                            android:textSize="28sp" />
+
+                        <TextView
+                            android:id="@+id/view_question_question"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="12"
+                            android:textStyle="bold"
+                            android:gravity="start|top"
+                            android:hint="Share question here"
+                            android:textSize="17sp" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:layout_weight="1"
+                            android:hint=" '' "
+                            android:textSize="28sp" />
+
+                    </LinearLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv_assignment_document"
+                        android:id="@+id/rv_document"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
@@ -120,7 +146,6 @@
                         android:gravity="start|top"
                         android:maxLines="1"
                         android:text="Extra note"
-                        android:textColor="@color/black"
                         android:textSize="16sp"
                         android:visibility="gone" />
 
@@ -131,8 +156,91 @@
                         android:gravity="start|top"
                         android:textSize="16sp" />
 
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/answer_input"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Enter answer" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/view_question_upload"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="16dp"
+                            android:paddingVertical="16dp"
+                            android:text="Upload file"
+                            android:textSize="16sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/file_upload"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="4dp"
+                            app:cardBackgroundColor="?iconTint"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="6dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:foreground="@drawable/app50_ripple"
+                                android:paddingHorizontal="16dp"
+                                android:paddingVertical="8dp"
+                                android:text="Upload"
+                                android:textColor="?textColor" />
+
+                        </androidx.cardview.widget.CardView>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_attachment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:itemCount="1"
+                        tools:listitem="@layout/row_attachment1" />
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/submit_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="4dp"
+                        android:layout_marginTop="50dp"
+                        android:foreground="@drawable/app50_ripple"
+                        app:cardBackgroundColor="?iconTint"
+                        app:cardCornerRadius="15dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:padding="12sp"
+                            android:text="Submit"
+                            android:textColor="?textColor"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                    </androidx.cardview.widget.CardView>
+
                 </LinearLayout>
 
+                <!--MULTIPLE QUESTION-->
                 <LinearLayout
                     android:id="@+id/view_assignment_multiple_question_root"
                     android:layout_width="match_parent"
@@ -155,14 +263,15 @@
 
                 </LinearLayout>
 
+                <!--FINAL SCORE-->
                 <LinearLayout
                     android:id="@+id/view_assignment_result_question_root"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="50dp"
                     android:gravity="center"
-                    android:orientation="vertical"
                     android:visibility="gone"
+                    android:orientation="vertical"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -238,8 +347,47 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-
         </ScrollView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/assignment_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/forty_black"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/app40"
+            app:cardCornerRadius="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:paddingHorizontal="46sp"
+                android:paddingVertical="16dp">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:text="Sending..."
+                    android:textSize="22sp" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
 
     </LinearLayout>
 

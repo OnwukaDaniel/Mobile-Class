@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:background="#25000000"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="400dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:elevation="20dp"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/edit_text_background1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/fragment_input_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="24dp"
+                android:textIsSelectable="true"
+                android:gravity="center"
+                android:text="Loren Ipsum Loren Ipsum Loren Ipsum LorenIpsum"
+                android:textSize="15sp" />
+
+            <EditText
+                android:id="@+id/fragment_input_editText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="24dp"
+                android:hint="@string/afri_learn"
+                android:paddingHorizontal="8dp"
+                android:textColor="@color/black" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/teal_700" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <TextView
+                    android:id="@+id/fragment_input_cancel"
+                    android:layout_width="0dp"
+                    android:layout_height="54dp"
+                    android:layout_weight="1"
+                    android:foreground="@drawable/app50_ripple"
+                    android:gravity="center"
+                    android:text="Cancel" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/teal_700" />
+
+                <TextView
+                    android:id="@+id/fragment_input_ok"
+                    android:layout_width="0dp"
+                    android:layout_height="54dp"
+                    android:layout_weight="1"
+                    android:foreground="@drawable/app50_ripple"
+                    android:gravity="center"
+                    android:text="Ok" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

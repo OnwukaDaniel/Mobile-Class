@@ -2,9 +2,10 @@
 <com.google.android.material.chip.Chip xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/row_module_chip"
     android:text="Filename"
     android:textColor="@color/white"
+    app:chipCornerRadius="16sp"
     android:layout_marginHorizontal="4dp"
     android:textStyle="bold" />
-
